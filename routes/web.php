@@ -10,6 +10,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\UserController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('stocks', StockController::class);
+    Route::resource('users', UserController::class);
 
     // Dashboard related routes
     Route::get('dashboard/revenue', [DashboardController::class, 'revenue'])->name('dashboard.revenue');
