@@ -21,8 +21,11 @@ use App\Http\Controllers\TreatmentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TreatmentTypeController;
+use App\Http\Controllers\PaymentMethodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -59,7 +62,7 @@ Route::middleware(['auth'])->group(function () {
         AppointmentController::class,
         'today'
     ])->name('appointments.today');
-    
+
     Route::resource('appointments', AppointmentController::class);
 
     // Dashboard related routes
@@ -163,6 +166,31 @@ Route::middleware(['auth'])->group(function () {
     )->name('appointments.today');
 
     //settings
+    Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('settings');
+        
+        // Treatment Types
+        Route::resource('treatment-types', TreatmentTypeController::class)->names([
+            'index' => 'settings.treatment-types.index',
+            'create' => 'settings.treatment-types.create',
+            'store' => 'settings.treatment-types.store',
+            'show' => 'settings.treatment-types.show',
+            'edit' => 'settings.treatment-types.edit',
+            'update' => 'settings.treatment-types.update',
+            'destroy' => 'settings.treatment-types.destroy',
+        ]);
+
+        // Payment Methods
+        Route::resource('payment-methods', PaymentMethodController::class)->names([
+            'index' => 'settings.payment-methods.index',
+            'create' => 'settings.payment-methods.create',
+            'store' => 'settings.payment-methods.store',
+            'show' => 'settings.payment-methods.show',
+            'edit' => 'settings.payment-methods.edit',
+            'update' => 'settings.payment-methods.update',
+            'destroy' => 'settings.payment-methods.destroy',
+        ]);
+    });
 });
 
 require __DIR__.'/auth.php';
