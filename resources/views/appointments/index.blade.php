@@ -17,6 +17,46 @@
 
     <div class="row">
         <div class="col-12">
+            <div class="mb-4 card">
+                <div class="card-body">
+                    <form action="{{ route('appointments.index') }}" method="GET" class="row row-cols-1 row-cols-md-4 g-3">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="patient" class="form-label">Patient</label>
+                                <input type="text" class="form-control" id="patient" name="patient"
+                                    value="{{ request('patient') }}" placeholder="Nom du patient">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="dentist" class="form-label">Dentiste</label>
+                                <input type="text" class="form-control" id="dentist" name="dentist"
+                                    value="{{ request('dentist') }}" placeholder="Nom du dentiste">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="treatment" class="form-label">Type de traitement</label>
+                                <input type="text" class="form-control" id="treatment" name="treatment"
+                                    value="{{ request('treatment') }}" placeholder="Type de traitement">
+                            </div>
+                        </div>
+                        <div class="col d-flex align-items-end">
+                            <div class="gap-2 d-flex w-100">
+                                <button type="submit" class="btn btn-primary flex-grow-1">
+                                    <i class="bi bi-search me-1"></i> Rechercher
+                                </button>
+                                @if(request()->hasAny(['patient', 'dentist', 'treatment']))
+                                    <a href="{{ route('appointments.index') }}" class="btn btn-light">
+                                        <i class="bi bi-x-circle me-1"></i> Réinitialiser
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-body">
                     @if($appointments->isEmpty())
@@ -47,6 +87,9 @@
                                                 {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}
                                             </td>
                                             <td>
+                                                <span class="badge bg-primary">
+                                                {{ $appointment->patient->id }}
+                                                </span>
                                                 {{ $appointment->patient->first_name }}
                                                 {{ $appointment->patient->last_name }}
                                             </td>

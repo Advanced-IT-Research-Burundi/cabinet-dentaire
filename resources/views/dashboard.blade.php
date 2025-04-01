@@ -143,7 +143,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $appointment->dentiste->utilisateur->prenom }} {{ $appointment->dentiste->utilisateur->nom }}</td>
+                                <td>{{ $appointment->dentist->user->first_name }} {{ $appointment->dentist->user->last_name }}</td>
                                 <td>{{ $appointment->motif }}</td>
                                 <td>
                                     @if($appointment->statut == 'Confirmé')
