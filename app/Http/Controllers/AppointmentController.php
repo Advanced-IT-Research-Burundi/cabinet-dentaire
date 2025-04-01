@@ -39,7 +39,7 @@ class AppointmentController extends Controller
      * Affiche la liste des rendez-vous
      *
      * @param Request $request Les paramètres de recherche
-     * 
+     *
      * @return View
      */
     public function index(Request $request): View
@@ -78,6 +78,38 @@ class AppointmentController extends Controller
             ->withQueryString();
 
         return view('appointments.index', compact('appointments'));
+    }
+    public function show(Appointment $appointment)
+    {
+        return view('appointments.show', compact('appointment'));
+    }
+
+
+    public function calendar()
+    {
+        return view('appointments.calendar');
+    }
+
+    public function events()
+    {
+        $appointments = Appointment::with(['patient', 'dentist', 'plannedTreatment'])
+            ->get();
+
+        $events = $appointments->map(function ($appointment) {
+            return [
+                'id' => $appointment->id,
+                'title' => $appointment->patient->first_name . ' ' . $appointment->patient->last_name,
+                'start' => $appointment->date->format('Y-m-d') . 'T' . $appointment->start_time,
+                'end' => $appointment->date->format('Y-m-d') . 'T' . $appointment->end_time,
+                'treatment' => $appointment->plannedTreatment->name,
+                'backgroundColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
+                'borderColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
+            ];
+        });
+
+        return $events;
+
+
     }
 
     /**

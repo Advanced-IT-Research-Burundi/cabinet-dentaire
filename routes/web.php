@@ -30,6 +30,10 @@ use App\Http\Controllers\PaymentMethodController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get(
+    'appointments/events',
+    [AppointmentController::class, 'events']
+)->name('appointments.events');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -62,6 +66,8 @@ Route::middleware(['auth'])->group(function () {
         AppointmentController::class,
         'today'
     ])->name('appointments.today');
+
+    Route::get('/appointments/calendar', [AppointmentController::class, 'calendar'])->name('appointments.calendar');
 
     Route::resource('appointments', AppointmentController::class);
 
@@ -164,11 +170,12 @@ Route::middleware(['auth'])->group(function () {
         'appointments/today',
         [AppointmentController::class, 'today']
     )->name('appointments.today');
+    //events
 
     //settings
     Route::prefix('settings')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('settings');
-        
+
         // Treatment Types
         Route::resource('treatment-types', TreatmentTypeController::class)->names([
             'index' => 'settings.treatment-types.index',
