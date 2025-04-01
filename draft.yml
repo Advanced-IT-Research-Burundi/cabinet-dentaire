@@ -181,6 +181,8 @@ controllers:
     resource: web
   Payment:
     resource: web
+  Stock:
+    resource: web
 
 seeders:
   User
