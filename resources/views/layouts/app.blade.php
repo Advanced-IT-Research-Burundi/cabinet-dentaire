@@ -145,8 +145,8 @@
                                 <li><a class="dropdown-item" href=""><i class="bi bi-gear me-1"></i> Paramètres</a></li>
                                 @if(Auth::user()->role === 'Admin')
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href=""><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
-                                    <li><a class="dropdown-item" href=""><i class="bi bi-people me-1"></i> Utilisateurs</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people me-1"></i> Utilisateurs</a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
