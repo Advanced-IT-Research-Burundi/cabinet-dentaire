@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="row mb-4">
+    <div class="mb-4 row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">Nouveau Rendez-vous</h1>
+                <h1 class="mb-0 h3">Nouveau Rendez-vous</h1>
                 <a href="{{ route('appointments.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-1"></i> Retour
                 </a>
@@ -22,14 +22,14 @@
                     <form action="{{ route('appointments.store') }}" method="POST">
                         @csrf
 
-                        <div class="row mb-3">
+                        <div class="mb-3 row">
                             <div class="col-md-6">
                                 <label for="patient_id" class="form-label">Patient</label>
                                 <select name="patient_id" id="patient_id" class="form-select @error('patient_id') is-invalid @enderror" required>
                                     <option value="">Sélectionner un patient</option>
                                     @foreach($patients as $patient)
                                         <option value="{{ $patient->id }}" {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
-                                            {{ $patient->user->prenom }} {{ $patient->user->nom }}
+                                            {{ $patient->first_name }} {{ $patient->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -44,7 +44,7 @@
                                     <option value="">Sélectionner un dentiste</option>
                                     @foreach($dentists as $dentist)
                                         <option value="{{ $dentist->id }}" {{ old('dentist_id') == $dentist->id ? 'selected' : '' }}>
-                                            Dr. {{ $dentist->user->prenom }} {{ $dentist->user->nom }}
+                                            Dr. {{ $dentist->user->first_name }} {{ $dentist->user->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -54,10 +54,10 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="mb-3 row">
                             <div class="col-md-4">
                                 <label for="date" class="form-label">Date</label>
-                                <input type="date" class="form-control @error('date') is-invalid @enderror" 
+                                <input type="date" class="form-control @error('date') is-invalid @enderror"
                                     id="date" name="date" value="{{ old('date', date('Y-m-d')) }}" required>
                                 @error('date')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -66,7 +66,7 @@
 
                             <div class="col-md-4">
                                 <label for="start_time" class="form-label">Heure de début</label>
-                                <input type="time" class="form-control @error('start_time') is-invalid @enderror" 
+                                <input type="time" class="form-control @error('start_time') is-invalid @enderror"
                                     id="start_time" name="start_time" value="{{ old('start_time') }}" required>
                                 @error('start_time')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -75,7 +75,7 @@
 
                             <div class="col-md-4">
                                 <label for="end_time" class="form-label">Heure de fin</label>
-                                <input type="time" class="form-control @error('end_time') is-invalid @enderror" 
+                                <input type="time" class="form-control @error('end_time') is-invalid @enderror"
                                     id="end_time" name="end_time" value="{{ old('end_time') }}" required>
                                 @error('end_time')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -100,7 +100,7 @@
 
                         <div class="mb-3">
                             <label for="reason" class="form-label">Motif du rendez-vous</label>
-                            <textarea class="form-control @error('reason') is-invalid @enderror" 
+                            <textarea class="form-control @error('reason') is-invalid @enderror"
                                 id="reason" name="reason" rows="3">{{ old('reason') }}</textarea>
                             @error('reason')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -109,7 +109,7 @@
 
                         <div class="mb-3">
                             <label for="notes" class="form-label">Notes additionnelles</label>
-                            <textarea class="form-control @error('notes') is-invalid @enderror" 
+                            <textarea class="form-control @error('notes') is-invalid @enderror"
                                 id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
                             @error('notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -129,7 +129,7 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2">
+                        <div class="gap-2 d-flex justify-content-end">
                             <button type="reset" class="btn btn-light">Réinitialiser</button>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-calendar-plus me-1"></i> Créer le rendez-vous
@@ -145,7 +145,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Instructions</h5>
                     <p class="card-text">Veuillez remplir tous les champs obligatoires (*) pour créer un nouveau rendez-vous.</p>
-                    <ul class="list-unstyled mb-0">
+                    <ul class="mb-0 list-unstyled">
                         <li><i class="bi bi-dot"></i> Sélectionnez un patient et un dentiste</li>
                         <li><i class="bi bi-dot"></i> Choisissez une date et une plage horaire</li>
                         <li><i class="bi bi-dot"></i> Indiquez le type de traitement prévu</li>

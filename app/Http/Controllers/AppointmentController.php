@@ -38,14 +38,44 @@ class AppointmentController extends Controller
     /**
      * Affiche la liste des rendez-vous
      *
+     * @param Request $request Les paramètres de recherche
+     * 
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $appointments = Appointment::with(['patient.user', 'dentist.user'])
-            ->orderBy('date', 'desc')
+        $query = Appointment::with(['patient', 'dentist', 'plannedTreatment']);
+
+        // Recherche par patient
+        if ($request->filled('patient')) {
+            $patientSearch = $request->input('patient');
+            $query->whereHas('patient', function ($q) use ($patientSearch) {
+                $q->where('first_name', 'like', "%{$patientSearch}%")
+                    ->orWhere('last_name', 'like', "%{$patientSearch}%");
+            });
+        }
+
+        // Recherche par dentiste
+        if ($request->filled('dentist')) {
+            $dentistSearch = $request->input('dentist');
+            $query->whereHas('dentist.user', function ($q) use ($dentistSearch) {
+                $q->where('first_name', 'like', "%{$dentistSearch}%")
+                    ->orWhere('last_name', 'like', "%{$dentistSearch}%");
+            });
+        }
+
+        // Recherche par type de traitement
+        if ($request->filled('treatment')) {
+            $treatmentSearch = $request->input('treatment');
+            $query->whereHas('plannedTreatment', function ($q) use ($treatmentSearch) {
+                $q->where('name', 'like', "%{$treatmentSearch}%");
+            });
+        }
+
+        $appointments = $query->orderBy('date', 'desc')
             ->orderBy('start_time', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('appointments.index', compact('appointments'));
     }
