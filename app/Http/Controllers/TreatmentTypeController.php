@@ -62,18 +62,23 @@ class TreatmentTypeController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:treatment_types',
-            'description' => 'nullable|string',
-            'cost' => 'required|numeric|min:0',
-            'duration' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|max:100|unique:treatment_types',
+                'description' => 'nullable|string',
+                'average_duration' => 'nullable|integer|min:1',
+                'base_price' => 'nullable|numeric|min:0',
+                'category' => 'nullable|string|max:100',
+                'code' => 'nullable|string|max:20',
+                'active' => 'boolean',
+            ]
+        );
 
         TreatmentType::create($validated);
 
         return redirect()
             ->route('settings.treatment-types.index')
-            ->with('success', 'Type de traitement créé avec succès');
+            ->with('success', 'Type de traitement créé avec succès.');
     }
 
     /**
@@ -91,8 +96,8 @@ class TreatmentTypeController extends Controller
     /**
      * Met à jour le type de traitement
      *
-     * @param Request       $request       Les données du formulaire
-     * @param TreatmentType $treatmentType Type de traitement à mettre à jour
+     * @param Request       $request       
+     * @param TreatmentType $treatmentType 
      * 
      * @return RedirectResponse
      */
@@ -100,19 +105,25 @@ class TreatmentTypeController extends Controller
         Request $request,
         TreatmentType $treatmentType
     ): RedirectResponse {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:treatment_types,name,'
-                . $treatmentType->id,
-            'description' => 'nullable|string',
-            'cost' => 'required|numeric|min:0',
-            'duration' => 'required|integer|min:1',
-        ]);
+        $uniqueRule = 'unique:treatment_types,name,' . $treatmentType->id;
+        
+        $validated = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:100', $uniqueRule],
+                'description' => 'nullable|string',
+                'average_duration' => 'nullable|integer|min:1',
+                'base_price' => 'nullable|numeric|min:0',
+                'category' => 'nullable|string|max:100',
+                'code' => 'nullable|string|max:20',
+                'active' => 'boolean',
+            ]
+        );
 
         $treatmentType->update($validated);
 
         return redirect()
             ->route('settings.treatment-types.index')
-            ->with('success', 'Type de traitement mis à jour avec succès');
+            ->with('success', 'Type de traitement modifié avec succès.');
     }
 
     /**
