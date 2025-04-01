@@ -1,0 +1,117 @@
+created:
+    - app/Http/Controllers/UserController.php
+    - app/Http/Controllers/PatientController.php
+    - app/Http/Controllers/DentistController.php
+    - app/Http/Controllers/AppointmentController.php
+    - app/Http/Controllers/TreatmentController.php
+    - app/Http/Controllers/InvoiceController.php
+    - app/Http/Controllers/PaymentController.php
+    - database/factories/PatientFactory.php
+    - database/factories/DentistFactory.php
+    - database/factories/TreatmentTypeFactory.php
+    - database/factories/AppointmentFactory.php
+    - database/factories/TreatmentFactory.php
+    - database/factories/InvoiceDetailFactory.php
+    - database/factories/PaymentMethodFactory.php
+    - database/factories/PaymentFactory.php
+    - database/factories/PrescriptionFactory.php
+    - database/factories/StockFactory.php
+    - database/factories/StockUsageFactory.php
+    - database/factories/NotificationFactory.php
+    - database/factories/MedicalHistoryFactory.php
+    - database/factories/InvoiceFactory.php
+    - database/migrations/2025_04_01_074619_create_patients_table.php
+    - database/migrations/2025_04_01_074620_create_dentists_table.php
+    - database/migrations/2025_04_01_074621_create_treatment_types_table.php
+    - database/migrations/2025_04_01_074622_create_appointments_table.php
+    - database/migrations/2025_04_01_074623_create_treatments_table.php
+    - database/migrations/2025_04_01_074624_create_invoice_details_table.php
+    - database/migrations/2025_04_01_074625_create_payment_methods_table.php
+    - database/migrations/2025_04_01_074626_create_payments_table.php
+    - database/migrations/2025_04_01_074627_create_prescriptions_table.php
+    - database/migrations/2025_04_01_074628_create_stocks_table.php
+    - database/migrations/2025_04_01_074629_create_stock_usages_table.php
+    - database/migrations/2025_04_01_074630_create_notifications_table.php
+    - database/migrations/2025_04_01_074631_create_medical_histories_table.php
+    - database/migrations/2025_04_01_074632_create_invoices_table.php
+    - app/Models/Patient.php
+    - app/Models/Dentist.php
+    - app/Models/TreatmentType.php
+    - app/Models/Appointment.php
+    - app/Models/Treatment.php
+    - app/Models/InvoiceDetail.php
+    - app/Models/PaymentMethod.php
+    - app/Models/Payment.php
+    - app/Models/Prescription.php
+    - app/Models/Stock.php
+    - app/Models/StockUsage.php
+    - app/Models/Notification.php
+    - app/Models/MedicalHistory.php
+    - app/Models/Invoice.php
+    - database/seeders/UserPatientDentistTreatmentTypePaymentMethodSeeder.php
+    - tests/Feature/Http/Controllers/UserControllerTest.php
+    - tests/Feature/Http/Controllers/PatientControllerTest.php
+    - tests/Feature/Http/Controllers/DentistControllerTest.php
+    - tests/Feature/Http/Controllers/AppointmentControllerTest.php
+    - tests/Feature/Http/Controllers/TreatmentControllerTest.php
+    - tests/Feature/Http/Controllers/InvoiceControllerTest.php
+    - tests/Feature/Http/Controllers/PaymentControllerTest.php
+    - app/Http/Requests/UserStoreRequest.php
+    - app/Http/Requests/UserUpdateRequest.php
+    - app/Http/Requests/PatientStoreRequest.php
+    - app/Http/Requests/PatientUpdateRequest.php
+    - app/Http/Requests/DentistStoreRequest.php
+    - app/Http/Requests/DentistUpdateRequest.php
+    - app/Http/Requests/AppointmentStoreRequest.php
+    - app/Http/Requests/AppointmentUpdateRequest.php
+    - app/Http/Requests/TreatmentStoreRequest.php
+    - app/Http/Requests/TreatmentUpdateRequest.php
+    - app/Http/Requests/InvoiceStoreRequest.php
+    - app/Http/Requests/InvoiceUpdateRequest.php
+    - app/Http/Requests/PaymentStoreRequest.php
+    - app/Http/Requests/PaymentUpdateRequest.php
+    - resources/views/user/index.blade.php
+    - resources/views/user/create.blade.php
+    - resources/views/user/show.blade.php
+    - resources/views/user/edit.blade.php
+    - resources/views/patient/index.blade.php
+    - resources/views/patient/create.blade.php
+    - resources/views/patient/show.blade.php
+    - resources/views/patient/edit.blade.php
+    - resources/views/dentist/index.blade.php
+    - resources/views/dentist/create.blade.php
+    - resources/views/dentist/show.blade.php
+    - resources/views/dentist/edit.blade.php
+    - resources/views/appointment/index.blade.php
+    - resources/views/appointment/create.blade.php
+    - resources/views/appointment/show.blade.php
+    - resources/views/appointment/edit.blade.php
+    - resources/views/treatment/index.blade.php
+    - resources/views/treatment/create.blade.php
+    - resources/views/treatment/show.blade.php
+    - resources/views/treatment/edit.blade.php
+    - resources/views/invoice/index.blade.php
+    - resources/views/invoice/create.blade.php
+    - resources/views/invoice/show.blade.php
+    - resources/views/invoice/edit.blade.php
+    - resources/views/payment/index.blade.php
+    - resources/views/payment/create.blade.php
+    - resources/views/payment/show.blade.php
+    - resources/views/payment/edit.blade.php
+updated:
+    - routes/web.php
+models:
+    Patient: { first_name: 'string:100', middle_name: 'string:100 nullable', last_name: 'string:100 nullable', birth_date: date, gender: 'enum:M,F,Autre', phone: 'string:20 nullable', secondary_phone: 'string:20 nullable', email: 'string:100 unique nullable', address: 'text nullable', city: 'string:100 nullable', postal_code: 'string:20 nullable', country: 'string:100 nullable', insurance_number: 'string:100 nullable', insurance_company: 'string:100 nullable', medical_history: 'text nullable', allergies: 'text nullable', creator_id: 'id foreign:users' }
+    Dentist: { user_id: 'id foreign:users', specialty: 'string:100 nullable', license_number: 'string:50 nullable', biography: 'text nullable', calendar_color: 'string:7 nullable', available: 'boolean default:true' }
+    TreatmentType: { name: 'string:100', description: 'text nullable', average_duration: 'integer nullable', base_price: 'decimal:10,2 nullable', category: 'string:100 nullable', code: 'string:20 nullable', active: 'boolean default:true' }
+    Appointment: { patient_id: 'id foreign:patients', dentist_id: 'id foreign:dentists', date: date, start_time: time, end_time: time, reason: 'text nullable', status: 'enum:Confirme,Annule,Termine,En_attente,Reporte', notes: 'text nullable', reminder_sent: 'boolean default:false', created_at: datetime, creator_id: 'id foreign:users', planned_treatment_id: 'id foreign:treatment_types' }
+    Treatment: { patient_id: 'id foreign:patients', dentist_id: 'id foreign:dentists', treatment_type_id: 'id foreign:treatment_types', appointment_id: 'id foreign:appointments', date: date, description: 'text nullable', medical_notes: 'text nullable', applied_price: 'decimal:10,2 nullable', status: 'enum:Planifie,En_cours,Termine,Annule', created_at: datetime, updated_at: datetime }
+    InvoiceDetail: { invoice_id: 'id foreign:invoices', treatment_id: 'id foreign:treatments', description: 'string:255 nullable', quantity: 'integer default:1', unit_price: 'decimal:10,2 nullable', total_amount: 'decimal:10,2 nullable', tax_rate: 'decimal:5,2 default:0', tax_amount: 'decimal:10,2 default:0', discount_percentage: 'decimal:5,2 default:0', discount_amount: 'decimal:10,2 default:0', insurance_covered_amount: 'decimal:10,2 default:0', patient_amount: 'decimal:10,2 nullable' }
+    PaymentMethod: { name: 'string:100', description: 'text nullable', active: 'boolean default:true' }
+    Payment: { invoice_id: 'id foreign:invoices', patient_id: 'id foreign:patients', payment_method_id: 'id foreign:payment_methods', transaction_number: 'string:100 nullable', amount: 'decimal:10,2 nullable', payment_date: datetime, status: 'enum:Valide,En_attente,Rejete,Rembourse', notes: 'text nullable', proof_of_payment: 'string:255 nullable', operator_id: 'id foreign:users', created_at: datetime }
+    Prescription: { patient_id: 'id foreign:patients', dentist_id: 'id foreign:dentists', appointment_id: 'id foreign:appointments', prescription_date: 'date nullable', content: 'text nullable', instructions: 'text nullable', expiration_date: 'date nullable', status: 'enum:Active,Expiree,Annulee' }
+    Stock: { product_name: 'string:255', category: 'string:100', description: 'text nullable', available_quantity: integer, unit_measure: 'string:50 nullable', minimum_quantity: integer, last_order_date: 'date nullable', purchase_price: 'decimal:10,2 nullable', supplier: 'string:255 nullable', location: 'string:100 nullable', expiration_date: 'date nullable', status: 'enum:Disponible,Faible_stock,En_rupture,Expire', created_at: datetime, updated_at: datetime }
+    StockUsage: { stock_id: 'id foreign:stocks', treatment_id: 'id foreign:treatments', quantity_used: 'decimal:10,2 nullable', usage_date: datetime, user_id: 'id foreign:users' }
+    Notification: { title: 'string:255', message: text, type: 'enum:Rappel_RDV,Facture,Paiement,Stock,Systeme', recipient_id: id, recipient_type: 'enum:Patient,Dentiste,Utilisateur', link: 'string:255 nullable', status: 'enum:Non_envoye,Envoye,Lu', sent_date: datetime, read_date: datetime, send_method: 'enum:Email,SMS,Application,Tous' }
+    MedicalHistory: { patient_id: 'id foreign:patients', date: 'date nullable', document_type: 'enum:Radiographie,Ordonnance,Analyse,Rapport,Autre', title: 'string:255', details: text, file: 'string:255', dentist_id: 'id foreign:dentists', created_at: datetime }
+    Invoice: { patient_id: 'id foreign:patients', invoice_number: 'string:50 unique', issue_date: date, due_date: date, total_amount: 'decimal:10,2', insurance_amount: 'decimal:10,2', patient_amount: 'decimal:10,2', status: 'enum:Brouillon,Emise,Partiellement_payee,Payee,Annulee,En_retard', notes: text, creator_id: 'id foreign:users', created_at: datetime, updated_at: datetime }
