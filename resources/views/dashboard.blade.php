@@ -17,19 +17,19 @@
 @section('content')
 <!-- Cartes de statistiques -->
 <div class="row">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-0 stat-card h-100 bg-primary bg-opacity-10">
+    <div class="mb-4 col-xl-3 col-md-6">
+        <div class="bg-opacity-10 border-0 card stat-card h-100 bg-primary">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <div class="text-primary fw-bold">Rendez-vous aujourd'hui</div>
-                    <div class="bg-primary text-white rounded-circle p-2">
+                    <div class="p-2 text-white bg-primary rounded-circle">
                         <i class="bi bi-calendar-check"></i>
                     </div>
                 </div>
                 <div class="stat-value text-primary">{{ $rdvToday ?? 0 }}</div>
                 <div class="stat-title">Rendez-vous programmés</div>
             </div>
-            <div class="card-footer bg-transparent border-0 py-2">
+            <div class="py-2 bg-transparent border-0 card-footer">
                 <a href="{{ route('appointments.today') }}" class="text-decoration-none text-primary small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
                 </a>
@@ -38,19 +38,19 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-0 stat-card h-100 bg-success bg-opacity-10">
+    <div class="mb-4 col-xl-3 col-md-6">
+        <div class="bg-opacity-10 border-0 card stat-card h-100 bg-success">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <div class="text-success fw-bold">Nouveaux patients</div>
-                    <div class="bg-success text-white rounded-circle p-2">
+                    <div class="p-2 text-white bg-success rounded-circle">
                         <i class="bi bi-person-plus"></i>
                     </div>
                 </div>
                 <div class="stat-value text-success">{{ $newPatients ?? 0 }}</div>
                 <div class="stat-title">Ce mois-ci</div>
             </div>
-            <div class="card-footer bg-transparent border-0 py-2">
+            <div class="py-2 bg-transparent border-0 card-footer">
                 <a href="{{ route('patients.new') }}" class="text-decoration-none text-success small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
                 </a>
@@ -59,19 +59,19 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-0 stat-card h-100 bg-info bg-opacity-10">
+    <div class="mb-4 col-xl-3 col-md-6">
+        <div class="bg-opacity-10 border-0 card stat-card h-100 bg-info">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <div class="text-info fw-bold">Revenus</div>
-                    <div class="bg-info text-white rounded-circle p-2">
+                    <div class="p-2 text-white bg-info rounded-circle">
                         <i class="bi bi-cash-stack"></i>
                     </div>
                 </div>
-                <div class="stat-value text-info">{{ number_format($revenue ?? 0, 2) }} €</div>
+                <div class="stat-value text-info">{{ number_format($revenue ?? 0, 2) }} FBU</div>
                 <div class="stat-title">Ce mois-ci</div>
             </div>
-            <div class="card-footer bg-transparent border-0 py-2">
+            <div class="py-2 bg-transparent border-0 card-footer">
                 <a href="{{ route('factures.monthly') }}" class="text-decoration-none text-info small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
                 </a>
@@ -80,19 +80,19 @@
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-0 stat-card h-100 bg-warning bg-opacity-10">
+    <div class="mb-4 col-xl-3 col-md-6">
+        <div class="bg-opacity-10 border-0 card stat-card h-100 bg-warning">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <div class="text-warning fw-bold">Factures impayées</div>
-                    <div class="bg-warning text-white rounded-circle p-2">
+                    <div class="p-2 text-white bg-warning rounded-circle">
                         <i class="bi bi-receipt"></i>
                     </div>
                 </div>
                 <div class="stat-value text-warning">{{ $unpaidInvoices ?? 0 }}</div>
                 <div class="stat-title">Total en attente</div>
             </div>
-            <div class="card-footer bg-transparent border-0 py-2">
+            <div class="py-2 bg-transparent border-0 card-footer">
                 <a href="{{ route('factures.unpaid') }}" class="text-decoration-none text-warning small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
                 </a>
@@ -105,11 +105,11 @@
 <!-- Rendez-vous d'aujourd'hui et alertes -->
 <div class="row">
     <!-- Rendez-vous d'aujourd'hui -->
-    <div class="col-xl-8 mb-4">
-        <div class="card border-0 h-100">
-            <div class="card-header bg-white">
+    <div class="mb-4 col-xl-8">
+        <div class="border-0 card h-100">
+            <div class="bg-white card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-calendar-day me-2 text-primary"></i>Rendez-vous d'aujourd'hui
                     </h5>
                     <a href="{{ route('appointments.today') }}" class="btn btn-sm btn-primary">
@@ -117,9 +117,9 @@
                     </a>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="p-0 card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table mb-0 align-middle table-hover">
                         <thead>
                             <tr>
                                 <th>Heure</th>

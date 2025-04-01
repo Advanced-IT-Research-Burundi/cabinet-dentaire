@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Clinique Dentaire') }} - @yield('title')</title>
+    <title>{{ config('app.name', 'Budental Services') }} - @yield('title')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
                     <i class="bi bi-hospital me-2 fs-3"></i>
-                    <span class="fw-bold">Clinique Dentaire</span>
+                    <span class="fw-bold">Budental Services</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -39,7 +39,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Menu Gauche -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="mb-2 navbar-nav me-auto mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                 <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
@@ -95,7 +95,7 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="stocksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-box-seam me-1"></i> Stocks
+                                <i class="bi bi-box-seam me-1"></i> Pharmacies
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="stocksDropdown">
                                 <li><a class="dropdown-item" href="{{ route('stocks.index') }}"><i class="bi bi-boxes me-1"></i> Inventaire</a></li>
@@ -110,7 +110,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-bell-fill fs-5 position-relative">
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <span class="top-0 position-absolute start-100 translate-middle badge rounded-pill bg-danger">
                                         10
                                     </span>
                                 </i>
@@ -128,9 +128,9 @@
                                         </li>
                                     @endforeach
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-center" href="{{ route('notifications.index') }}">Voir toutes</a></li>
+                                    <li><a class="text-center dropdown-item" href="{{ route('notifications.index') }}">Voir toutes</a></li>
                                 @else
-                                    <li><a class="dropdown-item text-center" href="#">Aucune notification</a></li>
+                                    <li><a class="text-center dropdown-item" href="#">Aucune notification</a></li>
                                 @endif
                             </ul>
                         </li>
@@ -147,6 +147,7 @@
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
                                     <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people me-1"></i> Utilisateurs</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('dentists.index') }}"><i class="bi bi-hospital me-1"></i> Gestion des dentistes</a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
@@ -165,7 +166,7 @@
         </nav>
 
         <!-- Contenu principal -->
-        <main class="flex-grow-1 py-4">
+        <main class="py-4 flex-grow-1">
             <div class="container-fluid">
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -188,7 +189,7 @@
                     </div>
                 @endif
 
-                <div class="row mb-4">
+                <div class="mb-4 row">
                     <div class="col-12">
                         <h1 class="page-title">@yield('page-title')</h1>
                         @yield('breadcrumbs')
@@ -200,7 +201,7 @@
         </main>
 
         <!-- Pied de page -->
-        <footer class="bg-light py-3 border-top mt-auto">
+        <footer class="py-3 mt-auto bg-light border-top">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6">

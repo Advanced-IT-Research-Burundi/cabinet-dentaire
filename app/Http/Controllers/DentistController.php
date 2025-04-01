@@ -1,66 +1,150 @@
 <?php
 
+/**
+ * Dentist Controller
+ *
+ * This controller handles all dentist-related operations including CRUD operations
+ * and relationship management with users.
+ *
+ * PHP version 8.1
+ *
+ * @category Controllers
+ * @package  App\Http\Controllers
+ * @author   Your Name <your.email@example.com>
+ * @license  http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link     https://github.com/your-username/cabinet-dentaire
+ */
+
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DentistStoreRequest;
-use App\Http\Requests\DentistUpdateRequest;
+use App\Models\User;
 use App\Models\Dentist;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
+/**
+ * DentistController Class
+ *
+ * Handles all dentist-related operations in the dental clinic application.
+ *
+ * @category Controllers
+ * @package  App\Http\Controllers
+ * @author   Your Name <your.email@example.com>
+ * @license  http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link     https://github.com/your-username/cabinet-dentaire
+ */
 class DentistController extends Controller
 {
-    public function index(Request $request): Response
+    /**
+     * Display a listing of dentists
+     *
+     * @return View Returns a view with all dentists
+     */
+    public function index(): View
     {
-        $dentists = Dentist::all();
+        $dentists = Dentist::with('user')->get();
+        return view('dentist.index', compact('dentists'));
+    }
 
-        return view('dentist.index', [
-            'dentists' => $dentists,
+    /**
+     * Show the form for creating a new dentist
+     *
+     * @return View Returns the dentist creation form view
+     */
+    public function create(): View
+    {
+        $users = User::all();
+        return view('dentist.create', compact('users'));
+    }
+
+    /**
+     * Store a newly created dentist in storage
+     *
+     * @param Request $request The HTTP request containing dentist data
+     *
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'specialty' => 'required|string|max:255',
+            'license_number' => 'required|string|max:255|unique:dentists',
+            'biography' => 'nullable|string',
+            'calendar_color' => 'required|string|max:7',
+            'is_active' => 'required|boolean',
         ]);
+
+        Dentist::create($validatedData);
+
+        return redirect()->route('dentists.index')
+            ->with('success', 'Dentist created successfully.');
     }
 
-    public function create(Request $request): Response
+    /**
+     * Display the specified dentist
+     *
+     * @param Dentist $dentist The dentist to display
+     *
+     * @return View
+     */
+    public function show(Dentist $dentist): View
     {
-        return view('dentist.create');
+        return view('dentist.show', compact('dentist'));
     }
 
-    public function store(DentistStoreRequest $request): Response
+    /**
+     * Show the form for editing the specified dentist
+     *
+     * @param Dentist $dentist The dentist to edit
+     *
+     * @return View
+     */
+    public function edit(Dentist $dentist): View
     {
-        $dentist = Dentist::create($request->validated());
-
-        $request->session()->flash('dentist.id', $dentist->id);
-
-        return redirect()->route('dentists.index');
+        $users = User::all();
+        return view('dentist.edit', compact('dentist', 'users'));
     }
 
-    public function show(Request $request, Dentist $dentist): Response
+    /**
+     * Update the specified dentist in storage
+     *
+     * @param Request $request The HTTP request containing updated data
+     * @param Dentist $dentist The dentist to update
+     *
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Dentist $dentist): RedirectResponse
     {
-        return view('dentist.show', [
-            'dentist' => $dentist,
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'specialty' => 'required|string|max:255',
+            'license_number' => 'required|string|max:255|unique:dentists,license_number,'.
+                $dentist->id,
+            'biography' => 'nullable|string',
+            'calendar_color' => 'required|string|max:7',
+            'is_active' => 'required|boolean',
         ]);
+
+        $dentist->update($validatedData);
+
+        return redirect()->route('dentists.index')
+            ->with('success', 'Dentist updated successfully.');
     }
 
-    public function edit(Request $request, Dentist $dentist): Response
-    {
-        return view('dentist.edit', [
-            'dentist' => $dentist,
-        ]);
-    }
-
-    public function update(DentistUpdateRequest $request, Dentist $dentist): Response
-    {
-        $dentist->update($request->validated());
-
-        $request->session()->flash('dentist.id', $dentist->id);
-
-        return redirect()->route('dentists.index');
-    }
-
-    public function destroy(Request $request, Dentist $dentist): Response
+    /**
+     * Remove the specified dentist from storage
+     *
+     * @param Dentist $dentist The dentist to delete
+     *
+     * @return RedirectResponse
+     */
+    public function destroy(Dentist $dentist): RedirectResponse
     {
         $dentist->delete();
 
-        return redirect()->route('dentists.index');
+        return redirect()->route('dentists.index')
+            ->with('success', 'Dentist deleted successfully.');
     }
 }
