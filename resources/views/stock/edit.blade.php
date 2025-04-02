@@ -1,68 +1,177 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container">
-    <h1>Edit Stock</h1>
-    <form action="{{ route('stocks.update', $stock->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+@section('title', 'Modifier le Stock')
 
-        <div class="row g-3">
-            <div class="col-md-6">
-            <label for="product_name" class="form-label">Nom du Produit</label>
-            <input type="text" class="form-control" id="product_name" name="product_name" value="{{ old('product_name', $stock->product_name) }}" required>
-            </div>
-            <div class="col-md-6">
-            <label for="category" class="form-label">Catégorie</label>
-            <input type="text" class="form-control" id="category" name="category" value="{{ old('category', $stock->category) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="available_quantity" class="form-label">Quantité Disponible</label>
-            <input type="number" class="form-control" id="available_quantity" name="available_quantity" value="{{ old('available_quantity', $stock->available_quantity) }}" required>
-            </div>
-            <div class="col-md-6">
-            <label for="unit_measure" class="form-label">Unité de Mesure</label>
-            <input type="text" class="form-control" id="unit_measure" name="unit_measure" value="{{ old('unit_measure', $stock->unit_measure) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="minimum_quantity" class="form-label">Quantité Minimum</label>
-            <input type="number" class="form-control" id="minimum_quantity" name="minimum_quantity" value="{{ old('minimum_quantity', $stock->minimum_quantity) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="purchase_price" class="form-label">Prix d'Achat</label>
-            <input type="number" step="0.01" class="form-control" id="purchase_price" name="purchase_price" value="{{ old('purchase_price', $stock->purchase_price) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="supplier" class="form-label">Fournisseur</label>
-            <input type="text" class="form-control" id="supplier" name="supplier" value="{{ old('supplier', $stock->supplier) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="location" class="form-label">Emplacement</label>
-            <input type="text" class="form-control" id="location" name="location" value="{{ old('location', $stock->location) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="expiration_date" class="form-label">Date d'Expiration</label>
-            <input type="date" class="form-control" id="expiration_date" name="expiration_date" value="{{ old('expiration_date', $stock->expiration_date) }}">
-            </div>
-            <div class="col-md-6">
-            <label for="status" class="form-label">Status</label>
-            <select id="status" name="status" class="form-select">
-                <option value="0" {{ old('status', $stock->status) == 0 ? 'selected' : '' }}>Disponible</option>
-                <option value="1" {{ old('status', $stock->status) == 1 ? 'selected' : '' }}>Faible stock</option>
-                <option value="2" {{ old('status', $stock->status) == 2 ? 'selected' : '' }}>En rupture</option>
-                <option value="3" {{ old('status', $stock->status) == 3 ? 'selected' : '' }}>Expiré</option>
-                <option value="4" {{ old('status', $stock->status) == 4 ? 'selected' : '' }}>Autre</option>
-            </select>
-            </div>
-            <div class="col-12">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $stock->description) }}</textarea>
-            </div>
+@section('content')
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Modifier le Stock</h1>
+        <a href="{{ route('stocks.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <form action="{{ route('stocks.update', $stock->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="code_product" class="form-label">Code Produit</label>
+                        <input type="text" class="form-control @error('code_product') is-invalid @enderror" id="code_product" name="code_product" value="{{ old('code_product', $stock->code_product) }}">
+                        @error('code_product')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="product_name" class="form-label">Nom du Produit</label>
+                        <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name', $stock->product_name) }}">
+                        @error('product_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="marque" class="form-label">Marque</label>
+                        <input type="text" class="form-control @error('marque') is-invalid @enderror" id="marque" name="marque" value="{{ old('marque', $stock->marque) }}">
+                        @error('marque')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="unite_mesure" class="form-label">Unité de Mesure</label>
+                        <input type="text" class="form-control @error('unite_mesure') is-invalid @enderror" id="unite_mesure" name="unite_mesure" value="{{ old('unite_mesure', $stock->unite_mesure) }}">
+                        @error('unite_mesure')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="quantite" class="form-label">Quantité</label>
+                        <input type="number" step="0.01" class="form-control @error('quantite') is-invalid @enderror" id="quantite" name="quantite" value="{{ old('quantite', $stock->quantite) }}" required>
+                        @error('quantite')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="quantite_alert" class="form-label">Quantité d'Alerte</label>
+                        <input type="number" step="0.01" class="form-control @error('quantite_alert') is-invalid @enderror" id="quantite_alert" name="quantite_alert" value="{{ old('quantite_alert', $stock->quantite_alert) }}">
+                        @error('quantite_alert')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price" class="form-label">Prix</label>
+                        <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price', $stock->price) }}">
+                        @error('price')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price_ttc" class="form-label">Prix TTC</label>
+                        <input type="number" step="0.01" class="form-control @error('price_ttc') is-invalid @enderror" id="price_ttc" name="price_ttc" value="{{ old('price_ttc', $stock->price_ttc) }}">
+                        @error('price_ttc')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price_max" class="form-label">Prix Maximum</label>
+                        <input type="number" step="0.01" class="form-control @error('price_max') is-invalid @enderror" id="price_max" name="price_max" value="{{ old('price_max', $stock->price_max) }}">
+                        @error('price_max')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price_tvac" class="form-label">Prix TVAC</label>
+                        <input type="number" step="0.01" class="form-control @error('price_tvac') is-invalid @enderror" id="price_tvac" name="price_tvac" value="{{ old('price_tvac', $stock->price_tvac) }}">
+                        @error('price_tvac')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="taux_tva" class="form-label">Taux TVA</label>
+                        <input type="number" step="0.01" class="form-control @error('taux_tva') is-invalid @enderror" id="taux_tva" name="taux_tva" value="{{ old('taux_tva', $stock->taux_tva) }}">
+                        @error('taux_tva')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="item_ott_tax" class="form-label">Taxe OTT</label>
+                        <input type="number" step="0.01" class="form-control @error('item_ott_tax') is-invalid @enderror" id="item_ott_tax" name="item_ott_tax" value="{{ old('item_ott_tax', $stock->item_ott_tax) }}">
+                        @error('item_ott_tax')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="item_tsce_tax" class="form-label">Taxe TSCE</label>
+                        <input type="number" step="0.01" class="form-control @error('item_tsce_tax') is-invalid @enderror" id="item_tsce_tax" name="item_tsce_tax" value="{{ old('item_tsce_tax', $stock->item_tsce_tax) }}">
+                        @error('item_tsce_tax')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="price_min" class="form-label">Prix Minimum</label>
+                        <input type="number" step="0.01" class="form-control @error('price_min') is-invalid @enderror" id="price_min" name="price_min" value="{{ old('price_min', $stock->price_min) }}">
+                        @error('price_min')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="date_expiration" class="form-label">Date d'Expiration</label>
+                        <input type="date" class="form-control @error('date_expiration') is-invalid @enderror" id="date_expiration" name="date_expiration" value="{{ old('date_expiration', $stock->date_expiration) }}">
+                        @error('date_expiration')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Statut</label>
+                        <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>
+                            <option value="" disabled>Choisir un statut</option>
+                            <option value="Disponible" {{ old('status', $stock->status) == 'Disponible' ? 'selected' : '' }}>Disponible</option>
+                            <option value="Faible_stock" {{ old('status', $stock->status) == 'Faible_stock' ? 'selected' : '' }}>Faible stock</option>
+                            <option value="En_rupture" {{ old('status', $stock->status) == 'En_rupture' ? 'selected' : '' }}>En rupture</option>
+                            <option value="Expire" {{ old('status', $stock->status) == 'Expire' ? 'selected' : '' }}>Expiré</option>
+                        </select>
+                        @error('status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="category_id" class="form-label">Catégorie</label>
+                        <select id="category_id" name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                            <option value="" disabled>Choisir une catégorie</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $stock->category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-12">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description', $stock->description) }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </div>
+            </form>
         </div>
-        <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Mettre à Jour</button>
-            <a href="{{ route('stocks.index') }}" class="btn btn-secondary">Annuler</a>
-        </div>
-    </form>
+    </div>
 </div>
 @endsection

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\StockStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stock extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -16,17 +16,26 @@ class Stock extends Model
      * @var array
      */
     protected $fillable = [
+        'code_product',
         'product_name',
-        'category',
+        'marque',
+        'unite_mesure',
+        'quantite',
+        'quantite_alert',
+        'price',
+        'price_ttc',
+        'price_max',
+        'price_tvac',
+        'taux_tva',
+        'item_ott_tax',
+        'item_tsce_tax',
+        'price_min',
+        'date_expiration',
         'description',
-        'available_quantity',
-        'unit_measure',
-        'minimum_quantity',
-        'last_order_date',
-        'purchase_price',
-        'supplier',
         'location',
-        'expiration_date',
+        'supplier',
+        'user_id',
+        'category_id',
         'status',
     ];
 
@@ -36,11 +45,24 @@ class Stock extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'last_order_date' => 'date',
-        'purchase_price' => 'decimal:2',
-        'expiration_date' => 'date',
+        'quantite' => 'double',
+        'quantite_alert' => 'double',
+        'price' => 'double',
+        'price_ttc' => 'double',
+        'price_max' => 'double',
+        'price_tvac' => 'double',
+        'taux_tva' => 'double',
+        'item_ott_tax' => 'double',
+        'item_tsce_tax' => 'double',
+        'price_min' => 'double',
+        'date_expiration' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

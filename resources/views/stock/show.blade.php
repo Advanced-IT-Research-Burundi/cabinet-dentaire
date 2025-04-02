@@ -15,56 +15,68 @@
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <h5>Nom du Produit</h5>
-                    <p>{{ $stock->product_name }}</p>
+                    <h5>Code Produit</h5>
+                    <p>{{ $stock->code_product ?: '-' }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Catégorie</h5>
-                    <p>{{ $stock->category ?: '-' }}</p>
-                </div>
-                <div class="col-md-6">
-                    <h5>Quantité Disponible</h5>
-                    <p>{{ $stock->available_quantity }}</p>
+                    <h5>Marque</h5>
+                    <p>{{ $stock->marque ?: '-' }}</p>
                 </div>
                 <div class="col-md-6">
                     <h5>Unité de Mesure</h5>
-                    <p>{{ $stock->unit_measure ?: '-' }}</p>
+                    <p>{{ $stock->unite_mesure ?: '-' }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Quantité Minimum</h5>
-                    <p>{{ $stock->minimum_quantity ?: '-' }}</p>
+                    <h5>Quantité</h5>
+                    <p>{{ $stock->quantite }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Prix d'Achat</h5>
-                    <p>{{ $stock->purchase_price ? number_format($stock->purchase_price, 2) . ' €' : '-' }}</p>
+                    <h5>Quantité d'Alerte</h5>
+                    <p>{{ $stock->quantite_alert }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Fournisseur</h5>
-                    <p>{{ $stock->supplier ?: '-' }}</p>
+                    <h5>Prix</h5>
+                    <p>{{ $stock->price ? number_format($stock->price, 2) . ' Fbu' : '-' }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Emplacement</h5>
-                    <p>{{ $stock->location ?: '-' }}</p>
+                    <h5>Prix TTC</h5>
+                    <p>{{ $stock->price_ttc ? number_format($stock->price_ttc, 2) . ' Fbu' : '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Prix Maximum</h5>
+                    <p>{{ $stock->price_max ? number_format($stock->price_max, 2) . ' Fbu' : '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Prix TVAC</h5>
+                    <p>{{ $stock->price_tvac ? number_format($stock->price_tvac, 2) . ' Fbu' : '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Taux TVA</h5>
+                    <p>{{ $stock->taux_tva }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Taxe OTT</h5>
+                    <p>{{ $stock->item_ott_tax }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Taxe TSCE</h5>
+                    <p>{{ $stock->item_tsce_tax }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Prix Minimum</h5>
+                    <p>{{ $stock->price_min }}</p>
                 </div>
                 <div class="col-md-6">
                     <h5>Date d'Expiration</h5>
-                    <p>{{ $stock->expiration_date ? $stock->expiration_date->format('d/m/Y') : '-' }}</p>
+                    <p>{{ $stock->date_expiration ? $stock->date_expiration->format('d/m/Y') : '-' }}</p>
                 </div>
                 <div class="col-md-6">
-                    <h5>Status</h5>
-                    <p>
-                        @if($stock->status == "Disponible")
-                            <span class="badge bg-success">Disponible</span>
-                        @elseif($stock->status == "Faible_stock")
-                            <span class="badge bg-warning">Faible stock</span>
-                        @elseif($stock->status == "En_rupture")
-                            <span class="badge bg-danger">En rupture</span>
-                        @elseif($stock->status == "Expire")
-                            <span class="badge bg-secondary">Expiré</span>
-                        @else
-                            <span>-</span>
-                        @endif
-                    </p>
+                    <h5>Catégorie</h5>
+                    <p>{{ $stock->category->name ?? '-' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Utilisateur</h5>
+                    <p>{{ $user->name ?? '-' }}</p>
                 </div>
                 <div class="col-12">
                     <h5>Description</h5>

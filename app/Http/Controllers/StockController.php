@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stock;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
@@ -15,8 +16,7 @@ class StockController extends Controller
 
         $stocks = Stock::query()
             ->when($search, function ($query, $search) {
-                $query->where('product_name', 'like', "%{$search}%")
-                      ->orWhere('category', 'like', "%{$search}%");
+                $query->where('product_name', 'like', "%{$search}%");
             })
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
@@ -29,24 +29,35 @@ class StockController extends Controller
     // Show the form for creating a new stock
     public function create()
     {
-        return view('stock.create');
+        $categories = Category::all();
+        return view('stock.create', compact('categories'));
     }
 
     // Store a newly created stock in storage
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'code_product' => 'nullable|string|max:255',
             'product_name' => 'required|string|max:255',
-            'category' => 'nullable|string|max:255',
+            'marque' => 'nullable|string|max:255',
+            'unite_mesure' => 'nullable|string|max:255',
+            'quantite' => 'required|numeric|min:0',
+            'quantite_alert' => 'nullable|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
+            'price_ttc' => 'nullable|numeric|min:0',
+            'price_max' => 'nullable|numeric|min:0',
+            'price_tvac' => 'nullable|numeric|min:0',
+            'taux_tva' => 'nullable|numeric|min:0',
+            'item_ott_tax' => 'nullable|numeric|min:0',
+            'item_tsce_tax' => 'nullable|numeric|min:0',
+            'price_min' => 'nullable|numeric|min:0',
+            'date_expiration' => 'nullable|date',
             'description' => 'nullable|string',
-            'available_quantity' => 'required|integer|min:0',
-            'unit_measure' => 'nullable|string|max:50',
-            'minimum_quantity' => 'nullable|integer|min:0',
-            'purchase_price' => 'nullable|numeric|min:0',
+            'location' => 'nullable|string|max:100',
             'supplier' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'expiration_date' => 'nullable|date',
-            'status' => ['required'], // Removed enum reference
+            'user_id' => 'required|exists:users,id',
+            'category_id' => 'required|exists:categories,id',
+            'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
         ]);
 
         Stock::create($validated);
@@ -61,26 +72,36 @@ class StockController extends Controller
     }
 
     // Show the form for editing the specified stock
-    public function edit(Stock $stock)
+    public function edit($id)
     {
-        return view('stock.edit', compact('stock'));
+        $stock = Stock::findOrFail($id);
+        $categories = Category::all(); // Retrieve all categories for the dropdown
+        return view('stock.edit', compact('stock', 'categories'));
     }
 
     // Update the specified stock in storage
     public function update(Request $request, Stock $stock)
     {
         $validated = $request->validate([
+            'code_product' => 'nullable|string|max:255',
             'product_name' => 'required|string|max:255',
-            'category' => 'nullable|string|max:255',
+            'marque' => 'nullable|string|max:255',
+            'unite_mesure' => 'nullable|string|max:255',
+            'quantite' => 'required|numeric|min:0',
+            'quantite_alert' => 'nullable|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
+            'price_ttc' => 'nullable|numeric|min:0',
+            'price_max' => 'nullable|numeric|min:0',
+            'price_tvac' => 'nullable|numeric|min:0',
+            'taux_tva' => 'nullable|numeric|min:0',
+            'item_ott_tax' => 'nullable|numeric|min:0',
+            'item_tsce_tax' => 'nullable|numeric|min:0',
+            'price_min' => 'nullable|numeric|min:0',
+            'date_expiration' => 'nullable|date',
             'description' => 'nullable|string',
-            'available_quantity' => 'required|integer|min:0',
-            'unit_measure' => 'nullable|string|max:50',
-            'minimum_quantity' => 'nullable|integer|min:0',
-            'purchase_price' => 'nullable|numeric|min:0',
-            'supplier' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'expiration_date' => 'nullable|date',
-            'status' => ['required'], // Removed enum reference
+            'user_id' => 'required|exists:users,id',
+            'category_id' => 'required|exists:categories,id',
+            'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
         ]);
 
         $stock->update($validated);

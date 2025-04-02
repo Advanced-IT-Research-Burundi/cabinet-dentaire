@@ -47,8 +47,9 @@
                         <tr>
                             <th>Nom du Produit</th>
                             <th>Catégorie</th>
-                            <th>Quantité Disponible</th>
-                            <th>Prix d'Achat</th>
+                            <th>Code Produit</th>
+                            <th>Quantité</th>
+                            <th>Prix</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -56,33 +57,12 @@
                     <tbody>
                         @forelse($stocks as $stock)
                             <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-primary-subtle text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                            {{ strtoupper(substr($stock->product_name, 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <div class="fw-medium">{{ $stock->product_name }}</div>
-                                            <small class="text-muted">ID: {{ $stock->id }}</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>{{ $stock->category ?: '-' }}</td>
-                                <td>{{ $stock->available_quantity }}</td>
-                                <td>{{ $stock->purchase_price ? number_format($stock->purchase_price) . ' Fbu' : '-' }}</td>
-                                <td>
-                                    @if($stock->status == "Disponible")
-                                        <span class="badge bg-success">Disponible</span>
-                                    @elseif($stock->status == "Faible_stock")
-                                        <span class="badge bg-warning">Faible stock</span>
-                                    @elseif($stock->status == "En_rupture")
-                                        <span class="badge bg-danger">En rupture</span>
-                                    @elseif($stock->status == "Expire")
-                                        <span class="badge bg-secondary">Expiré</span>
-                                    @else
-                                        <span>-</span>
-                                    @endif
-                                </td>
+                                <td>{{ $stock->product_name }}</td>
+                                <td>{{ $stock->category->name ?? '-' }}</td>
+                                <td>{{ $stock->code_product ?: '-' }}</td>
+                                <td>{{ $stock->quantite }}</td>
+                                <td>{{ $stock->price ? number_format($stock->price, 2) . ' Fbu' : '-' }}</td>
+                                <td>{{ $stock->status }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="{{ route('stocks.show', $stock) }}" class="btn btn-sm btn-outline-primary">
@@ -106,7 +86,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">
+                                <td colspan="7" class="text-center py-4">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox-fill fs-2 d-block mb-2"></i>
                                         Aucun stock trouvé

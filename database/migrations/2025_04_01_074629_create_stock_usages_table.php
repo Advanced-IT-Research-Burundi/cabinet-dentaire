@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('stock_usages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_id')->constrained();
+            $table->foreignId('stock_id')->constrained('stocks');
             $table->foreignId('treatment_id')->constrained();
             $table->decimal('quantity_used', 10, 2)->nullable();
             $table->dateTime('usage_date');

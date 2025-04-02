@@ -26,6 +26,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TreatmentTypeController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('payments', PaymentController::class);
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);
+    Route::resource('categories', CategoryController::class);
 
     // Routes pour les rendez-vous
     Route::get('/appointments/today', [

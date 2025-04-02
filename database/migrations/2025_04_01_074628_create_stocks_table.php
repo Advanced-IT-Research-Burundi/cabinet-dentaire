@@ -15,18 +15,27 @@ return new class extends Migration
 
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name', 255);
-            $table->string('category', 100);
+            $table->string('code_product')->nullable();
+            $table->string('product_name');
+            $table->string('marque')->nullable();
+            $table->string('unite_mesure')->nullable();
+            $table->double('quantite',62,2)->default(0);
+            $table->double('quantite_alert',62,2)->default(0);
+            $table->double('price',62,2)->default(0);
+            $table->double('price_ttc',62,2)->default(0);
+            $table->double('price_max',62,2)->default(0);
+            $table->double('price_tvac',62,2)->default(0);
+            $table->double('taux_tva',62,2)->default(0);
+            $table->double('item_ott_tax',62,2)->default(0);
+            $table->double('item_tsce_tax',62,2)->default(0);
+            $table->double('price_min',62,2)->default(0);
+            $table->date('date_expiration')->nullable();
             $table->text('description')->nullable();
-            $table->integer('available_quantity');
-            $table->string('unit_measure', 50)->nullable();
-            $table->integer('minimum_quantity');
-            $table->date('last_order_date')->nullable();
-            $table->decimal('purchase_price', 10, 2)->nullable();
-            $table->string('supplier', 255)->nullable();
             $table->string('location', 100)->nullable();
-            $table->date('expiration_date')->nullable();
-            $table->enum('status', ["Disponible","Faible_stock","En_rupture","Expire"]);
+            $table->string('supplier', 255)->nullable();
+            $table->foreignId('user_id');
+            $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->enum('status', ["Disponible","Faible_stock","En_rupture","Expire"])->default("Disponible");
             $table->timestamps();
             $table->softDeletes();
         });
