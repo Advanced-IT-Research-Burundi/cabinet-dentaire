@@ -88,9 +88,9 @@
                                 <i class="bi bi-clipboard2-pulse me-1"></i> Traitements
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="traitementDropdown">
+                                <li><a class="dropdown-item" href="{{ route('treatments.create') }}"><i class="bi bi-plus-circle me-1"></i> Nouveau traitement</a></li>
                                 <li><a class="dropdown-item" href="{{ route('treatments.index') }}"><i class="bi bi-journal-medical me-1"></i> Historique traitements</a></li>
                                 <li><a class="dropdown-item" href="{{ route('settings.treatment-types.index') }}"><i class="bi bi-list-check me-1"></i> Types de traitement</a></li>
-                                <li><a class="dropdown-item" href=""><i class="bi bi-file-earmark-text me-1"></i> Prescriptions</a></li>
                             </ul>
                         </li>
 

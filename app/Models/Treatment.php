@@ -1,11 +1,33 @@
 <?php
 
+/**
+ * Treatment Model
+ *
+ * Represents a dental treatment in the system.
+ *
+ * @version  GIT: 1.0.0
+ * @category Models
+ * @package  CabinetDentaire
+ * @author   Advanced IT Research Team <contact@advanced-it-research.bi>
+ * @license  MIT License
+ * @link     https://github.com/Advanced-IT-Research-Burundi/cabinet-dentaire
+ */
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * Treatment Model Class
+ *
+ * @category Models
+ * @package  CabinetDentaire
+ * @author   Advanced IT Research Team <contact@advanced-it-research.bi>
+ * @license  MIT License
+ * @link     https://github.com/Advanced-IT-Research-Burundi/cabinet-dentaire
+ */
 class Treatment extends Model
 {
     use HasFactory;
@@ -13,7 +35,7 @@ class Treatment extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
         'patient_id',
@@ -27,40 +49,50 @@ class Treatment extends Model
         'status',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
-        'id' => 'integer',
-        'patient_id' => 'integer',
-        'dentist_id' => 'integer',
-        'treatment_type_id' => 'integer',
-        'appointment_id' => 'integer',
-        'date' => 'date',
-        'applied_price' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'date' => 'datetime',
+        'applied_price' => 'float',
     ];
 
+    /**
+     * Get the patient that owns the treatment.
+     *
+     * @return BelongsTo Patient relationship
+     */
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
 
+    /**
+     * Get the dentist that performed the treatment.
+     *
+     * @return BelongsTo User relationship
+     */
     public function dentist(): BelongsTo
     {
-        return $this->belongsTo(Dentist::class);
+        return $this->belongsTo(User::class, 'dentist_id');
     }
 
+    /**
+     * Get the treatment type of this treatment.
+     *
+     * @return BelongsTo TreatmentType relationship
+     */
     public function treatmentType(): BelongsTo
     {
         return $this->belongsTo(TreatmentType::class);
     }
 
+    /**
+     * Get the appointment associated with this treatment.
+     *
+     * @return BelongsTo Appointment relationship
+     */
     public function appointment(): BelongsTo
     {
         return $this->belongsTo(Appointment::class);
     }
+
+
 }

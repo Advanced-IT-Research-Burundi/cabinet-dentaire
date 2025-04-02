@@ -54,4 +54,9 @@ class Patient extends Model
     {
         return $this->belongsTo(User::class ,'creator_id');
     }
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }
