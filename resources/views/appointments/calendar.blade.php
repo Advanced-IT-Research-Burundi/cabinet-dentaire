@@ -43,8 +43,8 @@
                     },
                     locale: 'fr',
                     timeZone: 'local',
-                    slotMinTime: '06:00:00',
-                    slotMaxTime: '21:00:00',
+                    slotMinTime: '07:00:00',
+                    slotMaxTime: '18:00:00',
                     allDaySlot: false,
                     nowIndicator: true,
                     height: 'auto',
@@ -80,7 +80,7 @@
             html: modalContent,
             icon: 'info',
             confirmButtonText: 'Fermer'
-        });
+});
     }
 </script>
 @endsection
