@@ -71,6 +71,9 @@
             <p><strong>Traitement:</strong> ${event.extendedProps.treatment}</p>
             <p><strong>Début:</strong> ${event.start.toLocaleString()}</p>
             <p><strong>Fin:</strong> ${event.end.toLocaleString()}</p>
+            <p><small>Dentiste :</small> ${event.extendedProps.description}</p>
+            <p><small>Enregistré par :</small> ${event.extendedProps.created_by}</p>
+
         `;
 
         // Ici vous pouvez utiliser une modal Bootstrap ou SweetAlert2

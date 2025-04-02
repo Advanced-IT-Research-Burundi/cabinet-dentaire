@@ -93,6 +93,9 @@ class AppointmentController extends Controller
     public function events()
     {
         $appointments = Appointment::with(['patient', 'dentist', 'plannedTreatment'])
+            ->whereHas('patient')
+            ->whereHas('dentist')
+            ->whereHas('plannedTreatment')
             ->get();
 
         $events = $appointments->map(function ($appointment) {
@@ -104,6 +107,11 @@ class AppointmentController extends Controller
                 'treatment' => $appointment->plannedTreatment->name,
                 'backgroundColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
                 'borderColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
+                'extendedProps' => [
+                    'description' => $appointment->dentist?->user?->first_name . ' ' . $appointment->dentist?->user?->last_name,
+                    'created_by' => $appointment->creator?->name
+
+                ]
             ];
         });
 
