@@ -5,9 +5,9 @@
 @section('content')
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Liste des Stocks</h1>
+        <h1 class="h3 mb-0 text-gray-800">Liste des Produits</h1>
         <a href="{{ route('stocks.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Nouveau Stock
+            <i class="bi bi-plus-circle-fill"></i> Nouveau Produit
         </a>
     </div>
 
