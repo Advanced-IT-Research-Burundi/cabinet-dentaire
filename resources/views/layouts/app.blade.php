@@ -103,6 +103,7 @@
                                 <li><a class="dropdown-item" href="{{ route('categories.index') }}"><i class="bi bi-tag me-1"></i> Categories</a></li>
                                 <li><a class="dropdown-item" href=""><i class="bi bi-exclamation-circle me-1"></i> Alertes de stock</a></li>
                                 <li><a class="dropdown-item" href=""><i class="bi bi-graph-up me-1"></i> Utilisation</a></li>
+                                <li><a class="dropdown-item" href="{{ route('suppliers.index') }}"><i class="bi bi-people me-1"></i> Fournisseurs</a></li>
                             </ul>
                         </li>
                     </ul>

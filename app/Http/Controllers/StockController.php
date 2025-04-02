@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stock;
 use App\Models\Category;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
@@ -30,7 +31,8 @@ class StockController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('stock.create', compact('categories'));
+        $suppliers = Supplier::all(); // Retrieve all suppliers for the dropdown
+        return view('stock.create', compact('categories', 'suppliers'));
     }
 
     // Store a newly created stock in storage
@@ -58,6 +60,7 @@ class StockController extends Controller
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
+            'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
 
         Stock::create($validated);
@@ -68,7 +71,9 @@ class StockController extends Controller
     // Display the specified stock
     public function show(Stock $stock)
     {
-        return view('stock.show', compact('stock'));
+        $category = $stock->category; // Retrieve the associated category
+        $user = $stock->user; // Retrieve the associated user
+        return view('stock.show', compact('stock', 'category', 'user'));
     }
 
     // Show the form for editing the specified stock
@@ -76,7 +81,8 @@ class StockController extends Controller
     {
         $stock = Stock::findOrFail($id);
         $categories = Category::all(); // Retrieve all categories for the dropdown
-        return view('stock.edit', compact('stock', 'categories'));
+        $suppliers = Supplier::all(); // Retrieve all suppliers for the dropdown
+        return view('stock.edit', compact('stock', 'categories', 'suppliers'));
     }
 
     // Update the specified stock in storage
@@ -102,6 +108,7 @@ class StockController extends Controller
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
             'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
+            'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
 
         $stock->update($validated);

@@ -32,7 +32,7 @@ return new class extends Migration
             $table->date('date_expiration')->nullable();
             $table->text('description')->nullable();
             $table->string('location', 100)->nullable();
-            $table->string('supplier', 255)->nullable();
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->foreignId('user_id');
             $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->enum('status', ["Disponible","Faible_stock","En_rupture","Expire"])->default("Disponible");

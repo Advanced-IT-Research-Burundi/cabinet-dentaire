@@ -27,6 +27,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TreatmentTypeController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -62,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('suppliers', SupplierController::class);
 
     // Routes pour les rendez-vous
     Route::get('/appointments/today', [

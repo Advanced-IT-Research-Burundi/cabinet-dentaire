@@ -82,6 +82,10 @@
                     <h5>Utilisateur</h5>
                     <p>{{ $user->name ?? '-' }}</p>
                 </div>
+                <div class="col">
+                    <h5>Fournisseur</h5>
+                    <p>{{ $stock->supplier->name ?? '-' }}</p>
+                </div>
                 <div class="col-12">
                     <h5>Description</h5>
                     <p>{{ $stock->description ?: '-' }}</p>
