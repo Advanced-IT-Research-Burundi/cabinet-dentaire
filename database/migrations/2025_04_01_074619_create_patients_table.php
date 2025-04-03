@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('country', 100)->nullable();
             $table->string('insurance_number', 100)->nullable();
             $table->string('insurance_company', 100)->nullable();
+            $table->foreignId('insurance_id', 100)->constrained('assurances')->nullable();
             $table->text('medical_history')->nullable();
             $table->text('allergies')->nullable();
             $table->foreignId('creator_id')->constrained('users');

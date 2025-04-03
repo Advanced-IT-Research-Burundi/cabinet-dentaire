@@ -75,8 +75,8 @@
                                 <i class="bi bi-receipt me-1"></i> Facturation
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="facturationDropdown">
-                                <li><a class="dropdown-item" href="{{ route('invoices.index') }}"><i class="bi bi-list-columns me-1"></i> Liste des factures</a></li>
-                                <li><a class="dropdown-item" href="{{ route('invoices.create') }}"><i class="bi bi-file-earmark-plus me-1"></i> Nouvelle facture</a></li>
+                                <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="bi bi-list-columns me-1"></i> Liste des factures</a></li>
+                                <li><a class="dropdown-item" href="{{ route('orders.create') }}"><i class="bi bi-file-earmark-plus me-1"></i> Nouvelle facture</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ route('payments.index') }}"><i class="bi bi-cash-coin me-1"></i> Paiements</a></li>
                                 <li><a class="dropdown-item" href=""><i class="bi bi-exclamation-triangle me-1"></i> Factures impayées</a></li>
@@ -151,6 +151,7 @@
                                     <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
                                     <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people me-1"></i> Utilisateurs</a></li>
                                     <li><a class="dropdown-item" href="{{ route('dentists.index') }}"><i class="bi bi-hospital me-1"></i> Gestion des dentistes</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('assurances.index') }}"><i class="bi bi-shield-plus me-1"></i> Gestion des assurances</a></li>
                                 @endif
                                 <li><hr class="dropdown-divider"></li>
                                 <li>

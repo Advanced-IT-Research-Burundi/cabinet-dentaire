@@ -162,11 +162,16 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="insurance_company" class="form-label">Compagnie d'assurance</label>
-                            <input type="text" class="form-control @error('insurance_company') is-invalid @enderror" 
-                                   id="insurance_company" name="insurance_company"
-                                   value="{{ old('insurance_company', $patient->insurance_company ?? '') }}">
-                            @error('insurance_company')
+                            <label for="insurance_id" class="form-label">Assurance</label>
+                            <select id="insurance_id" name="insurance_id" class="form-select @error('insurance_id') is-invalid @enderror">
+                                <option value="" disabled selected>Choisir une assurance</option>
+                                @foreach($assurances as $assurance)
+                                    <option value="{{ $assurance->id }}" {{ old('insurance_id', $patient->insurance_id ?? '') == $assurance->id ? 'selected' : '' }}>
+                                        {{ $assurance->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('insurance_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

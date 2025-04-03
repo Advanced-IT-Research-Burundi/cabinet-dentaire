@@ -30,6 +30,7 @@ class Patient extends Model
         'country',
         'insurance_number',
         'insurance_company',
+        'insurance_id',
         'medical_history',
         'allergies',
         'creator_id',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\Assurance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +39,8 @@ class PatientController extends Controller
 
     public function create()
     {
-        return view('patient.create');
+        $assurances = Assurance::all(); // Fetch assurances
+        return view('patient.create', compact('assurances'));
     }
 
     public function store(Request $request)
@@ -60,6 +62,7 @@ class PatientController extends Controller
             'insurance_company' => 'nullable|string|max:100',
             'medical_history' => 'nullable|string',
             'allergies' => 'nullable|string',
+            'insurance_id' => 'nullable|exists:assurances,id',
         ]);
 
         $validated['creator_id'] = Auth::id();
@@ -78,7 +81,8 @@ class PatientController extends Controller
 
     public function edit(Patient $patient)
     {
-        return view('patient.edit', compact('patient'));
+        $assurances = Assurance::all(); // Fetch assurances
+        return view('patient.edit', compact('patient', 'assurances'));
     }
 
     public function update(Request $request, Patient $patient)
@@ -100,6 +104,7 @@ class PatientController extends Controller
             'insurance_company' => 'nullable|string|max:100',
             'medical_history' => 'nullable|string',
             'allergies' => 'nullable|string',
+            'insurance_id' => 'nullable|exists:assurances,id',
         ]);
 
         $patient->update($validated);
