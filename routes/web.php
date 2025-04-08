@@ -167,7 +167,7 @@ Route::middleware(['auth'])->group(function () {
         [AppointmentController::class, 'destroy']
     )->name('rendezvous.delete');
 
-    //endezvous.today
+    //rendezvous.today
     Route::get(
         'rendezvous/today',
         [AppointmentController::class, 'today']

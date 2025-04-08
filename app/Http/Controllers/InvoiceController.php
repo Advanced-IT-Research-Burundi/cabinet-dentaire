@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request)
     {
         $invoices = Invoice::all();
 
@@ -20,12 +20,12 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request)
     {
         return view('invoice.create');
     }
 
-    public function store(InvoiceStoreRequest $request): Response
+    public function store(InvoiceStoreRequest $request)
     {
         $invoice = Invoice::create($request->validated());
 
@@ -34,21 +34,21 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index');
     }
 
-    public function show(Request $request, Invoice $invoice): Response
+    public function show(Request $request, Invoice $invoice)
     {
         return view('invoice.show', [
             'invoice' => $invoice,
         ]);
     }
 
-    public function edit(Request $request, Invoice $invoice): Response
+    public function edit(Request $request, Invoice $invoice)
     {
         return view('invoice.edit', [
             'invoice' => $invoice,
         ]);
     }
 
-    public function update(InvoiceUpdateRequest $request, Invoice $invoice): Response
+    public function update(InvoiceUpdateRequest $request, Invoice $invoice)
     {
         $invoice->update($request->validated());
 
@@ -57,7 +57,7 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index');
     }
 
-    public function destroy(Request $request, Invoice $invoice): Response
+    public function destroy(Request $request, Invoice $invoice)
     {
         $invoice->delete();
 
