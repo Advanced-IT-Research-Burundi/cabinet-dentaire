@@ -122,14 +122,14 @@ class PatientController extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->get('q');
-        $patients = Patient::where('first_name', 'like', "%{$search}%")
-                         ->orWhere('last_name', 'like', "%{$search}%")
-                         ->orWhere('phone', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%")
-                         ->limit(10)
-                         ->get(['id', 'first_name', 'last_name', 'phone', 'email']);
+        $query = $request->get('q', '');
+        $patients = Patient::where('first_name', 'like', "%{$query}%")
+            ->orWhere('last_name', 'like', "%{$query}%")
+            ->orWhere('email', 'like', "%{$query}%")
+            ->orWhere('phone', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['id', 'first_name', 'last_name', 'email', 'phone']);
 
-        return response()->json($patients);
+        return $patients;
     }
 }

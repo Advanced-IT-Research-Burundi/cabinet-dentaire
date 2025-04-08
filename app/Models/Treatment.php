@@ -54,6 +54,13 @@ class Treatment extends Model
         'applied_price' => 'float',
     ];
 
+    protected $with= [
+        'patient',
+        'dentist',
+        'treatmentType',
+        'appointment'
+    ];
+
     /**
      * Get the patient that owns the treatment.
      *

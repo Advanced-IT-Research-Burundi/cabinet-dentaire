@@ -29,10 +29,9 @@ class OrderController extends Controller
         $type = $request->get('type', 'treatment'); // Default to treatment
         $stocks = Stock::all();
         $patients = Patient::all();
-        $assurances = Assurance::all();
         $treatments = Treatment::all();
 
-        return view('order.create', compact('stocks', 'patients', 'assurances', 'treatments', 'type'));
+        return view('order.create', compact('stocks', 'patients', 'type'));
     }
 
     /**
