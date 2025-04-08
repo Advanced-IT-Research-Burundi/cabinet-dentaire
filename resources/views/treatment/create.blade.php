@@ -17,7 +17,6 @@
         <div class="card-body">
             <form action="{{ route('treatments.store') }}" method="POST">
                 @csrf
-
                 <div class="mb-3 row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -60,7 +59,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="treatment_type_id" class="form-label">Type de traitement</label>
-                            <select name="treatment_type_id" id="treatment_type_id" class="form-select @error('treatment_type_id') is-invalid @enderror" required>
+                            <select name="treatment_type_id" id="treatment_type_id" class="form-select @error('treatment_type_id') is-invalid @enderror" required onchange="updatePrice()">
                                 <option value="">Sélectionnez un type</option>
                                 @foreach($treatmentTypes as $type)
                                     <option value="{{ $type->id }}" {{ old('treatment_type_id') == $type->id ? 'selected' : '' }}>
@@ -170,3 +169,26 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script>
+    function updatePrice() {
+        const treatmentTypeId = document.getElementById('treatment_type_id').value;
+        const treatmentTypes = @json($treatmentTypes);
+        const selectedType = treatmentTypes.find(type => type.id == treatmentTypeId);
+        const priceInput = document.getElementById('applied_price');
+
+        
+        if (selectedType) {
+            priceInput.value = selectedType.base_price;
+            //alert('Le prix du traitement est de ' + selectedType.price + ' FBU');
+            //console.log("selectedType",selectedType);
+        } else {
+            priceInput.value = '';
+            alert('Invalide Traitements');
+        }
+      
+        
+    }
+</script>
+@stop

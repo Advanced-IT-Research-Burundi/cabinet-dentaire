@@ -24,6 +24,8 @@ return new class extends Migration
             $table->text('medical_notes')->nullable();
             $table->decimal('applied_price', 10, 2)->nullable();
             $table->enum('status', ["Planifie","En_cours","Termine","Annule"]);
+            $table->string('payment_status')->nullable();
+            $table->foreignId('invoice_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

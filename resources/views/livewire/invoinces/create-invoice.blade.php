@@ -6,8 +6,46 @@
             <input type="text" wire:model="patientID" placeholder="Numéro du patient" class="mb-2 form-control form-control-sm" wire:keydown.enter="search">
             <input type="text" wire:model="patientName" placeholder="Nom du patient" class="mb-2 form-control form-control-sm" wire:keydown.enter="search">
             <button wire:click="search" class="btn btn-primary btn-sm">
-                <i class="bi bi-search"></i> Search
+                <i class="bi bi-search"></i> 
             </button>
+            <button wire:click="clear" class="btn btn-danger btn-sm">
+                <i class="bi bi-x"></i> 
+            </button>
+        </div>
+        <div>
+            @if ($patient)
+            <h6>Informations sur les services non payes</h6>
+            <div class="alert alert-info">
+                <strong>Nombre de services non payés:</strong> {{  $patient->treatementsNotPaids->count() }}<br>
+                <br>
+                <strong>Total:</strong> {{ $patient->treatementsNotPaids->sum('applied_price') }}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Medecin</th>
+                        <th>Nom du service</th>
+                        <th>Prix</th>
+                        <th>Date de traitement</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($patient->treatementsNotPaids as $treatement)
+                    <tr>
+                        <td>{{ $treatement->id }}</td>
+                        <td>{{ $treatement->dentist->name }} </td>
+                        <td>{{ $treatement->treatmentType->name }}</td>
+                        <td>{{ $treatement->applied_price }}</td>
+                        <td>{{ $treatement->created_at }}</td>
+                        <td>{{ $treatement->status }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            </div>
+            @endif
+           
         </div>
     </div>
     <div class="col-md-4">

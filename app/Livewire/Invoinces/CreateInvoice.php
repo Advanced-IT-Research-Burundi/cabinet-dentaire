@@ -15,16 +15,24 @@ class CreateInvoice extends Component
         return view('livewire.invoinces.create-invoice');
     }
 
+    public function clear()
+    {
+        $this->patientID = null;
+        $this->patientName = null;
+        $this->patient = null;
+    }
+
     public function search()
     {
         // Prioritize search by ID, then search other fields
-        $this->patient = Patient::when($this->patientID, function ($query) {
+        $this->patient = Patient::
+        with(['treatementsNotPaids', 'treatementsNotPaids.dentist', 'treatementsNotPaids.treatmentType'])
+        ->when($this->patientID, function ($query) {
                 $query->where('id', '=',  $this->patientID );
             })
             ->when(!$this->patientID, function ($query) {
                 $query->where(function ($query) {
-                    $query->where('name', 'like', '%' . $this->patientName . '%')
-                        ->orWhere('first_name', 'like', '%' . $this->patientName . '%')
+                    $query->where('first_name', 'like', '%' . $this->patientName . '%')
                         ->orWhere('middle_name', 'like', '%' . $this->patientName . '%')
                         ->orWhere('last_name', 'like', '%' . $this->patientName . '%')
                         ->orWhere('birth_date', 'like', '%' . $this->patientName . '%')

@@ -52,7 +52,8 @@ class TreatmentController extends Controller
             'dentist',
             'treatmentType',
             'appointment'
-        ])->get();
+        ])->latest()->paginate(10);
+       
         return view('treatment.index', compact('treatments'));
     }
 

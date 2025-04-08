@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="mb-4 row">
         <div class="col">
             <h1>Historique des traitements</h1>
@@ -40,8 +40,16 @@
                         @forelse($treatments as $treatment)
                             <tr>
                                 <td>{{ $treatment->id }}</td>
-                                <td>{{ $treatment->patient->full_name }}</td>
-                                <td>{{ $treatment->dentist->name }}</td>
+                                <td>
+                                <span class="badge bg-primary">
+                                    
+                                    {{  $treatment->patient->id }}
+                                </span>
+                                {{ $treatment->patient->full_name }}
+                            </td>
+                                <td>{{ $treatment->dentist->name }}
+
+                                </td>
                                 <td>{{ $treatment->treatmentType->name }}</td>
                                 <td>{{ $treatment->date }}</td>
                                 <td>{{ number_format($treatment->applied_price, 2) }} FBU</td>
@@ -86,6 +94,10 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+   
+            <div class="mt-3">
+                {{ $treatments->links() }}
             </div>
         </div>
     </div>
