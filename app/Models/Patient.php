@@ -34,6 +34,7 @@ class Patient extends Model
         'medical_history',
         'allergies',
         'creator_id',
+       
     ];
 
     protected $with = ['assurance'];
@@ -66,5 +67,12 @@ class Patient extends Model
     public function assurance()
     {
         return $this->belongsTo(Assurance::class);
+    }
+
+    public function treatementsNotPaids()
+    {
+        return $this->hasMany(Treatment::class)
+                          ->whereNull('payment_status')
+        ;
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('average_duration')->nullable();
             $table->decimal('base_price', 10, 2)->nullable();
+            $table->decimal('max_price', 10, 2)->nullable();
             $table->string('category', 100)->nullable();
             $table->string('code', 20)->nullable();
             $table->boolean('active')->default(true);

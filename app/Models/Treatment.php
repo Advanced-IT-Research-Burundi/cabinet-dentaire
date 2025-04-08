@@ -47,6 +47,8 @@ class Treatment extends Model
         'medical_notes',
         'applied_price',
         'status',
+        'payment_status',
+        'invoice_id'
     ];
 
     protected $casts = [
