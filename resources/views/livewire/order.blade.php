@@ -19,7 +19,7 @@
                         @csrf
                         <input type="hidden" name="type" value="{{ $type }}">
                         <div>
-                            <label for="patient_id" class="form-label">Patient</label>
+                            <label for="patient_id" class="form-label">Patient <span>({{ $selectedPatient ? $selectedPatient->first_name . " " . $selectedPatient->last_name : 'Pas de patient selectionné' }})</span></label>
                             <div class="input-group">
                                 <input type="text" id="selected_patient_name" class="form-control" placeholder="Sélectionner un patient" readonly>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#patientModal">Choisir</button>
@@ -79,8 +79,12 @@
                         @if ($type === 'treatment')
                             @if ($selectedPatient && $treatments)
                                 <div class="mt-4">
-                                    <h5>Traitements</h5>
-                                    <table class="table table-bordered">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5>Traitements </h5>
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#treatmentModal" id="add-treatment-row">Ajouter un Traitement</button>
+                                    </div>
+                                    
+                                    <table class="table table-bordered mt-3">
                                         <thead>
                                             <tr>
                                                 <th>Traitement</th>
@@ -89,27 +93,76 @@
                                             </tr>
                                         </thead>
                                         <tbody id="treatment-rows">
-                                            <tr>
-                                                <td>
-                                                    <select name="treatments[0][treatment_id]" class="form-select treatment-select" required>
-                                                        <option value="" disabled selected>Choisir un traitement</option>
-                                                        @foreach($treatments as $treatment)
-                                                            <option value="{{ $treatment->id }}" data-price="{{ $treatment->price }}" data-patient-id="{{ $treatment->patient_id }}">
-                                                                {{ $treatment->description }} | {{ $treatment->created_at->format('Y-m-d') }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control treatment-price" readonly>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger btn-sm remove-treatment-row">Supprimer</button>
-                                                </td>
-                                            </tr>
+                                            @if (count($selectedTreatments) > 0)
+                                                @foreach($selectedTreatments as $index => $treatment)
+                                                    <tr>
+                                                        <td valign="middle">                                                            
+                                                            {{ $treatment['description'] }}
+                                                        </td>
+                                                        <td valign="middle">
+                                                            {{ $treatment['applied_price'] }}
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" wire:click="removeTreatment({{$index}})" class="btn btn-danger btn-sm remove-treatment-row">Supprimer</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                               <tr>
+                                                <td colspan="3" class="text-center">Pas de treatment ajouté!</td>
+                                                </tr> 
+                                            @endif
+                                            
                                         </tbody>
                                     </table>
-                                    <button type="button" class="btn btn-primary btn-sm" id="add-treatment-row">Ajouter un Traitement</button>
+                                </div>
+
+                                <!-- Modal for adding treatment -->
+                                <div class="modal fade" id="treatmentModal" tabindex="-1" aria-labelledby="treatmentModalLabel" aria-hidden="true" wire:ignore.self>
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="patientModalLabel">Ajouter les traitements</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{-- <input type="text" id="search_patient" wire:model.live="search_patient" class="form-control mb-3" placeholder="Rechercher un patient..." autofocus> --}}
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date de création</th>
+                                                            <th>Type de traitement</th>
+                                                            <th>Descrpiption</th>
+                                                            <th>Prix</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="treatment_list">
+                                                        @if (count($treatments) > 0)
+                                                            @foreach ($treatments as $index => $treatment)
+                                                                <tr>
+                                                                    <td valign="middle">{{ $treatment->created_at->format('d-m-Y') }}</td>
+                                                                    <td valign="middle">{{ $treatment->treatmentType->name }}</td>
+                                                                    <td valign="middle">{{ $treatment->description }}</td>
+                                                                    <td valign="middle">{{ $treatment->applied_price }}</td>
+                                                                    <td>
+                                                                        <button type="button" wire:click="addTreatment({{$treatment}})" data-bs-dismiss="modal" class="btn btn-sm btn-primary select-treatment">
+                                                                            Ajouter
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="5" class="text-center">Aucun treatment trouvé pour <b>"{{ $selectedPatient->first_name }} {{ $selectedPatient->last_name }}"</b></td>
+                                                            </tr>
+                                                        @endif
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
                             
@@ -156,56 +209,6 @@
                                 <button type="button" class="btn btn-primary btn-sm" id="add-row">Ajouter un Produit</button>
                             </div>
                         @endif
-
-                        <div class="mt-4">
-                            <h5>Résumé et Paiement</h5>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for="amount" class="form-label">Montant Total</label>
-                                    <input type="text" id="amount" name="amount" class="form-control" readonly>
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="tax_rate" class="form-label">Taxe (%)</label>
-                                    <input type="number" step="0.01" id="tax_rate" name="tax_rate" class="form-control">
-                                </div>
-                                <div class="col-md-4">
-                                    <label for="final_amount" class="form-label">Montant Final</label>
-                                    <input type="text" id="final_amount" name="final_amount" class="form-control" readonly>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <label for="type_paiement" class="form-label">Type de Paiement</label>
-                                    <select id="type_paiement" name="type_paiement" class="form-select @error('type_paiement') is-invalid @enderror" required>
-                                        <option value="" disabled selected>Choisir un type de paiement</option>
-                                        <option value="En espèce" {{ old('type_paiement') == 'En espèce' ? 'selected' : '' }}>En espèce</option>
-                                        <option value="Banque" {{ old('type_paiement') == 'Banque' ? 'selected' : '' }}>Banque</option>
-                                        <option value="A crédit" {{ old('type_paiement') == 'A crédit' ? 'selected' : '' }}>A crédit</option>
-                                    </select>
-                                    @error('type_paiement')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="assurance_id" class="form-label">Assurance</label>
-                                    {{-- <select id="assurance_id" name="assurance_id" class="form-select @error('assurance_id') is-invalid @enderror">
-                                        <option value="" disabled selected>Choisir une assurance</option>
-                                        @foreach($assurances as $assurance)
-                                            <option value="{{ $assurance->id }}" {{ old('assurance_id') == $assurance->id ? 'selected' : '' }}>
-                                                {{ $assurance->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('assurance_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror --}}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -213,9 +216,58 @@
         <div class="col-md-5">
             <div class="card">
                 <div class="card-header">
+                    <h5>Résumé et Paiement</h5>
                 </div>
                 <div class="card-body">
+                    <div class="">
+                        <label class="form-label">Le patient</label>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Nom & Prénom: </td>
+                                <td>{{ $selectedPatient->first_name ?? '-' }} {{ $selectedPatient->last_name ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Assurance</td>
+                                <td>{{ $selectedPatient->assurance->name ?? '-'}} | {{$selectedPatient->assurance->coverage_percentage ?? '-' }}%</td>
+                            </tr>
+                            <tr>
+                                <td>No. d'assurance</td>
+                                <td>{{ $selectedPatient->insurance_number ?? '-' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="mt-4">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Montant Total</label>
+                                <input type="text" id="amount" name="amount" wire:model="totalAmount" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="final_amount" class="form-label">Montant(Patient)</label>
+                                <input type="text" id="final_amount" wire:click="patientAmount" name="final_amount" class="form-control" readonly>
+                                <span class="badge text-bg-success mt-2">Assurance: {{ $insuranceAmount }}</span>
+                            </div>
+                        </div>
+                        {{-- <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="type_paiement" class="form-label">Type de Paiement</label>
+                                <select id="type_paiement" name="type_paiement" class="form-select @error('type_paiement') is-invalid @enderror" required>
+                                    <option value="" disabled selected>Choisir un type de paiement</option>
+                                    <option value="En espèce" {{ old('type_paiement') == 'En espèce' ? 'selected' : '' }}>En espèce</option>
+                                    <option value="Banque" {{ old('type_paiement') == 'Banque' ? 'selected' : '' }}>Banque</option>
+                                    <option value="A crédit" {{ old('type_paiement') == 'A crédit' ? 'selected' : '' }}>A crédit</option>
+                                </select>
+                                @error('type_paiement')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div> --}}
+                    </div>
 
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-primary">Enregistrer la facture</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -66,7 +66,7 @@ class Patient extends Model
 
     public function assurance()
     {
-        return $this->belongsTo(Assurance::class);
+        return $this->belongsTo(Assurance::class, 'insurance_id');
     }
 
     public function treatementsNotPaids()
