@@ -46,8 +46,7 @@ class Order extends Model
         'patient_amount',
     ];
 
-    public function detailOrders()
-    {
-        return $this->hasMany(DetailOrder::class);
+    public function orderDetails(){
+        return $this->hasMany(OrderDetail::class);
     }
 }

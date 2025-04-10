@@ -75,138 +75,188 @@
                                 </div>
                             </div>
                         </div>
-
-                        @if ($type === 'treatment')
-                            @if ($selectedPatient && $treatments)
-                                <div class="mt-4">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h5>Traitements </h5>
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#treatmentModal" id="add-treatment-row">Ajouter un Traitement</button>
-                                    </div>
-                                    
-                                    <table class="table table-bordered mt-3">
-                                        <thead>
-                                            <tr>
-                                                <th>Traitement</th>
-                                                <th>Prix</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="treatment-rows">
-                                            @if (count($selectedTreatments) > 0)
-                                                @foreach($selectedTreatments as $index => $treatment)
-                                                    <tr>
-                                                        <td valign="middle">                                                            
-                                                            {{ $treatment['description'] }}
-                                                        </td>
-                                                        <td valign="middle">
-                                                            {{ $treatment['applied_price'] }}
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" wire:click="removeTreatment({{$index}})" class="btn btn-danger btn-sm remove-treatment-row">Supprimer</button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @else
-                                               <tr>
-                                                <td colspan="3" class="text-center">Pas de treatment ajouté!</td>
-                                                </tr> 
-                                            @endif
-                                            
-                                        </tbody>
-                                    </table>
+                        @if ($selectedPatient && $treatments)
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5>Traitements </h5>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#treatmentModal" id="add-treatment-row">Ajouter un Traitement</button>
                                 </div>
+                                
+                                <table class="table table-bordered mt-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Traitement</th>
+                                            <th>Prix</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="treatment-rows">
+                                        @if (count($selectedTreatments) > 0)
+                                            @foreach($selectedTreatments as $index => $treatment)
+                                                <tr>
+                                                    <td valign="middle">                                                            
+                                                        {{ $treatment['description'] }}
+                                                    </td>
+                                                    <td valign="middle">
+                                                        {{ $treatment['applied_price'] }}
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" wire:click="removeTreatment({{$index}})" class="btn btn-danger btn-sm remove-treatment-row">Supprimer</button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                            <td colspan="3" class="text-center">Pas de treatment ajouté!</td>
+                                            </tr> 
+                                        @endif
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                <!-- Modal for adding treatment -->
-                                <div class="modal fade" id="treatmentModal" tabindex="-1" aria-labelledby="treatmentModalLabel" aria-hidden="true" wire:ignore.self>
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="patientModalLabel">Ajouter les traitements</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{-- <input type="text" id="search_patient" wire:model.live="search_patient" class="form-control mb-3" placeholder="Rechercher un patient..." autofocus> --}}
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Date de création</th>
-                                                            <th>Type de traitement</th>
-                                                            <th>Descrpiption</th>
-                                                            <th>Prix</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="treatment_list">
-                                                        @if (count($treatments) > 0)
-                                                            @foreach ($treatments as $index => $treatment)
-                                                                <tr>
-                                                                    <td valign="middle">{{ $treatment->created_at->format('d-m-Y') }}</td>
-                                                                    <td valign="middle">{{ $treatment->treatmentType->name }}</td>
-                                                                    <td valign="middle">{{ $treatment->description }}</td>
-                                                                    <td valign="middle">{{ $treatment->applied_price }}</td>
-                                                                    <td>
-                                                                        <button type="button" wire:click="addTreatment({{$treatment}})" data-bs-dismiss="modal" class="btn btn-sm btn-primary select-treatment">
-                                                                            Ajouter
-                                                                        </button>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        @else
+                            <!-- Modal for adding treatment -->
+                            <div class="modal fade" id="treatmentModal" tabindex="-1" aria-labelledby="treatmentModalLabel" aria-hidden="true" wire:ignore.self>
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="patientModalLabel">Ajouter les traitements</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{-- <input type="text" id="search_patient" wire:model.live="search_patient" class="form-control mb-3" placeholder="Rechercher un patient..." autofocus> --}}
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date de création</th>
+                                                        <th>Type de traitement</th>
+                                                        <th>Descrpiption</th>
+                                                        <th>Prix</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="treatment_list">
+                                                    @if (count($treatments) > 0)
+                                                        @foreach ($treatments as $index => $treatment)
                                                             <tr>
-                                                                <td colspan="5" class="text-center">Aucun treatment trouvé pour <b>"{{ $selectedPatient->first_name }} {{ $selectedPatient->last_name }}"</b></td>
+                                                                <td valign="middle">{{ $treatment->created_at->format('d-m-Y') }}</td>
+                                                                <td valign="middle">{{ $treatment->treatmentType->name }}</td>
+                                                                <td valign="middle">{{ $treatment->description }}</td>
+                                                                <td valign="middle">{{ $treatment->applied_price }}</td>
+                                                                <td>
+                                                                    <button type="button" wire:click="addTreatment({{$treatment}})" data-bs-dismiss="modal" class="btn btn-sm btn-primary select-treatment">
+                                                                        Ajouter
+                                                                    </button>
+                                                                </td>
                                                             </tr>
-                                                        @endif
-                                                        
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">Aucun treatment trouvé pour <b>"{{ $selectedPatient->first_name }} {{ $selectedPatient->last_name }}"</b></td>
+                                                        </tr>
+                                                    @endif
+                                                    
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
-                            @endif
-                            
-                        @elseif ($type === 'product')
+                            </div>
+
                             <div class="mt-4">
-                                <h5>Produits/Stocks</h5>
-                                <table class="table table-bordered">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5>Produits </h5>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal" id="add-treatment-row">Ajouter un Produit</button>
+                                </div>
+                                
+                                <table class="table table-bordered mt-3">
                                     <thead>
                                         <tr>
                                             <th>Produit</th>
                                             <th>Quantité</th>
-                                            <th>Prix Unitaire</th>
-                                            <th>Total</th>
+                                            <th>Prix U.</th>
+                                            <th>Prix Totale</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="detail-orders">
-                                        <tr>
-                                            <td>
-                                                {{-- <select name="detail_orders[0][product_id]" class="form-select product-select" required>
-                                                    <option value="" disabled selected>Choisir un produit</option>
-                                                    @foreach($stocks as $stock)
-                                                        <option value="{{ $stock->id }}" data-quantity="{{ $stock->quantite }}" data-price="{{ $stock->price }}">
-                                                            {{ $stock->product_name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select> --}}
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" name="detail_orders[0][quantite]" class="form-control quantity-input" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" name="detail_orders[0][price_unitaire]" class="form-control price-input" required>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control total-input" readonly>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger btn-sm remove-row">Supprimer</button>
-                                            </td>
-                                        </tr>
+                                    <tbody id="treatment-rows">
+                                        @if (count($selectedProducts) > 0)
+                                            @foreach($selectedProducts as $index => $product)
+                                                <tr>
+                                                    <td valign="middle">                                                            
+                                                        {{ $product['product_name'] }}
+                                                    </td>
+
+                                                    <td valign="middle">
+                                                        <input type="number" max="selectedProducts.{{$index}}.max_qty" class="form-control" wire:model.live="selectedProducts.{{$index}}.qty">
+                                                    </td>
+                                                    <td valign="middle">
+                                                        <input type="text" class="form-control" wire:model.live="selectedProducts.{{$index}}.price">
+                                                    </td>
+                                                    <td valign="middle">
+                                                        <input type="text" class="form-control" wire:model.live="selectedProducts.{{$index}}.total_price" readonly>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" wire:click="removeProduct({{$index}})" class="btn btn-danger btn-sm remove-treatment-row">Supprimer</button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                            <td colspan="5" class="text-center">Pas de produit ajouté!</td>
+                                            </tr> 
+                                        @endif
+                                        
                                     </tbody>
                                 </table>
-                                <button type="button" class="btn btn-primary btn-sm" id="add-row">Ajouter un Produit</button>
+                            </div>
+
+                            <!-- Modal for adding product -->
+                            <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="treatmentModalLabel" aria-hidden="true" wire:ignore.self>
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="patientModalLabel">Ajouter les produits</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{-- <input type="text" id="search_patient" wire:model.live="search_patient" class="form-control mb-3" placeholder="Rechercher un patient..." autofocus> --}}
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nom du produit</th>
+                                                        <th>Quantité</th>
+                                                        <th>Prix</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="product_list">
+                                                    @if (count($products) > 0)
+                                                        @foreach ($products as $index => $product)
+                                                            <tr>
+                                                                <td valign="middle">{{ $product->product_name }}</td>
+                                                                <td valign="middle">{{ $product->quantite }}</td>
+                                                                <td valign="middle">{{ $product->price }}</td>
+                                                                <td valign="middle">{{ $product->status }}</td>
+                                                                <td>
+                                                                    <button type="button" wire:click="addProduct({{$product}})" data-bs-dismiss="modal" class="btn btn-sm btn-primary select-product">
+                                                                        Ajouter
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">Aucun produit trouvé pour <b>"{{ $searchProduct }}"</b></td>
+                                                        </tr>
+                                                    @endif
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         @endif
                     </form>
@@ -245,7 +295,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="final_amount" class="form-label">Montant(Patient)</label>
-                                <input type="text" id="final_amount" wire:click="patientAmount" name="final_amount" class="form-control" readonly>
+                                <input type="text" id="final_amount" wire:model="patientAmount" name="final_amount" class="form-control" readonly>
                                 <span class="badge text-bg-success mt-2">Assurance: {{ $insuranceAmount }}</span>
                             </div>
                         </div>
