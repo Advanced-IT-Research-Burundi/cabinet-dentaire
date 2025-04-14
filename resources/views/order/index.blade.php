@@ -6,15 +6,10 @@
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Liste des Factures</h1>
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="createFactureDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Créer une Facture
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="createFactureDropdown">
-                <li><a class="dropdown-item" href="{{ route('orders.create', ['type' => 'treatment']) }}">Facture (Traitements)</a></li>
-                <li><a class="dropdown-item" href="{{ route('orders.create', ['type' => 'product']) }}">Facture (Produits)</a></li>
-            </ul>
-        </div>
+
+        <a href="{{ route('orders.create') }}" class="btn btn-primary" type="button">
+            Créer une Facture
+        </a>
     </div>
 
     <div class="card">

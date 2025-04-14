@@ -37,6 +37,8 @@ class Patient extends Model
        
     ];
 
+    protected $with = ['assurance'];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -60,6 +62,11 @@ class Patient extends Model
     public function getFullNameAttribute(): string
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function assurance()
+    {
+        return $this->belongsTo(Assurance::class, 'insurance_id');
     }
 
     public function treatementsNotPaids()

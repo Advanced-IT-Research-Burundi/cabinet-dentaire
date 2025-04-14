@@ -53,7 +53,6 @@ class TreatmentController extends Controller
             'treatmentType',
             'appointment'
         ])->latest()->paginate(10);
-       
         return view('treatment.index', compact('treatments'));
     }
 

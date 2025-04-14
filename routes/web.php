@@ -39,6 +39,9 @@ Route::get(
     [AppointmentController::class, 'events']
 )->name('appointments.events');
 
+//patients.search
+Route::get('patients/search',[PatientController::class, 'search'])->name('patients.search');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
@@ -130,12 +133,6 @@ Route::middleware(['auth'])->group(function () {
         'factures.new',
         [InvoiceController::class, 'new']
     )->name('factures.new');
-
-    //patients.search
-    Route::get(
-        'patients/search',
-        [PatientController::class, 'search']
-    )->name('patients.search');
 
     //rendezvous.calendar
     Route::get(
