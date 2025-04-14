@@ -32,7 +32,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AssuranceController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 Route::get(
     'appointments/events',
