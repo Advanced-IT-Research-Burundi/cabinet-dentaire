@@ -1,14 +1,12 @@
+@extends('layouts.app')
 
-    @extends('layouts.app')
+@section('content')
 
-    @section('content')
-    <!DOCTYPE html>
-<html>
 <head>
     <meta charset="utf-8">
     <style>
         @page {
-            margin: 2cm;
+            margin: 0.5cm;
         }
         body {
             font-family: Arial, sans-serif;
@@ -16,14 +14,14 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
         .company-info {
             text-align: right;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .invoice-info {
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
         .invoice-info table {
             width: 100%;
@@ -71,12 +69,32 @@
             font-size: 0.9em;
             color: #666;
         }
+
+        @media print {
+            .btn {
+                display: none;
+            }
+        }
     </style>
 </head>
+<div class="container-fluid">
 <body>
     <div class="header">
         <h1>FACTURE</h1>
         <h2>N° {{ $invoice->invoice_number }}</h2>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{{ route('invoices.index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+        <div>
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="bi bi-printer"></i> Imprimer
+            </button>
+        </div>
     </div>
 
     <div class="company-info">
@@ -153,7 +171,6 @@
         <p>Merci de votre confiance. Pour toute question, n'hésitez pas à nous contacter.</p>
     </div>
 </body>
-</html>
+</div>
 
-    @endsection
-
+@endsection
