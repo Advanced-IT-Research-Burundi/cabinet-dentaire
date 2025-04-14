@@ -26,6 +26,9 @@ class Invoice extends Model
         'status',
         'notes',
         'creator_id',
+        'description',
+        'company',
+        'client'
     ];
 
     /**
@@ -54,5 +57,18 @@ class Invoice extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function getCompanyAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+    public function getClientAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        return json_decode($value, true);
     }
 }

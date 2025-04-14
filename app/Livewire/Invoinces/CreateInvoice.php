@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Invoinces;
 
+use App\Models\Company;
 use App\Models\Patient;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -89,11 +90,22 @@ class CreateInvoice extends Component
 
         try {
             DB::beginTransaction();
+            $treatements = \App\Models\Treatment::
+            with(['dentist', 'treatmentType'])
+            ->whereIn('id', $this->selectedTreatments)->get();
+
+            $treatementsValues = $treatements->map(function ($treatement) {
+                return [
+                    'id' => $treatement->id,
+                    'applied_price' => $treatement->applied_price,
+                    'dentist' => $treatement->dentist->name,
+                    'treatmentType' => $treatement->treatmentType->name
+                ];
+            });
+
             $invoice = \App\Models\Invoice::create([
                 'patient_id' => $this->patient->id,
-                'total_amount' => $this->patient->treatementsNotPaids
-                    ->whereIn('id', $this->selectedTreatments)
-                    ->sum('applied_price'),
+                'total_amount' => $treatements->sum('applied_price'),
             'status' => 'Brouillon',
             'invoice_number' => rand(1000, 9999),
             'issue_date' => now(),
@@ -101,11 +113,13 @@ class CreateInvoice extends Component
             'insurance_amount' => 0,
             'patient_amount' => 0,
             'notes' => '',
+            'client' => $this->patient->toJson(),
+            'company' => Company::current()->toJson(),
+            'description' => json_encode($treatementsValues->toArray()),
             'creator_id' => auth()->user()->id
         ]);
         // Mettre à jour l'état des traitements sélectionnés
-        foreach ($this->selectedTreatments as $treatementId) {
-            $treatement = \App\Models\Treatment::where('id', $treatementId)->first();
+        foreach ($treatements as $treatement) {
             $treatement->update(['payment_status' => 'Payee', 'invoice_id' => $invoice->id]);
         }
         DB::commit();
@@ -114,7 +128,6 @@ class CreateInvoice extends Component
             session()->flash('error', 'Une erreur est survenue: ' . $e->getMessage());
             return;
         }
-
         session()->flash('success', 'Facture créée avec succès');
         return redirect()->route('invoices.index');
     }

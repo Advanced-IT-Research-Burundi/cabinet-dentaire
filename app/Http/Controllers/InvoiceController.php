@@ -88,4 +88,13 @@ class InvoiceController extends Controller
 
         return redirect()->route('invoices.index');
     }
+
+    public function generatePdf($id)
+    {
+        $invoice = Invoice::with('patient', 'creator')->find($id);
+
+        $pdf = \PDF::loadView('facture.invoice', compact('invoice'));
+
+        return $pdf->stream('facture_' . $invoice->invoice_number . '.pdf');
+    }
 }

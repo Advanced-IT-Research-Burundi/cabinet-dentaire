@@ -23,7 +23,10 @@ return new class extends Migration
             $table->decimal('insurance_amount', 10, 2);
             $table->decimal('patient_amount', 10, 2);
             $table->enum('status', ["Brouillon","Emise","Partiellement_payee","Payee","Annulee","En_retard"]);
-            $table->text('notes');
+            $table->text('notes')->nullable();
+            $table->text('description')->nullable();
+            $table->text('company')->nullable();
+            $table->text('client')->nullable();
             $table->foreignId('creator_id')->constrained('users');
             $table->timestamps();
             $table->softDeletes();

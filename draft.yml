@@ -1,192 +1,43 @@
 models:
 
-  Patient:
-    first_name: string:100
-    middle_name: string:100 nullable
-    last_name: string:100 nullable
-    birth_date: date
-    gender: enum:M,F,Autre
-    phone: string:20 nullable
-    secondary_phone: string:20 nullable
-    email: string:100 unique nullable
-    address: text nullable
-    city: string:100 nullable
-    postal_code: string:20 nullable
-    country: string:100 nullable
-    insurance_number: string:100 nullable
-    insurance_company: string:100 nullable
-    medical_history: text nullable
-    allergies: text nullable
-    creator_id: id foreign:users
-
-
-  Dentist:
-    user_id: id foreign:users
-    specialty: string:100 nullable
-    license_number: string:50 nullable
-    biography: text nullable
-    calendar_color: string:7 nullable
-    available: boolean default:true
-
-  TreatmentType:
-    name: string:100
-    description: text nullable
-    average_duration: integer nullable
-    base_price: decimal:10,2 nullable
-    category: string:100 nullable
-    code: string:20 nullable
-    active: boolean default:true
-
-  Appointment:
-    patient_id: id foreign:patients
-    dentist_id: id foreign:dentists
-    date: date
-    start_time: time
-    end_time: time
-    reason: text nullable
-    status: enum:Confirme,Annule,Termine,En_attente,Reporte
-    notes: text nullable
-    reminder_sent: boolean default:false
-    created_at: datetime
-    creator_id: id foreign:users
-    planned_treatment_id: id foreign:treatment_types
-
-  Treatment:
-    patient_id: id foreign:patients
-    dentist_id: id foreign:dentists
-    treatment_type_id: id foreign:treatment_types
-    appointment_id: id foreign:appointments
-    date: date
-    description: text nullable
-    medical_notes: text nullable
-    applied_price: decimal:10,2 nullable
-    status: enum:Planifie,En_cours,Termine,Annule
-    created_at: datetime
-    updated_at: datetime
-
-  InvoiceDetail:
-    invoice_id: id foreign:invoices
-    treatment_id: id foreign:treatments
-    description: string:255 nullable
-    quantity: integer default:1
-    unit_price: decimal:10,2 nullable
-    total_amount: decimal:10,2 nullable
-    tax_rate: decimal:5,2 default:0
-    tax_amount: decimal:10,2 default:0
-    discount_percentage: decimal:5,2 default:0
-    discount_amount: decimal:10,2 default:0
-    insurance_covered_amount: decimal:10,2 default:0
-    patient_amount: decimal:10,2 nullable
-
-  PaymentMethod:
-    name: string:100
-    description: text nullable
-    active: boolean default:true
-
-  Payment:
-    invoice_id: id foreign:invoices
-    patient_id: id foreign:patients
-    payment_method_id: id foreign:payment_methods
-    transaction_number: string:100 nullable
-    amount: decimal:10,2 nullable
-    payment_date: datetime
-    status: enum:Valide,En_attente,Rejete,Rembourse
-    notes: text nullable
-    proof_of_payment: string:255 nullable
-    operator_id: id foreign:users
-    created_at: datetime
-
-  Prescription:
-    patient_id: id foreign:patients
-    dentist_id: id foreign:dentists
-    appointment_id: id foreign:appointments
-    prescription_date: date nullable
-    content: text nullable
-    instructions: text nullable
-    expiration_date: date nullable
-    status: enum:Active,Expiree,Annulee
-
-  Stock:
-    product_name: string:255
-    category: string:100
-    description: text nullable
-    available_quantity: integer
-    unit_measure: string:50 nullable
-    minimum_quantity: integer
-    last_order_date: date nullable
-    purchase_price: decimal:10,2 nullable
-    supplier: string:255 nullable
-    location: string:100 nullable
-    expiration_date: date nullable
-    status: enum:Disponible,Faible_stock,En_rupture,Expire
-    created_at: datetime
-    updated_at: datetime
-
-  StockUsage:
-    stock_id: id foreign:stocks
-    treatment_id: id foreign:treatments
-    quantity_used: decimal:10,2 nullable
-    usage_date: datetime
-    user_id: id foreign:users
-
-  Notification:
-    title: string:255
-    message: text
-    type: enum:Rappel_RDV,Facture,Paiement,Stock,Systeme
-    recipient_id: id
-    recipient_type: enum:Patient,Dentiste,Utilisateur
-    link: string:255 nullable
-    status: enum:Non_envoye,Envoye,Lu
-    sent_date: datetime
-    read_date: datetime
-    send_method: enum:Email,SMS,Application,Tous
-
-  MedicalHistory:
-    patient_id: id foreign:patients
-    date: date nullable
-    document_type: enum:Radiographie,Ordonnance,Analyse,Rapport,Autre
-    title: string:255
-    details: text
-    file: string:255
-    dentist_id: id foreign:dentists
-    created_at: datetime
-
-  Invoice:
-    patient_id: id foreign:patients
-    invoice_number: string:50 unique
-    issue_date: date
-    due_date: date
-    total_amount: decimal:10,2
-    insurance_amount: decimal:10,2
-    patient_amount: decimal:10,2
-    status: enum:Brouillon,Emise,Partiellement_payee,Payee,Annulee,En_retard
-    notes: text
-    creator_id: id foreign:users
-    created_at: datetime
-    updated_at: datetime
+  Company:
+   tp_name: string:250 nullable
+   tp_type: string:250 nullable
+   tp_TIN: string:250 nullable
+   tp_trade_number: string:250 nullable
+   tp_postal_number: string:250 nullable
+   tp_phone_number: string:250 nullable
+   tp_address_privonce: string:250 nullable
+   tp_address_avenue: string:250 nullable
+   tp_address_quartier: string:250 nullable
+   tp_address_commune: string:250 nullable
+   tp_address_rue: string:250 nullable
+   tp_address_number: string:250 nullable
+   vat_taxpayer: string:250 nullable
+   ct_taxpayer: string:250 nullable
+   tl_taxpayer: string:250 nullable
+   tp_fiscal_center: string:250 nullable
+   tp_activity_sector: string:250 nullable
+   tp_legal_form: string:250 nullable
+   payment_type: string:250 nullable
+   is_actif: boolean
+   user_id: integer
+   created_at: timestamp
+   updated_at: timestamp
+   deleted_at: timestamp
+   tp_email: string:250 nullable
+   tp_website: string:250 nullable
+   tp_logo: string:250 nullable
+   tp_bank: string:250 nullable
+   tp_account_number: string:250 nullable
+   tp_facebook: string:250 nullable
+   tp_twitter: string:250 nullable
+   tp_instagram: string:250 nullable
+   tp_youtube: string:250 nullable
+   tp_whatsapp: string:250 nullable
+   tp_address: string:250 nullable
 
 
 controllers:
-  User:
+  Company:
     resource: web
-  Patient:
-    resource: web
-  Dentist:
-    resource: web
-  Appointment:
-    resource: web
-  Treatment:
-    resource: web
-  Invoice:
-    resource: web
-  Payment:
-    resource: web
-  Stock:
-    resource: web
-
-seeders:
-  User
-  Patient
-  Dentist
-  TreatmentType
-  PaymentMethod
