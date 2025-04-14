@@ -13,11 +13,36 @@ class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
-        $invoices = Invoice::all();
+        $query = Invoice::query();
 
-        return view('invoice.index', [
-            'invoices' => $invoices,
-        ]);
+        // Recherche par patient
+        if ($request->has('patient')) {
+            $query->whereHas('patient', function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->patient . '%')
+                    ->orWhere('middle_name', 'like', '%' . $request->patient . '%')
+                    ->orWhere('last_name', 'like', '%' . $request->patient . '%')
+                    ->orWhere('phone', 'like', '%' . $request->patient . '%');
+            });
+        }
+
+        // Recherche par date
+        if ($request->has('date_from') || $request->has('date_to')) {
+            $query->whereBetween('issue_date', [
+                $request->date_from ?? '2000-01-01',
+                $request->date_to ?? now()
+            ]);
+        }
+
+        // Recherche par statut
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $invoices = $query->with('patient')
+            ->latest()
+            ->paginate(10);
+
+        return view('invoice.index', compact('invoices'));
     }
 
     public function create(Request $request)

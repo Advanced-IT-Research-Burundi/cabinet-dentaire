@@ -81,6 +81,7 @@
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ route('payments.index') }}"><i class="bi bi-cash-coin me-1"></i> Paiements</a></li>
                                 <li><a class="dropdown-item" href=""><i class="bi bi-exclamation-triangle me-1"></i> Factures impayées</a></li>
+                                <li><a class="dropdown-item" href="{{ route('invoices.index') }}"><i class="bi bi-check2 me-1"></i> Factures payées</a></li>
                             </ul>
                         </li>
 

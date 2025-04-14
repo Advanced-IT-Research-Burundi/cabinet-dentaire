@@ -6,11 +6,24 @@
             <input type="text" wire:model="patientID" placeholder="Numéro du patient" class="mb-2 form-control form-control-sm" wire:keydown.enter="search">
             <input type="text" wire:model="patientName" placeholder="Nom du patient" class="mb-2 form-control form-control-sm" wire:keydown.enter="search">
             <button wire:click="search" class="btn btn-primary btn-sm">
-                <i class="bi bi-search"></i> 
+                <i class="bi bi-search"></i>
             </button>
             <button wire:click="clear" class="btn btn-danger btn-sm">
-                <i class="bi bi-x"></i> 
+                <i class="bi bi-x"></i>
             </button>
+        </div>
+        <div>
+            @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
+
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
         </div>
         <div>
             @if ($patient)
@@ -22,8 +35,11 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>
+                            <input type="checkbox" wire:click="selectAll">
+                        </th>
                         <th>ID</th>
-                        <th>Medecin</th>
+                        <th>Médecin</th>
                         <th>Nom du service</th>
                         <th>Prix</th>
                         <th>Date de traitement</th>
@@ -33,8 +49,11 @@
                 <tbody>
                     @foreach ($patient->treatementsNotPaids as $treatement)
                     <tr>
+                        <td>
+                            <input type="checkbox" wire:model.live="selectedTreatments" value="{{ $treatement->id }}">
+                        </td>
                         <td>{{ $treatement->id }}</td>
-                        <td>{{ $treatement->dentist->name }} </td>
+                        <td>{{ $treatement->dentist->name }}</td>
                         <td>{{ $treatement->treatmentType->name }}</td>
                         <td>{{ $treatement->applied_price }}</td>
                         <td>{{ $treatement->created_at }}</td>
@@ -43,6 +62,19 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="btn btn-secondary btn-sm" wire:click="deselectAll">
+                        <i class="bi bi-x-square"></i> Désélectionner tout
+                    </button>
+                </div>
+                <div>
+                    <span class="me-3">Total sélectionné: {{ $patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') }}</span>
+                    <button class="btn btn-primary btn-sm" wire:click="createInvoice">
+                        <i class="bi bi-receipt"></i> Créer la facture
+                    </button>
+                </div>
+            </div>
             </div>
             @endif
         </div>

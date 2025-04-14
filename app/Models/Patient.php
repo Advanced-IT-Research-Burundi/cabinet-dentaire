@@ -34,7 +34,7 @@ class Patient extends Model
         'medical_history',
         'allergies',
         'creator_id',
-       
+
     ];
 
     protected $with = ['assurance'];
