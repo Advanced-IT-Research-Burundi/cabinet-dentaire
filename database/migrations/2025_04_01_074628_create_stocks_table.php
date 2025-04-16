@@ -32,6 +32,7 @@ return new class extends Migration
             $table->date('date_expiration')->nullable();
             $table->text('description')->nullable();
             $table->string('location', 100)->nullable();
+            $table->string('code_product', 100)->nullable();
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('set null');
             $table->foreignId('user_id');
             $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');

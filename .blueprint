@@ -1,15 +1,15 @@
 created:
-    - app/Http/Controllers/CompanyController.php
-    - database/factories/CompanyFactory.php
-    - database/migrations/2025_04_14_041454_create_companies_table.php
-    - app/Models/Company.php
-    - tests/Feature/Http/Controllers/CompanyControllerTest.php
-    - app/Http/Requests/CompanyStoreRequest.php
-    - app/Http/Requests/CompanyUpdateRequest.php
-    - resources/views/company/index.blade.php
-    - resources/views/company/create.blade.php
-    - resources/views/company/show.blade.php
-    - resources/views/company/edit.blade.php
+    - app/Http/Controllers/StockMovementController.php
+    - database/factories/StockMovementFactory.php
+    - database/migrations/2025_04_16_035510_create_stock_movements_table.php
+    - app/Models/StockMovement.php
+    - tests/Feature/Http/Controllers/StockMovementControllerTest.php
+    - app/Http/Requests/StockMovementStoreRequest.php
+    - app/Http/Requests/StockMovementUpdateRequest.php
+    - resources/views/stockMovement/index.blade.php
+    - resources/views/stockMovement/create.blade.php
+    - resources/views/stockMovement/show.blade.php
+    - resources/views/stockMovement/edit.blade.php
 updated:
     - routes/web.php
 models:
@@ -28,3 +28,4 @@ models:
     MedicalHistory: { patient_id: 'id foreign:patients', date: 'date nullable', document_type: 'enum:Radiographie,Ordonnance,Analyse,Rapport,Autre', title: 'string:255', details: text, file: 'string:255', dentist_id: 'id foreign:dentists', created_at: datetime }
     Invoice: { patient_id: 'id foreign:patients', invoice_number: 'string:50 unique', issue_date: date, due_date: date, total_amount: 'decimal:10,2', insurance_amount: 'decimal:10,2', patient_amount: 'decimal:10,2', status: 'enum:Brouillon,Emise,Partiellement_payee,Payee,Annulee,En_retard', notes: text, creator_id: 'id foreign:users', created_at: datetime, updated_at: datetime }
     Company: { tp_name: 'string:250 nullable', tp_type: 'string:250 nullable', tp_TIN: 'string:250 nullable', tp_trade_number: 'string:250 nullable', tp_postal_number: 'string:250 nullable', tp_phone_number: 'string:250 nullable', tp_address_privonce: 'string:250 nullable', tp_address_avenue: 'string:250 nullable', tp_address_quartier: 'string:250 nullable', tp_address_commune: 'string:250 nullable', tp_address_rue: 'string:250 nullable', tp_address_number: 'string:250 nullable', vat_taxpayer: 'string:250 nullable', ct_taxpayer: 'string:250 nullable', tl_taxpayer: 'string:250 nullable', tp_fiscal_center: 'string:250 nullable', tp_activity_sector: 'string:250 nullable', tp_legal_form: 'string:250 nullable', payment_type: 'string:250 nullable', is_actif: boolean, user_id: integer, created_at: timestamp, updated_at: timestamp, deleted_at: timestamp, tp_email: 'string:250 nullable', tp_website: 'string:250 nullable', tp_logo: 'string:250 nullable', tp_bank: 'string:250 nullable', tp_account_number: 'string:250 nullable', tp_facebook: 'string:250 nullable', tp_twitter: 'string:250 nullable', tp_instagram: 'string:250 nullable', tp_youtube: 'string:250 nullable', tp_whatsapp: 'string:250 nullable', tp_address: 'string:250 nullable' }
+    StockMovement: { stock_id: 'foreign:stocks,id', type: 'string:250', date: timestamp, quantity: float, price: double, description: 'string:250 nullable', status: 'string:250 nullable', is_syncronized: 'boolean nullable' }

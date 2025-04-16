@@ -1,43 +1,15 @@
 models:
-
-  Company:
-   tp_name: string:250 nullable
-   tp_type: string:250 nullable
-   tp_TIN: string:250 nullable
-   tp_trade_number: string:250 nullable
-   tp_postal_number: string:250 nullable
-   tp_phone_number: string:250 nullable
-   tp_address_privonce: string:250 nullable
-   tp_address_avenue: string:250 nullable
-   tp_address_quartier: string:250 nullable
-   tp_address_commune: string:250 nullable
-   tp_address_rue: string:250 nullable
-   tp_address_number: string:250 nullable
-   vat_taxpayer: string:250 nullable
-   ct_taxpayer: string:250 nullable
-   tl_taxpayer: string:250 nullable
-   tp_fiscal_center: string:250 nullable
-   tp_activity_sector: string:250 nullable
-   tp_legal_form: string:250 nullable
-   payment_type: string:250 nullable
-   is_actif: boolean
-   user_id: integer
-   created_at: timestamp
-   updated_at: timestamp
-   deleted_at: timestamp
-   tp_email: string:250 nullable
-   tp_website: string:250 nullable
-   tp_logo: string:250 nullable
-   tp_bank: string:250 nullable
-   tp_account_number: string:250 nullable
-   tp_facebook: string:250 nullable
-   tp_twitter: string:250 nullable
-   tp_instagram: string:250 nullable
-   tp_youtube: string:250 nullable
-   tp_whatsapp: string:250 nullable
-   tp_address: string:250 nullable
+  StockMovement:
+    stock_id: foreign:stocks,id
+    type: string:250
+    date: timestamp
+    quantity: float
+    price: double
+    description: string:250 nullable
+    status: string:250 nullable
+    is_syncronized: boolean nullable
 
 
 controllers:
-  Company:
+  StockMovement:
     resource: web

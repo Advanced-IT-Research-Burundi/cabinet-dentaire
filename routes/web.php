@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointments/calendar', [AppointmentController::class, 'calendar'])->name('appointments.calendar');
 
     Route::resource('appointments', AppointmentController::class);
+    Route::get('stocks/{id}/movement', [StockController::class, 'movement'])->name('stocks.movement');
 
     // Dashboard related routes
     Route::get(
@@ -202,10 +203,12 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'settings.payment-methods.update',
             'destroy' => 'settings.payment-methods.destroy',
         ]);
+
+Route::resource('companies', App\Http\Controllers\CompanyController::class);
+Route::resource('stock_movements', App\Http\Controllers\StockMovementController::class);
+
     });
 });
 
 require __DIR__.'/auth.php';
 
-
-Route::resource('companies', App\Http\Controllers\CompanyController::class);

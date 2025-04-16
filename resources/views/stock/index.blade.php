@@ -3,22 +3,21 @@
 @section('title', 'Liste des Stocks')
 
 @section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Liste des Produits</h1>
+<div class="px-4 container-fluid">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h1 class="mb-0 text-gray-800 h3">Liste des Produits</h1>
         <a href="{{ route('stocks.create') }}" class="btn btn-primary">
             <i class="bi bi-plus-circle-fill"></i> Nouveau Produit
         </a>
     </div>
-
     <!-- Search and Filter Card -->
-    <div class="card mb-4">
+    <div class="mb-4 card">
         <div class="card-body">
             <form action="{{ route('stocks.index') }}" method="GET" class="row g-3">
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" name="search" value="{{ request('search') }}" 
+                        <input type="text" class="form-control" name="search" value="{{ request('search') }}"
                                placeholder="Rechercher par nom de produit, catégorie...">
                     </div>
                 </div>
@@ -42,7 +41,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table align-middle table-hover">
                     <thead>
                         <tr>
                             <th>Nom du Produit</th>
@@ -71,24 +70,18 @@
                                         <a href="{{ route('stocks.edit', $stock) }}" class="btn btn-sm btn-outline-secondary">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                onclick="confirmDelete('{{ $stock->id }}')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <a href="{{ route('stocks.movement', $stock) }}" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-clipboard"></i>
+                                            Mouvement
+                                        </a>
                                     </div>
-                                    <form id="delete-form-{{ $stock->id }}" 
-                                          action="{{ route('stocks.destroy', $stock) }}" 
-                                          method="POST" class="d-none">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="7" class="py-4 text-center">
                                     <div class="text-muted">
-                                        <i class="bi bi-inbox-fill fs-2 d-block mb-2"></i>
+                                        <i class="mb-2 bi bi-inbox-fill fs-2 d-block"></i>
                                         Aucun stock trouvé
                                     </div>
                                 </td>
@@ -98,7 +91,7 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="mt-4 d-flex justify-content-between align-items-center">
                 <div class="text-muted small">
                     Affichage de {{ $stocks->firstItem() ?? 0 }} à {{ $stocks->lastItem() ?? 0 }} sur {{ $stocks->total() }} stocks
                 </div>

@@ -14,7 +14,6 @@ class StockController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-
         $stocks = Stock::query()
             ->when($search, function ($query, $search) {
                 $query->where('product_name', 'like', "%{$search}%");
@@ -25,6 +24,17 @@ class StockController extends Controller
             ->paginate(10);
 
         return view('stock.index', compact('stocks'));
+    }
+
+    /**
+     * Display the specified stock.
+     */
+    public function movement($stock)
+    {
+        $stock = Stock::findOrFail($stock);
+        $movements = $stock->movements()->paginate(10);
+        $mouvementsTypes = MOUVEMENT_STOCK;
+        return view('stock.movement', compact('stock', 'movements', 'mouvementsTypes'));
     }
 
     // Show the form for creating a new stock
