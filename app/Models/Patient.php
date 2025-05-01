@@ -64,6 +64,18 @@ class Patient extends Model
         return $this->first_name . ' ' . $this->last_name;
     }
 
+    public function appointments(){
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function treatments(){
+        return $this->hasMany(Treatment::class, 'patient_id');
+    }
+
+    public function invoices(){
+        return $this->hasMany(Invoice::class, 'patient_id');
+    }
+
     public function assurance()
     {
         return $this->belongsTo(Assurance::class, 'insurance_id');
