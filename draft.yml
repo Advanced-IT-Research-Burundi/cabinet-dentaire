@@ -1,15 +1,24 @@
 models:
-  StockMovement:
-    stock_id: foreign:stocks,id
-    type: string:250
+  Caisse:
+    type: string:250 nullable
     date: timestamp
-    quantity: float
-    price: double
+    montant: double default:0
     description: string:250 nullable
     status: string:250 nullable
-    is_syncronized: boolean nullable
+    user_id: foreign:users,id
+
+  CaisseDetail:
+    caisse_id: foreign:caisses,id
+    type: string:250 nullable
+    price: double default:0
+    total: double default:0
+    status: string:250 nullable
+    user_id: foreign:users,id
+
 
 
 controllers:
-  StockMovement:
+  Caisse:
+    resource: web
+  CaisseDetail:
     resource: web

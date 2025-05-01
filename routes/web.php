@@ -214,3 +214,8 @@ Route::resource('stock_movements', StockMovementController::class);
 
 require __DIR__.'/auth.php';
 
+
+
+Route::resource('caisses', App\Http\Controllers\CaisseController::class);
+
+Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);

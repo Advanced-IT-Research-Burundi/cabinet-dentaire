@@ -1,15 +1,26 @@
 created:
-    - app/Http/Controllers/StockMovementController.php
-    - database/factories/StockMovementFactory.php
-    - database/migrations/2025_04_16_035510_create_stock_movements_table.php
-    - app/Models/StockMovement.php
-    - tests/Feature/Http/Controllers/StockMovementControllerTest.php
-    - app/Http/Requests/StockMovementStoreRequest.php
-    - app/Http/Requests/StockMovementUpdateRequest.php
-    - resources/views/stockMovement/index.blade.php
-    - resources/views/stockMovement/create.blade.php
-    - resources/views/stockMovement/show.blade.php
-    - resources/views/stockMovement/edit.blade.php
+    - app/Http/Controllers/CaisseController.php
+    - app/Http/Controllers/CaisseDetailController.php
+    - database/factories/CaisseFactory.php
+    - database/factories/CaisseDetailFactory.php
+    - database/migrations/2025_05_01_092845_create_caisses_table.php
+    - database/migrations/2025_05_01_092846_create_caisse_details_table.php
+    - app/Models/Caisse.php
+    - app/Models/CaisseDetail.php
+    - tests/Feature/Http/Controllers/CaisseControllerTest.php
+    - tests/Feature/Http/Controllers/CaisseDetailControllerTest.php
+    - app/Http/Requests/CaisseStoreRequest.php
+    - app/Http/Requests/CaisseUpdateRequest.php
+    - app/Http/Requests/CaisseDetailStoreRequest.php
+    - app/Http/Requests/CaisseDetailUpdateRequest.php
+    - resources/views/caisse/index.blade.php
+    - resources/views/caisse/create.blade.php
+    - resources/views/caisse/show.blade.php
+    - resources/views/caisse/edit.blade.php
+    - resources/views/caisseDetail/index.blade.php
+    - resources/views/caisseDetail/create.blade.php
+    - resources/views/caisseDetail/show.blade.php
+    - resources/views/caisseDetail/edit.blade.php
 updated:
     - routes/web.php
 models:
@@ -29,3 +40,5 @@ models:
     Invoice: { patient_id: 'id foreign:patients', invoice_number: 'string:50 unique', issue_date: date, due_date: date, total_amount: 'decimal:10,2', insurance_amount: 'decimal:10,2', patient_amount: 'decimal:10,2', status: 'enum:Brouillon,Emise,Partiellement_payee,Payee,Annulee,En_retard', notes: text, creator_id: 'id foreign:users', created_at: datetime, updated_at: datetime }
     Company: { tp_name: 'string:250 nullable', tp_type: 'string:250 nullable', tp_TIN: 'string:250 nullable', tp_trade_number: 'string:250 nullable', tp_postal_number: 'string:250 nullable', tp_phone_number: 'string:250 nullable', tp_address_privonce: 'string:250 nullable', tp_address_avenue: 'string:250 nullable', tp_address_quartier: 'string:250 nullable', tp_address_commune: 'string:250 nullable', tp_address_rue: 'string:250 nullable', tp_address_number: 'string:250 nullable', vat_taxpayer: 'string:250 nullable', ct_taxpayer: 'string:250 nullable', tl_taxpayer: 'string:250 nullable', tp_fiscal_center: 'string:250 nullable', tp_activity_sector: 'string:250 nullable', tp_legal_form: 'string:250 nullable', payment_type: 'string:250 nullable', is_actif: boolean, user_id: integer, created_at: timestamp, updated_at: timestamp, deleted_at: timestamp, tp_email: 'string:250 nullable', tp_website: 'string:250 nullable', tp_logo: 'string:250 nullable', tp_bank: 'string:250 nullable', tp_account_number: 'string:250 nullable', tp_facebook: 'string:250 nullable', tp_twitter: 'string:250 nullable', tp_instagram: 'string:250 nullable', tp_youtube: 'string:250 nullable', tp_whatsapp: 'string:250 nullable', tp_address: 'string:250 nullable' }
     StockMovement: { stock_id: 'foreign:stocks,id', type: 'string:250', date: timestamp, quantity: float, price: double, description: 'string:250 nullable', status: 'string:250 nullable', is_syncronized: 'boolean nullable' }
+    Caisse: { type: 'string:250 nullable', date: timestamp, montant: 'double default:0', description: 'string:250 nullable', status: 'string:250 nullable', user_id: 'foreign:users,id' }
+    CaisseDetail: { caisse_id: 'foreign:caisses,id', type: 'string:250 nullable', price: 'double default:0', total: 'double default:0', status: 'string:250 nullable', user_id: 'foreign:users,id' }
