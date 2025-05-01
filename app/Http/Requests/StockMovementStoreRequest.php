@@ -20,7 +20,7 @@ class StockMovementStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock_id' => ['required', 'integer', 'exists:stocks,id,id'],
+            'stock_id' => ['required', 'integer'],
             'type' => ['required', 'string', 'max:250'],
             'date' => ['required'],
             'quantity' => ['required', 'numeric'],

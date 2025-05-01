@@ -30,6 +30,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AssuranceController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\StockMovementController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -203,12 +205,12 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'settings.payment-methods.update',
             'destroy' => 'settings.payment-methods.destroy',
         ]);
-
-Route::resource('companies', App\Http\Controllers\CompanyController::class);
-Route::resource('stock_movements', App\Http\Controllers\StockMovementController::class);
-
     });
+
+    Route::resource('companies', CompanyController::class);
 });
+
+Route::resource('stock_movements', StockMovementController::class);
 
 require __DIR__.'/auth.php';
 
