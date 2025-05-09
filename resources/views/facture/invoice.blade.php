@@ -121,7 +121,7 @@
                 <tr>
                     <td>{{ $item['treatmentType'] }}</td>
                     <td>{{ $item['dentist'] }}</td>
-                    <td>{{ number_format($item['applied_price'], 2, ',', ' ') }} FCFA</td>
+                    <td>{{ number_format($item['applied_price'], 2, ',', ' ') }} FBU</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -132,15 +132,15 @@
         <table>
             <tr>
                 <th colspan="2">Total</th>
-                <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FCFA</td>
+                <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FBU</td>
             </tr>
             <tr>
                 <th colspan="2">Montant assurance</th>
-                <td>{{ number_format($invoice->insurance_amount, 2, ',', ' ') }} FCFA</td>
+                <td>{{ number_format($invoice->insurance_amount, 2, ',', ' ') }} FBU</td>
             </tr>
             <tr>
                 <th colspan="2">Montant à payer</th>
-                <td>{{ number_format($invoice->patient_amount, 2, ',', ' ') }} FCFA</td>
+                <td>{{ number_format($invoice->patient_amount, 2, ',', ' ') }} FBU</td>
             </tr>
         </table>
     </div>

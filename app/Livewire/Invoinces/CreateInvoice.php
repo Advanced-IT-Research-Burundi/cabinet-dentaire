@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Invoinces;
 
+use App\Models\Caisse;
 use App\Models\Company;
 use App\Models\Patient;
 use Illuminate\Support\Facades\DB;
@@ -106,17 +107,17 @@ class CreateInvoice extends Component
             $invoice = \App\Models\Invoice::create([
                 'patient_id' => $this->patient->id,
                 'total_amount' => $treatements->sum('applied_price'),
-            'status' => 'Brouillon',
-            'invoice_number' => rand(1000, 9999),
-            'issue_date' => now(),
-            'due_date' => now()->addDays(30),
-            'insurance_amount' => 0,
-            'patient_amount' => 0,
-            'notes' => '',
-            'client' => $this->patient->toJson(),
-            'company' => Company::current()->toJson(),
-            'description' => json_encode($treatementsValues->toArray()),
-            'creator_id' => auth()->user()->id
+                'status' => 'Brouillon',
+                'invoice_number' => rand(1000, 9999),
+                'issue_date' => now(),
+                'due_date' => now()->addDays(30),
+                'insurance_amount' => 0,
+                'patient_amount' => 0,
+                'notes' => '',
+                'client' => $this->patient->toJson(),
+                'company' => Company::current()->toJson(),
+                'description' => json_encode($treatementsValues->toArray()),
+                'creator_id' => auth()->user()->id
         ]);
         // Mettre à jour l'état des traitements sélectionnés
         foreach ($treatements as $treatement) {

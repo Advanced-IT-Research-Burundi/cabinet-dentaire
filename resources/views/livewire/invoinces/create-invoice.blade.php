@@ -68,7 +68,7 @@
                         <i class="bi bi-x-square"></i> Désélectionner tout
                     </button>
                 </div>
-                <div>
+                <div class="mt-4">
                     <span class="me-3">Total sélectionné: {{ $patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') }}</span>
                     <button class="btn btn-primary btn-sm" wire:click="createInvoice">
                         <i class="bi bi-receipt"></i> Créer la facture

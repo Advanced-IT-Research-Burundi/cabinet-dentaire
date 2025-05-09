@@ -67,7 +67,7 @@
                                     <td>{{ $invoice->patient->full_name }}</td>
                                     <td>{{ \Carbon\Carbon::parse($invoice->issue_date)->format('d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</td>
-                                    <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FCFA</td>
+                                    <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FBU</td>
                                     <td>
                                         <span class="badge bg-{{ $invoice->status === 'Brouillon' ? 'warning' : ($invoice->status === 'Payée' ? 'success' : 'danger') }}">
                                             {{ $invoice->status }}
