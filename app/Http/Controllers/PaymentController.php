@@ -16,7 +16,7 @@ class PaymentController extends Controller
         return view('payment.index', [
             'payments' => $payments,
         ]);
-    }
+    }   
 
     public function create(Request $request): View
     {
