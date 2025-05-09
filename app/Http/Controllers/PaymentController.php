@@ -5,27 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PaymentStoreRequest;
 use App\Http\Requests\PaymentUpdateRequest;
 use App\Models\Payment;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request):View
     {
         $payments = Payment::all();
-
         return view('payment.index', [
             'payments' => $payments,
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request): View
     {
         return view('payment.create');
     }
 
-    public function store(PaymentStoreRequest $request): Response
+    public function store(PaymentStoreRequest $request): View
     {
         $payment = Payment::create($request->validated());
 
@@ -34,21 +32,21 @@ class PaymentController extends Controller
         return redirect()->route('payments.index');
     }
 
-    public function show(Request $request, Payment $payment): Response
+    public function show(Request $request, Payment $payment): View
     {
         return view('payment.show', [
             'payment' => $payment,
         ]);
     }
 
-    public function edit(Request $request, Payment $payment): Response
+    public function edit(Request $request, Payment $payment): View
     {
         return view('payment.edit', [
             'payment' => $payment,
         ]);
     }
 
-    public function update(PaymentUpdateRequest $request, Payment $payment): Response
+    public function update(PaymentUpdateRequest $request, Payment $payment): View
     {
         $payment->update($request->validated());
 
@@ -57,7 +55,7 @@ class PaymentController extends Controller
         return redirect()->route('payments.index');
     }
 
-    public function destroy(Request $request, Payment $payment): Response
+    public function destroy(Request $request, Payment $payment): View
     {
         $payment->delete();
 
