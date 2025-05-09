@@ -32,7 +32,9 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                    <i class="bi bi-hospital me-2 fs-3"></i>
+                    {{-- <i class="bi bi-hospital me-2 fs-3"></i>
+                     --}}
+                     <img src="{{ asset("img/logo.png") }}" width="50px" height="50px" alt="">
                     <span class="fw-bold">Budental Services</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">

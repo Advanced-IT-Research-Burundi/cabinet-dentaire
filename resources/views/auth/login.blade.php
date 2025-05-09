@@ -73,10 +73,10 @@ body {
   background: #e2e2e5;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 40px);
+  height:100%;
   position: absolute;
   place-content: center;
-  width: calc(100% - 40px);
+  width: 100vw;
 }
 @media (max-width: 767px) {
   .page {
@@ -194,6 +194,8 @@ input::-moz-focus-inner {
     height: 100px;
     font-size: 30px;
     font-weight: 900;
+    font-style: italic;
+    color: #474A59;
     text-decoration: underline;
 }
     </style>

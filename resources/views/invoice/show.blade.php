@@ -12,6 +12,9 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
         }
+        .header-top {
+            margin-top: 40px;
+        }
         .header {
             text-align: center;
             margin-bottom: 10px;
@@ -96,7 +99,9 @@
             </button>
         </div>
     </div>
-
+    <div>
+        <img src="{{ asset("img/logo.png") }}" width="120px" height="120px" alt="">
+    </div>
     <div class="company-info">
         <h3>{{ $invoice->company['tp_name'] }}</h3>
         <p>
