@@ -31,10 +31,10 @@ class StockController extends Controller
      */
     public function movement($stock)
     {
-        $stock = Stock::findOrFail($stock);
-        $movements = $stock->movements()->paginate(10);
+        $stock = Stock::with('mouvements')->findOrFail($stock);
+        $mouvements = $stock->mouvements()->orderBy('created_at', 'desc')->paginate(10);
         $mouvementsTypes = MOUVEMENT_STOCK;
-        return view('stock.movement', compact('stock', 'movements', 'mouvementsTypes'));
+        return view('stock.mouvement', compact('stock', 'mouvements', 'mouvementsTypes'));
     }
 
     // Show the form for creating a new stock

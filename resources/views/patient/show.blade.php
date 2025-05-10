@@ -165,7 +165,7 @@
                                     @foreach($patient->appointments as $appointment)
                                         <tr>
                                             <td>{{ $appointment->date->format('d/m/Y') }}</td>
-                                            <td>{{ $appointment->start_time->format('H:i') }} - {{ $appointment->end_time->format('H:i') }}</td>
+                                            <td>{{ $appointment->start_time }} - {{ $appointment->end_time }}</td>
                                             <td>{{ $appointment->dentist->user->first_name }} {{ $appointment->dentist->user->last_name }}</td>
                                             <td>{{ $appointment->reason }}</td>
                                             <td>
@@ -231,8 +231,8 @@
                                     @foreach($patient->treatments as $treatment)
                                         <tr>
                                             <td>{{ $treatment->date->format('d/m/Y') }}</td>
-                                            <td>{{ $treatment->treatment_type->name }}</td>
-                                            <td>{{ $treatment->dentist->user->first_name }} {{ $treatment->dentist->user->last_name }}</td>
+                                            <td>{{ $treatment->treatment_type?->name ?? "" }}</td>
+                                            <td>{{ $treatment->dentist?->user?->first_name ?? "" }} {{ $treatment->dentist?->user?->last_name ?? "" }}</td>
                                             <td>{{ Str::limit($treatment->description, 50) }}</td>
                                             <td>
                                                 @switch($treatment->status)
@@ -298,9 +298,9 @@
                                             <td>{{ $invoice->invoice_number }}</td>
                                             <td>{{ $invoice->issue_date->format('d/m/Y') }}</td>
                                             <td>{{ $invoice->due_date->format('d/m/Y') }}</td>
-                                            <td>{{ number_format($invoice->total_amount, 2) }} €</td>
-                                            <td>{{ number_format($invoice->insurance_amount, 2) }} €</td>
-                                            <td>{{ number_format($invoice->patient_amount, 2) }} €</td>
+                                            <td>{{ number_format($invoice->total_amount, 2) }} {{ $invoice->currency }}</td>
+                                            <td>{{ number_format($invoice->insurance_amount, 2) }} {{ $invoice->currency }}</td>
+                                            <td>{{ number_format($invoice->patient_amount, 2) }} {{ $invoice->currency }}</td>
                                             <td>
                                                 @switch($invoice->status)
                                                     @case('Brouillon')

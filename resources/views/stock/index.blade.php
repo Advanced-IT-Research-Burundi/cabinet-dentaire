@@ -44,7 +44,9 @@
                 <table class="table align-middle table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Nom du Produit</th>
+                            <th>Numéro du produit</th>
                             <th>Catégorie</th>
                             <th>Code Produit</th>
                             <th>Quantité</th>
@@ -56,7 +58,9 @@
                     <tbody>
                         @forelse($stocks as $stock)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $stock->product_name }}</td>
+                                <td> {{ $stock->id }}</td>
                                 <td>{{ $stock->category->name ?? '-' }}</td>
                                 <td>{{ $stock->code_product ?: '-' }}</td>
                                 <td>{{ $stock->quantite }}</td>

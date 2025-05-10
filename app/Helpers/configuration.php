@@ -11,6 +11,7 @@
  */
 
 const MOUVEMENT_STOCK = [
+    "" => "----",
     'EN' => 'Entrée Normales',
     'ER' => 'Entrée Retour',
     'EI' => 'Entrée Inventaire',

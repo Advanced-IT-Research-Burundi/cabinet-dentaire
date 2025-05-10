@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('movement_stocks', function (Blueprint $table) {
+
+        Schema::create('mouvement_stocks', function (Blueprint $table) {
             $table->id();
             $table->string('system_or_device_id');
             $table->string('item_code');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->string('is_send_to_obr')->nullable();
             $table->dateTime('is_sent_at')->nullable();
             $table->foreignId('user_id');
+            $table->foreignId('stock_id');
             $table->timestamps();
             $table->softDeletes();
         });

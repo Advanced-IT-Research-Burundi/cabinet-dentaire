@@ -71,8 +71,8 @@ class Stock extends Model
         return $this->belongsTo(Supplier::class);
     }
 
-    public function movements()
+    public function mouvements()
     {
-        return $this->hasMany(StockMovement::class);
+        return $this->hasMany(MouvementStock::class);
     }
 }

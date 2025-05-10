@@ -31,6 +31,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AssuranceController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\MouvementStockController;
+use App\Http\Controllers\MovementStockController;
 use App\Http\Controllers\StockMovementController;
 
 Route::get('/', function () {
@@ -65,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('patients', PatientController::class);
     Route::resource('dentists', DentistController::class);
     Route::resource('treatments', TreatmentController::class);
+    Route::resource('mouvements_stocks', MouvementStockController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('payments', PaymentController::class);
     Route::resource('stocks', StockController::class);
