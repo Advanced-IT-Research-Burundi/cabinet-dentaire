@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture BuDental Services</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: white;
+        }
+
+        .invoice-container {
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .logo-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            background-color: #51a7e0;
+            border-radius: 5px;
+            position: relative;
+            margin-right: 10px;
+        }
+
+        .logo-img::before {
+            content: "";
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 3px solid white;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+
+        .company-name {
+            color: #51a7e0;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .company-info {
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .invoice-box {
+            border: 1px solid #0a3d71;
+            padding: 5px 10px;
+            width: 48%;
+            background-color: #e9f5ff;
+        }
+
+        .invoice-box-title {
+            background-color: #0a3d71;
+            color: white;
+            padding: 3px 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .invoice-table th {
+            background-color: #0a3d71;
+            color: white;
+            text-align: left;
+            padding: 8px;
+        }
+
+        .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .totals {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .totals-table {
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .totals-table .total-row {
+            background-color: #e9f5ff;
+            font-weight: bold;
+        }
+
+        .bank-info {
+            margin-top: 20px;
+            width: 48%;
+        }
+
+        .bank-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bank-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .bank-title {
+            background-color: #0a3d71;
+            color: white;
+            padding: 3px 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .approval {
+            margin-top: 20px;
+        }
+
+        .approval-title {
+            background-color: #0a3d71;
+            color: white;
+            padding: 3px 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            border-bottom: 1px dotted #000;
+            display: inline-block;
+            width: 200px;
+            margin-left: 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .dental-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .dental-icon {
+            position: absolute;
+            color: #51a7e0;
+            font-size: 30px;
+        }
+
+        .print-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background-color: #0a3d71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">Imprimer</button>
+
+    <div class="invoice-container">
+        <div class="logo-header">
+            <div class="logo">
+                <div class="logo-img"></div>
+                <div class="company-name">BuDental Services</div>
+            </div>
+            <div class="company-info">
+                NIE: 001647371<br>
+                RC: 29723/21<br>
+                Tél: 62 10 63 08/62 50 50 09<br>
+                Email: budentalservices@gmail.com<br>
+                Adresse: N°12, Ave d'Italie, Rohero, Mukaza,<br>
+                Bujumbura, Burundi
+            </div>
+        </div>
+
+        <div class="invoice-info">
+            <div class="invoice-box">
+                <div class="invoice-box-title">FACTURE</div>
+                <table style="width: 100%">
+                    <tr>
+                        <td>Nom</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Nom de la société</td>
+                        <td>SADENTUS</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Téléphone</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="invoice-box">
+                <div class="invoice-box-title">FACTURE</div>
+                <table style="width: 100%">
+                    <tr>
+                        <td>N°</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>DATE</td>
+                        <td>10/05/25</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>DESCRIPTION DES SERVICES</th>
+                    <th>UNITES</th>
+                    <th>PRIX UNITAIRE</th>
+                    <th>MONTANT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BRACKETS</td>
+                    <td>1</td>
+                    <td>40 000</td>
+                    <td>40 000</td>
+                </tr>
+                <tr>
+                    <td>BUCCAL TUBES</td>
+                    <td>2</td>
+                    <td>6 500</td>
+                    <td>13 000</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <div class="bank-info">
+                <div class="bank-title">BANQUE (KCB)</div>
+                <table class="bank-table">
+                    <tr>
+                        <td>COMPTE #</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="totals">
+                <table class="totals-table">
+                    <tr>
+                        <td>SOUS-TOTAL</td>
+                        <td>53 000</td>
+                    </tr>
+                    <tr>
+                        <td>TVA</td>
+                        <td></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>TOTAL</td>
+                        <td>FBu 53 000</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="approval" style="margin-top: 30px;">
+            <div class="approval-title">APPROUVÉ PAR</div>
+            <div>
+                Nom <span class="signature-line"></span>
+            </div>
+            <div style="margin-top: 10px;">
+                Signature <span class="signature-line"></span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Merci pour votre collaboration !</p>
+            <p>Si vous avez des questions concernant cette facture, veuillez contacter</p>
+            <p>62 10 63 08, budentalservices@gmail.com</p>
+        </div>
+
+        <!-- Dental background pattern -->
+        <div class="dental-pattern" id="pattern">
+            <!-- Pattern will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Generate dental background pattern
+        function createDentalPattern() {
+            const pattern = document.getElementById('pattern');
+            const icons = ['🦷', '✖', '👄', '⚕️'];
+            const containerWidth = pattern.offsetWidth;
+            const containerHeight = pattern.offsetHeight;
+
+            for (let i = 0; i < 100; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'dental-icon';
+                icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+
+                // Random position
+                icon.style.left = `${Math.random() * containerWidth}px`;
+                icon.style.top = `${Math.random() * containerHeight}px`;
+
+                // Random rotation
+                icon.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                pattern.appendChild(icon);
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = createDentalPattern;
+    </script>
+</body>
+</html>
