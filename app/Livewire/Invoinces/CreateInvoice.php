@@ -240,7 +240,6 @@ class CreateInvoice extends Component
                 $listesMouvements[] = [
                     'system_or_device_id' => env('OBR_USERNAME', 'BUDENTAL'),
                     'item_code' => $stock->id,
-
                     'item_designation' => $stock->product_name,
                     'item_quantity' => $product['quantite'],
                     'item_measurement_unit' => $stock->unit_measure ?? 'unité',
@@ -250,6 +249,8 @@ class CreateInvoice extends Component
                     'item_movement_type' => 'SN',
                     'stock_id' => $stock->id,
                     'user_id' => auth()->user()->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
                 unset($stock->created_at, $stock->updated_at);
                 $listeUpdateStocks[] = [
