@@ -69,7 +69,7 @@ class User extends Authenticatable
         return $this->notifications()->where('read_at', '!=', null);
     }
 
-    public function getFullNameAttribute(): string
+    public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
@@ -91,4 +91,6 @@ class User extends Authenticatable
     {
         return $this->role === 'Pharmacist';
     }
+
+
 }
