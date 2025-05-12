@@ -49,6 +49,17 @@ class Invoice extends Model
         'updated_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($invoice) {
+
+            $nextId = (static::max('id') ?? 0) + 1;
+            $invoice->invoice_number = '#' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+        });
+    }
+
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
