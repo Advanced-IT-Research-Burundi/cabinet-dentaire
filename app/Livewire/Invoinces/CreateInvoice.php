@@ -4,6 +4,7 @@ namespace App\Livewire\Invoinces;
 
 use App\Models\Caisse;
 use App\Models\Company;
+use App\Models\MouvementStock;
 use App\Models\Patient;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
@@ -157,12 +158,39 @@ class CreateInvoice extends Component
             with(['dentist', 'treatmentType'])
             ->whereIn('id', $this->selectedTreatments)->get();
 
-            $treatementsValues = $treatements->map(function ($treatement) {
+            // Update Stock QUantite
+
+            $listeroducts = collect($this->productsChoosed)->map(function ($product) {
                 return [
-                    'id' => $treatement->id,
-                    'applied_price' => $treatement->applied_price,
-                    'dentist' => $treatement->dentist->name,
-                    'treatmentType' => $treatement->treatmentType->name
+
+                        "item_designation" => $product['product_name'],
+                        "item_quantity" => $product['quantite'],
+                        "item_price" => $product['price'],
+                        "item_ct" => 0,
+                        "item_tl" => 0,
+                        "item_price_nvat" => 0,
+                        "vat" => "0",
+                        "item_price_wvat" => $product['price'] * $product['quantite'],
+                        "item_total_amount" => $product['price'] * $product['quantite'],
+                        "item_product_detail_id" => $product['id'],
+                        "item_model" => Stock::class,
+
+                ];
+            });
+
+            $listTraitements  = $treatements->map(function ($treatement) {
+                return [
+                    "item_designation" => $treatement->treatmentType->name,
+                    "item_quantity" =>1,
+                    "item_price" => $treatement->applied_price,
+                    "item_ct" => 0,
+                    "item_tl" => 0,
+                    "item_price_nvat" => 0,
+                    "vat" => "0",
+                    "item_price_wvat" => $treatement->applied_price,
+                    "item_total_amount" => $treatement->applied_price,
+                    "item_product_detail_id" => $treatement->id,
+                    "item_model" => \App\Models\Treatment::class,
                 ];
             });
 
@@ -170,7 +198,6 @@ class CreateInvoice extends Component
                 'patient_id' => $this->patient->id,
                 'total_amount' => $treatements->sum('applied_price'),
                 'status' => 'Brouillon',
-                'invoice_number' => rand(1000, 9999),
                 'issue_date' => now(),
                 'due_date' => now()->addDays(30),
                 'insurance_amount' => 0,
@@ -178,9 +205,11 @@ class CreateInvoice extends Component
                 'notes' => '',
                 'client' => $this->patient->toJson(),
                 'company' => Company::current()->toJson(),
-                'description' => json_encode($treatementsValues->toArray()),
+                'description' => json_encode(array_merge($listTraitements->toArray(), $listeroducts->toArray())),
                 'creator_id' => auth()->user()->id
         ]);
+
+        $this->updateStockQuantite($invoice->id);
         // Mettre à jour l'état des traitements sélectionnés
         foreach ($treatements as $treatement) {
             $treatement->update(['payment_status' => 'Payee', 'invoice_id' => $invoice->id]);
@@ -193,5 +222,49 @@ class CreateInvoice extends Component
         }
         session()->flash('success', 'Facture créée avec succès');
         return redirect()->route('invoices.index');
+    }
+
+    public function updateStockQuantite($invoiceID)
+    {
+        $listesMouvements = [];
+        $listeUpdateStocks = [];
+        foreach ($this->productsChoosed as $product) {
+            $stock = Stock::find($product['id']);
+            if ($stock) {
+                if ($stock->quantite < $product['quantite']) {
+                    session()->flash('error', 'Quantité insuffisante pour le produit ' . $stock->product_name);
+                    throw new \Exception('Quantité insuffisante pour le produit ' . $stock->product_name);
+                }
+
+                $listesMouvements[] = [
+                    'system_or_device_id' => env('OBR_USERNAME', 'BUDENTAL'),
+                    'item_code' => $stock->id,
+                    'item_designation' => $stock->product_name,
+                    'item_quantity' => $product['quantite'],
+                    'item_measurement_unit' => $stock->measurement_unit,
+                    'item_purchase_or_sale_price' => $stock->price,
+                    'item_purchase_or_sale_currency' => 'FBU',
+                    'item_movement_invoice_ref' => $invoiceID,
+                    'item_movement_type' => 'SN',
+                    'stock_id' => $stock->id,
+                    'user_id' => auth()->user()->id,
+                ];
+                $listeUpdateStocks[] = [
+                    'id' => $stock->id,
+                    'quantite' => $stock->quantite - $product['quantite']
+                ];
+            }
+        }
+        try {
+            DB::beginTransaction();
+            MouvementStock::insert($listesMouvements);
+            Stock::upsert($listeUpdateStocks, ['id'], ['quantite']);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            session()->flash('error', 'Une erreur est survenue: ' . $th->getMessage());
+            throw $th;
+
+        }
     }
 }

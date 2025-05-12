@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients');
-            $table->double('tax',60,2);
-            $table->double('total_quantity',60,2);
-            $table->double('total_sacs',60,2);
-            $table->double('amount_tax',60,2);
-            $table->string('type_paiement');
+            $table->double('tax',60,2)->default(0);
+            $table->double('total_quantity',60,2)->default(0);
+            $table->double('total_sacs',60,2)->default(0);
+            $table->double('amount_tax',60,2)->default(0);
+            $table->string('type_paiement')->nullable();
             $table->string('type_facture')->nullable();
             $table->string('invoice_currency')->nullable();
             $table->string('invoice_type')->nullable();
@@ -26,9 +26,9 @@ return new class extends Migration
             // Added fields
             $table->date('date_emission')->nullable();
             $table->date('date_echeance')->nullable();
-            $table->double('amount',60,2);
-            $table->double('montant_assurance',60,2)->nullable();
-            $table->double('montant_patient',60,2)->nullable();
+            $table->double('amount',60,2)->default(0);
+            $table->double('montant_assurance',60,2)->default(0);
+            $table->double('montant_patient',60,2)->default(0);
             // Moved fields from invoice_details
             $table->decimal('tax_rate', 5, 2)->default(0);
             $table->decimal('tax_amount', 10, 2)->default(0);
@@ -43,12 +43,10 @@ return new class extends Migration
             $table->text('addresse_client')->nullable();
             $table->foreignId('user_id');
             $table->unsignedBigInteger('client_id')->nullable();
-            $table->unsignedBigInteger('commissionaire_id')->nullable();
-            $table->unsignedBigInteger('maison_id')->nullable();
             $table->boolean('is_cancelled')->nullable();
             $table->enum('status', ["Brouillon","Emise","Partiellement_payee","Payee","Annulee", "En_Retard"])->nullable();
             $table->text('notes')->nullable();
-            
+
             $table->timestamps();
             $table->softDeletes();
         });
