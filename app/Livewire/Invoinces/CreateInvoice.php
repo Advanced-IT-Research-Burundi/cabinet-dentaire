@@ -19,6 +19,7 @@ class CreateInvoice extends Component
     public $productName;
     public $products;
     public $productsChoosed = [];
+    public $totalPriceProducts = 0;
 
     public function mount()
     {
@@ -44,10 +45,32 @@ class CreateInvoice extends Component
         });
     }
 
+    public function updated($propertyName)
+    {
+
+        if ($propertyName == 'productsChoosed') {
+            $this->totalPriceProducts = collect($this->productsChoosed)->sum('price');
+        }
+    }
+
+    public function addProductToInvoice()
+    {
+
+    }
+
+    public function getTotalPrixProduitsProperty()
+    {
+        // returne la somme des prix Multiplier par la quantite
+        return collect($this->productsChoosed)->sum(function ($product) {
+            return $product['price'] * $product['quantite'];
+        });
+    }
+
+
     public function searchProduct()
     {
         $itemsList = array_map(function ($product) {
-            return $product['id'];
+            return $product['id'] ?? 0;
         }, $this->productsChoosed);
         $this->products = Stock::where('product_name', 'like', '%' . $this->productName . '%')
         ->whereNotIn('id', $itemsList)
@@ -61,7 +84,8 @@ class CreateInvoice extends Component
             'id' => $product->id,
             'product_name' => $product->product_name,
             'price' => $product->price,
-            'quantite' => 1
+            'quantite' => 1,
+            'quantite_disponible' => $product->quantite,
         ];
         $this->searchProduct();
     }

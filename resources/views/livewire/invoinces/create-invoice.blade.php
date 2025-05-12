@@ -69,6 +69,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Nom</th>
+                            <th>Qte en Stock</th>
                             <th>Prix</th>
                             <th>Quantité</th>
                             <th>Montant</th>
@@ -80,12 +81,22 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $product['product_name'] }}</td>
+                            <td>{{ $product['quantite_disponible'] }}</td>
                             <td>
                                 <input type="number" wire:model="productsChoosed.{{ $index }}.price"
+                                class="form-control form-control-sm"
+                                step="0.01"
                                 >
                             </td>
                             <td>
                                 <input type="number" wire:model="productsChoosed.{{ $index }}.quantite"
+                                class="form-control form-control-sm
+                                @if ($product['quantite'] > $product['quantite_disponible'])
+                                is-invalid
+                                @endif
+
+                                "
+                                step="0.01"
                                 >
                             </td>
                             <td>
@@ -98,6 +109,18 @@
                             </td>
                         </tr>
                         @endforeach
+                        @if ($productsChoosed)
+                        <tr>
+                            <td colspan="3">Total</td>
+                            <td colspan="2">
+                                <button wire:click="addProductToInvoice" class="btn btn-primary btn-sm">
+                                    Valider
+                                </button>
+                            </td>
+                            <td>{{  $this->totalPrixProduits  }}</td>
+                            <td></td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -109,6 +132,8 @@
                 </div>
                 <div class="mt-4">
                     <span class="me-3">Total sélectionné: {{ $patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') }}</span>
+                    <span class="me-3">Total produits: {{ $this->totalPrixProduits }}</span>
+                    <span class="me-3">Total du Facture: <b>{{ number_format($patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') + $this->totalPrixProduits, 2) }}</b></span>
                     <button class="btn btn-primary btn-sm" wire:click="createInvoice">
                         <i class="bi bi-receipt"></i> Créer la facture
                     </button>
