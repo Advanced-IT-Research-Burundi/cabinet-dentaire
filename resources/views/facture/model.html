@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture - BuDental Services</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary: #1e73be;
+            --dark-blue: #143d69;
+            --light-blue: #e8f0fe;
+            --lighter-blue: #f4f8ff;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --border-color: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .dental-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.07;
+            z-index: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%231e73be'%3E%3Cpath d='M12,2C7.36,2,4,5.36,4,10c0,2.79,1.35,5.25,3.58,7.07c0.39,0.32,0.83,0.59,1.29,0.82c0.34,0.17,0.64,0.39,0.89,0.65c0.25,0.26,0.45,0.55,0.59,0.88c0.14,0.33,0.23,0.69,0.27,1.06c0.04,0.37,0.06,0.75,0.06,1.13v0.39h2.64v-0.39c0-0.38,0.02-0.75,0.06-1.13c0.04-0.37,0.13-0.73,0.27-1.06c0.14-0.33,0.34-0.62,0.59-0.88c0.25-0.26,0.55-0.48,0.89-0.65c0.46-0.23,0.9-0.5,1.29-0.82C18.65,15.25,20,12.79,20,10C20,5.36,16.64,2,12,2z M14.89,15.55c-0.52,0.26-0.97,0.6-1.36,1c-0.39,0.4-0.71,0.86-0.95,1.37c-0.24,0.51-0.4,1.06-0.48,1.62c-0.04,0.28-0.07,0.56-0.08,0.85h-0.04c-0.01-0.29-0.04-0.57-0.08-0.85c-0.08-0.56-0.24-1.11-0.48-1.62c-0.24-0.51-0.56-0.97-0.95-1.37c-0.39-0.4-0.84-0.74-1.36-1C7.41,14.25,6,12.21,6,10c0-3.31,2.69-6,6-6s6,2.69,6,6C18,12.21,16.59,14.25,14.89,15.55z'%3E%3C/path%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 24 24' fill='%231e73be'%3E%3Cpath d='M15,2.4c-0.7-0.4-1.5-0.4-2.2,0l-1.4,0.8c-0.4,0.3-0.9,0.3-1.3,0.1l-1.5-0.6c-0.8-0.3-1.6-0.1-2.2,0.5l-1,1.2c-0.3,0.4-0.8,0.6-1.3,0.5L2.6,4.3C1.8,4.1,1,4.5,0.6,5.2L0,6.4c-0.2,0.5-0.2,1,0,1.5l0.6,1.5c0.2,0.5,0.2,1,0,1.5L0,12.4c-0.2,0.5-0.2,1,0,1.5l0.6,1.2c0.4,0.7,1.2,1.1,2,0.9l1.4-0.3c0.5-0.1,1,0.1,1.3,0.5l1,1.2c0.6,0.6,1.4,0.8,2.2,0.5l1.5-0.6c0.4-0.2,0.9-0.2,1.3,0.1l1.4,0.8c0.7,0.4,1.5,0.4,2.2,0l1.4-0.8c0.4-0.3,0.9-0.3,1.3-0.1l1.5,0.6c0.8,0.3,1.6,0.1,2.2-0.5l1-1.2c0.3-0.4,0.8-0.6,1.3-0.5l1.4,0.3c0.8,0.2,1.6-0.2,2-0.9l0.6-1.2c0.2-0.5,0.2-1,0-1.5l-0.6-1.5c-0.2-0.5-0.2-1,0-1.5l0.6-1.5c0.2-0.5,0.2-1,0-1.5l-0.6-1.2c-0.4-0.7-1.2-1.1-2-0.9l-1.4,0.3c-0.5,0.1-1-0.1-1.3-0.5l-1-1.2c-0.6-0.6-1.4-0.8-2.2-0.5L16.4,1.7c-0.4,0.2-0.9,0.2-1.3-0.1L13.7,0.8L15,2.4z'%3E%3C/path%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35' viewBox='0 0 24 24' fill='%231e73be'%3E%3Cpath d='M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M5,5H7V7H5V5M17,5H19V7H17V5M5,9H7V11H5V9M17,9H19V11H17V9M5,13H7V15H5V13M17,13H19V15H17V13M5,17H7V19H5V17M17,17H19V19H17V17Z'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .company-details {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .invoice-details {
+            width: 300px;
+        }
+
+        .invoice-heading {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin-bottom: 15px;
+            background-color: var(--dark-blue);
+            color: white;
+            font-weight: 500;
+        }
+
+        .invoice-heading h2 {
+            margin: 0;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .invoice-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .invoice-info-item {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .invoice-info-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--dark-blue);
+            margin-bottom: 2px;
+        }
+
+        .invoice-info-item span {
+            display: block;
+            font-size: 14px;
+        }
+
+        .client-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .client-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .client-info-item {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .client-info-item label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--dark-blue);
+            margin-bottom: 2px;
+        }
+
+        .client-info-item span {
+            display: block;
+            font-size: 14px;
+        }
+
+        .services-section {
+            margin-bottom: 30px;
+        }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .services-table th {
+            background-color: var(--dark-blue);
+            color: white;
+            text-align: left;
+            padding: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .services-table td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .services-table tr:nth-child(even) {
+            background-color: var(--lighter-blue);
+        }
+
+        .services-table th:nth-child(2),
+        .services-table td:nth-child(2) {
+            text-align: center;
+        }
+
+        .services-table th:nth-child(3),
+        .services-table td:nth-child(3),
+        .services-table th:nth-child(4),
+        .services-table td:nth-child(4) {
+            text-align: right;
+        }
+
+        .totals-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .bank-info {
+            width: 45%;
+        }
+
+        .bank-details {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        .bank-details-item {
+            margin-bottom: 5px;
+        }
+
+        .bank-details-item label {
+            display: inline-block;
+            width: 100px;
+            font-weight: 500;
+        }
+
+        .invoice-totals {
+            width: 45%;
+        }
+
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .totals-table tr:nth-child(even) {
+            background-color: var(--lighter-blue);
+        }
+
+        .totals-table tr.total-row {
+            background-color: var(--light-blue);
+            font-weight: 700;
+        }
+
+        .totals-table tr.total-row td:first-child {
+            text-transform: uppercase;
+        }
+
+        .totals-table td:first-child {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .totals-table td:last-child {
+            text-align: right;
+        }
+
+        .approval-section {
+            margin-bottom: 30px;
+        }
+
+        .approval-box {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+        }
+
+        .approval-item {
+            margin-bottom: 15px;
+        }
+
+        .approval-item label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            border-bottom: 1px dotted var(--border-color);
+            height: 30px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer .contact-info {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .invoice-container {
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .invoice-details {
+                width: 100%;
+                margin-top: 20px;
+            }
+
+            .client-info {
+                grid-template-columns: 1fr;
+            }
+
+            .totals-section {
+                flex-direction: column;
+            }
+
+            .bank-info, .invoice-totals {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media print {
+            .invoice-container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            body {
+                background-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="dental-pattern"></div>
+        <div class="content-layer">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="company-info">
+                    <div class="logo-container">
+                        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="#1e73be" d="M12,2C7.36,2,4,5.36,4,10c0,2.79,1.35,5.25,3.58,7.07c0.39,0.32,0.83,0.59,1.29,0.82c0.34,0.17,0.64,0.39,0.89,0.65c0.25,0.26,0.45,0.55,0.59,0.88c0.14,0.33,0.23,0.69,0.27,1.06c0.04,0.37,0.06,0.75,0.06,1.13v0.39h2.64v-0.39c0-0.38,0.02-0.75,0.06-1.13c0.04-0.37,0.13-0.73,0.27-1.06c0.14-0.33,0.34-0.62,0.59-0.88c0.25-0.26,0.55-0.48,0.89-0.65c0.46-0.23,0.9-0.5,1.29-0.82C18.65,15.25,20,12.79,20,10C20,5.36,16.64,2,12,2z M14.89,15.55c-0.52,0.26-0.97,0.6-1.36,1c-0.39,0.4-0.71,0.86-0.95,1.37c-0.24,0.51-0.4,1.06-0.48,1.62c-0.04,0.28-0.07,0.56-0.08,0.85h-0.04c-0.01-0.29-0.04-0.57-0.08-0.85c-0.08-0.56-0.24-1.11-0.48-1.62c-0.24-0.51-0.56-0.97-0.95-1.37c-0.39-0.4-0.84-0.74-1.36-1C7.41,14.25,6,12.21,6,10c0-3.31,2.69-6,6-6s6,2.69,6,6C18,12.21,16.59,14.25,14.89,15.55z"/>
+                        </svg>
+                        <div class="company-name">BuDental Services</div>
+                    </div>
+                    <div class="company-details">
+                        <p>NIF: 4001647371</p>
+                        <p>RC: 29752/21</p>
+                        <p>Tél: 62 10 63 08/82 50 50 00</p>
+                        <p>Email: budentalservices@gmail.com</p>
+                        <p>Adresse: N°12, Ave Ntahangwa, Rohero/Mukaza, Bujumbura, Burundi</p>
+                    </div>
+                </div>
+
+                <div class="invoice-details">
+                    <div class="invoice-heading">
+                        <h2>Facture</h2>
+                        <h2>#1</h2>
+                    </div>
+                    <div class="invoice-info">
+                        <div class="invoice-info-item">
+                            <label>DATE</label>
+                            <span>10/05/25</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Section -->
+            <div class="client-section">
+                <div class="section-title">Informations du Client</div>
+                <div class="client-info">
+                    <div class="client-info-item">
+                        <label>Nom</label>
+                        <span></span>
+                    </div>
+                    <div class="client-info-item">
+                        <label>Nom de la société</label>
+                        <span>SADENTUS</span>
+                    </div>
+                    <div class="client-info-item">
+                        <label>Email</label>
+                        <span></span>
+                    </div>
+                    <div class="client-info-item">
+                        <label>Téléphone</label>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section -->
+            <div class="services-section">
+                <div class="section-title">Description des Services</div>
+                <table class="services-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Unités</th>
+                            <th>Prix Unitaire</th>
+                            <th>Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BRACKETS</td>
+                            <td>1</td>
+                            <td>40 000</td>
+                            <td>40 000</td>
+                        </tr>
+                        <tr>
+                            <td>BUCCAL TUBES</td>
+                            <td>2</td>
+                            <td>6 500</td>
+                            <td>13 000</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals Section -->
+            <div class="totals-section">
+                <div class="bank-info">
+                    <div class="section-title">Informations Bancaires</div>
+                    <div class="bank-details">
+                        <div class="bank-details-item">
+                            <label>BANQUE (KCB)</label>
+                            <span></span>
+                        </div>
+                        <div class="bank-details-item">
+                            <label>COMPTE #</label>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="invoice-totals">
+                    <table class="totals-table">
+                        <tr>
+                            <td>SOUS-TOTAL</td>
+                            <td>53 000</td>
+                        </tr>
+                        <tr>
+                            <td>TVA</td>
+                            <td>-</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td>FBu 53 000</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Approval Section -->
+            <div class="approval-section">
+                <div class="section-title">Approuvé par</div>
+                <div class="approval-box">
+                    <div class="approval-item">
+                        <label>Nom</label>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="approval-item">
+                        <label>Signature</label>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p><strong>Merci pour votre collaboration !</strong></p>
+                <p>Si vous avez des questions concernant cette facture, veuillez contacter</p>
+                <p class="contact-info">62 10 53 08, budentalservices@gmail.com</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

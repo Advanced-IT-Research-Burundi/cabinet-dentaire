@@ -184,4 +184,41 @@ class AppointmentController extends Controller
 
         return view('appointments.today', compact('appointments'));
     }
+
+    // Faire terminer un rendez-vous
+    public function finish(Appointment $appointment): RedirectResponse
+    {
+        $appointment->update(['status' => 'Termine']);
+
+        return redirect()
+            ->route('appointments.index')
+            ->with('success', 'Le rendez-vous a été marqué comme terminé.');
+    }
+    // Annuler un rendez-vous
+    public function cancel(Appointment $appointment): RedirectResponse
+    {
+        $appointment->update(['status' => 'Annule']);
+
+        return redirect()
+            ->route('appointments.index')
+            ->with('success', 'Le rendez-vous a été annulé avec succès.');
+    }
+    // Reporter un rendez-vous
+    public function reschedule(Appointment $appointment): RedirectResponse
+    {
+        $appointment->update(['status' => 'Reporte']);
+
+        return redirect()
+            ->route('appointments.index')
+            ->with('success', 'Le rendez-vous a été reporté avec succès.');
+    }
+    // Supprimer un rendez-vous
+    public function destroy(Appointment $appointment): RedirectResponse
+    {
+        $appointment->delete();
+
+        return redirect()
+            ->route('appointments.index')
+            ->with('success', 'Le rendez-vous a été supprimé avec succès.');
+    }
 }
