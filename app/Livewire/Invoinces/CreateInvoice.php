@@ -5,6 +5,7 @@ namespace App\Livewire\Invoinces;
 use App\Models\Caisse;
 use App\Models\Company;
 use App\Models\Patient;
+use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -15,6 +16,9 @@ class CreateInvoice extends Component
     public $patient;
     public $selectedTreatments = [];
     public $treatments;
+    public $productName;
+    public $products;
+    public $productsChoosed = [];
 
     public function mount()
     {
@@ -31,6 +35,40 @@ class CreateInvoice extends Component
         $this->patientID = null;
         $this->patientName = null;
         $this->patient = null;
+    }
+
+    public function removeProduct($index)
+    {
+        $this->productsChoosed = array_filter($this->productsChoosed, function ($product) use ($index) {
+            return $product['id'] !== $index;
+        });
+    }
+
+    public function searchProduct()
+    {
+        $itemsList = array_map(function ($product) {
+            return $product['id'];
+        }, $this->productsChoosed);
+        $this->products = Stock::where('product_name', 'like', '%' . $this->productName . '%')
+        ->whereNotIn('id', $itemsList)
+        ->take(5)->get();
+    }
+
+    public function addProduct($id)
+    {
+        $product = Stock::find($id);
+        $this->productsChoosed[$id] = [
+            'id' => $product->id,
+            'product_name' => $product->product_name,
+            'price' => $product->price,
+            'quantite' => 1
+        ];
+        $this->searchProduct();
+    }
+
+    public function clearProduct()
+    {
+        $this->productName = null;
     }
 
     public function search()

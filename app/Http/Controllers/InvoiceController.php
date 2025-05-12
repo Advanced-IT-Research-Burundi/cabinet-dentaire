@@ -14,7 +14,6 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $query = Invoice::query();
-
         // Recherche par patient
         if ($request->has('patient')) {
             $query->whereHas('patient', function ($q) use ($request) {

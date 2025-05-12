@@ -62,6 +62,45 @@
                     @endforeach
                 </tbody>
             </table>
+            <div>
+                <h4>Produits choisis</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Montant</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($productsChoosed as $index => $product)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $product['product_name'] }}</td>
+                            <td>
+                                <input type="number" wire:model="productsChoosed.{{ $index }}.price"
+                                >
+                            </td>
+                            <td>
+                                <input type="number" wire:model="productsChoosed.{{ $index }}.quantite"
+                                >
+                            </td>
+                            <td>
+                                {{ $productsChoosed[$index]['price'] * $productsChoosed[$index]['quantite'] }}
+                            </td>
+                            <td>
+                                <button wire:click="removeProduct({{ $product['id'] }})" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <button class="btn btn-secondary btn-sm" wire:click="deselectAll">
@@ -97,7 +136,61 @@
 </div>
   <div class="row">
     <div class="col-md-8">
-        <h6>Informations sur les services non payes</h6>
+        <h6>Facturation sur les produits Pharmaceutiques</h6>
+        @if ($patient)
+        <div>
+            <div>
+            <div class="gap-2 d-flex">
+            <input type="text" wire:model="productName" placeholder="Nom du produit" class="mb-2 form-control form-control-sm" wire:keydown="searchProduct">
+            <button wire:click="searchProduct" class="btn btn-primary btn-sm">
+                <i class="bi bi-search"></i>
+            </button>
+            <button wire:click="clearProduct" class="btn btn-danger btn-sm">
+                <i class="bi bi-x"></i>
+            </button>
+            </div>
+
+            @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
+            @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+            </div>
+            @if ($products)
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Quantité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($products as $product)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $product->product_name }}</td>
+                        <td>{{ $product->price }}</td>
+                        <td>{{ $product->quantite }}</td>
+                        <td>
+                            <button wire:click="addProduct({{ $product->id }})" class="btn-sm">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+        </div>
+        @endif
     </div>
     <div class="col-md-4">
         <h6>Historique des factures</h6>
