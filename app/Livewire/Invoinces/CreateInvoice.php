@@ -198,6 +198,7 @@ class CreateInvoice extends Component
                 'patient_id' => $this->patient->id,
                 'total_amount' => $treatements->sum('applied_price'),
                 'status' => 'Brouillon',
+                'invoice_number' => 12,
                 'issue_date' => now(),
                 'due_date' => now()->addDays(30),
                 'insurance_amount' => 0,
@@ -239,9 +240,10 @@ class CreateInvoice extends Component
                 $listesMouvements[] = [
                     'system_or_device_id' => env('OBR_USERNAME', 'BUDENTAL'),
                     'item_code' => $stock->id,
+
                     'item_designation' => $stock->product_name,
                     'item_quantity' => $product['quantite'],
-                    'item_measurement_unit' => $stock->measurement_unit,
+                    'item_measurement_unit' => $stock->unit_measure ?? 'unité',
                     'item_purchase_or_sale_price' => $stock->price,
                     'item_purchase_or_sale_currency' => 'FBU',
                     'item_movement_invoice_ref' => $invoiceID,
@@ -249,8 +251,9 @@ class CreateInvoice extends Component
                     'stock_id' => $stock->id,
                     'user_id' => auth()->user()->id,
                 ];
+                unset($stock->created_at, $stock->updated_at);
                 $listeUpdateStocks[] = [
-                    'id' => $stock->id,
+                    ...$stock->toArray(),
                     'quantite' => $stock->quantite - $product['quantite']
                 ];
             }
