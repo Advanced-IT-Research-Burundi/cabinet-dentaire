@@ -70,7 +70,7 @@ class CreateInvoice extends Component
     public function searchProduct()
     {
         $itemsList = array_map(function ($product) {
-            return $product['id'];
+            return $product['id'] ?? 0;
         }, $this->productsChoosed);
         $this->products = Stock::where('product_name', 'like', '%' . $this->productName . '%')
         ->whereNotIn('id', $itemsList)

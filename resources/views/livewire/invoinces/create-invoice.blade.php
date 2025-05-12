@@ -132,6 +132,8 @@
                 </div>
                 <div class="mt-4">
                     <span class="me-3">Total sélectionné: {{ $patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') }}</span>
+                    <span class="me-3">Total produits: {{ $this->totalPrixProduits }}</span>
+                    <span class="me-3">Total du Facture: <b>{{ number_format($patient->treatementsNotPaids->whereIn('id', $selectedTreatments)->sum('applied_price') + $this->totalPrixProduits, 2) }}</b></span>
                     <button class="btn btn-primary btn-sm" wire:click="createInvoice">
                         <i class="bi bi-receipt"></i> Créer la facture
                     </button>
