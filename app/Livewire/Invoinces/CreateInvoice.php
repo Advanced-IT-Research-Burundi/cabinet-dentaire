@@ -196,7 +196,7 @@ class CreateInvoice extends Component
 
             $invoice = \App\Models\Invoice::create([
                 'patient_id' => $this->patient->id,
-                'total_amount' => $treatements->sum('applied_price'),
+                'total_amount' => $treatements->sum('applied_price')+$listeroducts->sum('item_total_amount'),
                 'status' => 'Brouillon',
                 'invoice_number' => 12,
                 'issue_date' => now(),

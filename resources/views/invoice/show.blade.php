@@ -249,8 +249,12 @@
                         <td>{{ $invoice->client['first_name'] ?? '' }} {{ $invoice->client['middle_name'] ?? '' }} {{ $invoice->client['last_name'] ?? '' }}</td>
                     </tr>
                     <tr>
-                        <td>Assurance</td>
+                        <td>Nom de la société</td>
                         <td>{{ $invoice->client['insurance_company'] ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Addresse</td>
+                        <td>{{ $invoice->client['address'] ?? 'N/A' }}</td>
                     </tr>
                     <tr>
                         <td>Email</td>
@@ -346,7 +350,7 @@
                     </tr>
                     <tr class="total-row">
                         <td>TOTAL</td>
-                        <td>FBu {{ number_format($invoice->total_amount, 2, ',', ' ') }}</td>
+                        <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FBu</td>
                     </tr>
                 </table>
             </div>
