@@ -54,16 +54,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col">
-                        <label for="quantite" class="form-label">Quantité</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control @error('quantite') is-invalid @enderror" id="quantite" name="quantite" value="{{ old('quantite') }}" required>
-                            <span class="input-group-text">Unités</span>
-                        </div>
-                        @error('quantite')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <input type="hidden" step="0.01" class="form-control @error('quantite') is-invalid @enderror" id="quantite" name="quantite" value="0" required>
                     <div class="col">
                         <label for="quantite_alert" class="form-label">Quantité d'Alerte</label>
                         <input type="number" step="0.01" class="form-control @error('quantite_alert') is-invalid @enderror" id="quantite_alert" name="quantite_alert" value="{{ old('quantite_alert') }}">
@@ -80,49 +71,49 @@
                     </div>
                     <div class="col">
                         <label for="price_ttc" class="form-label">Prix TTC</label>
-                        <input type="number" step="0.01" class="form-control @error('price_ttc') is-invalid @enderror" id="price_ttc" name="price_ttc" value="{{ old('price_ttc') }}">
+                        <input type="number" step="0.01" class="form-control @error('price_ttc') is-invalid @enderror" id="price_ttc" name="price_ttc" value="{{ old('price_ttc', 0) }}">
                         @error('price_ttc')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="price_max" class="form-label">Prix Maximum</label>
-                        <input type="number" step="0.01" class="form-control @error('price_max') is-invalid @enderror" id="price_max" name="price_max" value="{{ old('price_max') }}">
+                        <input type="number" step="0.01" class="form-control @error('price_max') is-invalid @enderror" id="price_max" name="price_max" value="{{ old('price_max', 0) }}">
                         @error('price_max')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="price_tvac" class="form-label">Prix TVAC</label>
-                        <input type="number" step="0.01" class="form-control @error('price_tvac') is-invalid @enderror" id="price_tvac" name="price_tvac" value="{{ old('price_tvac') }}">
+                        <input type="number" step="0.01" class="form-control @error('price_tvac') is-invalid @enderror" id="price_tvac" name="price_tvac" value="{{ old('price_tvac', 0) }}">
                         @error('price_tvac')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="taux_tva" class="form-label">Taux TVA</label>
-                        <input type="number" step="0.01" class="form-control @error('taux_tva') is-invalid @enderror" id="taux_tva" name="taux_tva" value="{{ old('taux_tva') }}">
+                        <input type="number" step="0.01" class="form-control @error('taux_tva') is-invalid @enderror" id="taux_tva" name="taux_tva" value="{{ old('taux_tva', 0) }}">
                         @error('taux_tva')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="item_ott_tax" class="form-label">Taxe OTT</label>
-                        <input type="number" step="0.01" class="form-control @error('item_ott_tax') is-invalid @enderror" id="item_ott_tax" name="item_ott_tax" value="{{ old('item_ott_tax') }}">
+                        <input type="number" step="0.01" class="form-control @error('item_ott_tax') is-invalid @enderror" id="item_ott_tax" name="item_ott_tax" value="{{ old('item_ott_tax', 0) }}">
                         @error('item_ott_tax')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="item_tsce_tax" class="form-label">Taxe TSCE</label>
-                        <input type="number" step="0.01" class="form-control @error('item_tsce_tax') is-invalid @enderror" id="item_tsce_tax" name="item_tsce_tax" value="{{ old('item_tsce_tax') }}">
+                        <input type="number" step="0.01" class="form-control @error('item_tsce_tax') is-invalid @enderror" id="item_tsce_tax" name="item_tsce_tax" value="{{ old('item_tsce_tax', 0) }}">
                         @error('item_tsce_tax')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col">
                         <label for="price_min" class="form-label">Prix Minimum</label>
-                        <input type="number" step="0.01" class="form-control @error('price_min') is-invalid @enderror" id="price_min" name="price_min" value="{{ old('price_min') }}">
+                        <input type="number" step="0.01" class="form-control @error('price_min') is-invalid @enderror" id="price_min" name="price_min" value="{{ old('price_min', 0) }}">
                         @error('price_min')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

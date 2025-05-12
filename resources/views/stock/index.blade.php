@@ -61,9 +61,14 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $stock->product_name }}</td>
                                 <td> {{ $stock->id }}</td>
-                                <td>{{ $stock->category->name ?? '-' }}</td>
+                                <td>{{ $stock->category->name }}</td>
                                 <td>{{ $stock->code_product ?: '-' }}</td>
-                                <td>{{ $stock->quantite }}</td>
+                                <td>
+                                    {{ $stock->quantite }}
+                                    @if($stock->quantite < $stock->quantite_alert)
+                                        <span class="badge bg-danger">Faible stock</span>
+                                    @endif
+                                </td>
                                 <td>{{ $stock->price ? number_format($stock->price, 2) . ' Fbu' : '-' }}</td>
                                 <td>{{ $stock->status }}</td>
                                 <td>

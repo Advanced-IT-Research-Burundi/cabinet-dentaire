@@ -34,3 +34,11 @@ const TYPE_PAYMENT = [
     3 => 'à crédit',
     4 => 'autres',
 ];
+
+const ROLE_USERS = [
+    "" => "----",
+    'Admin' => 'Admin',
+    'Dentiste' => 'Dentiste',
+    'Secretaire' => 'Secretaire',
+    'Pharmacist' => 'Pharmacist',
+];

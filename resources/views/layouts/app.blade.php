@@ -14,14 +14,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.13.1/bootstrap-icons.min.css') }}">
 
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <link rel="stylesheet" href="{{ asset('css/sweetalert2@11.css') }}">
 
     @stack('styles')
     @livewireStyles
@@ -34,7 +34,7 @@
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
                     {{-- <i class="bi bi-hospital me-2 fs-3"></i>
                      --}}
-                     <img src="{{ asset("img/logo.png") }}" width="50px" height="50px" alt="">
+                     <img src="{{ asset('img/logo.png') }}" width="50px" height="50px" alt="">
                     <span class="fw-bold">Budental Services</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,6 +138,9 @@
                                     <li><a class="text-center dropdown-item" href="{{ route('notifications.index') }}">Voir toutes</a></li>
                                 @else
                                     <li><a class="text-center dropdown-item" href="#">Aucune notification</a></li>
+                                    <li>
+                                        <a href="" class="dropdown-item">Marquer toutes comme lues</a>
+                                    </li>
                                 @endif
                             </ul>
                         </li>
@@ -224,11 +227,11 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{asset('js/sweetalert2@11.js')}}"></script>
     <!-- Custom JS -->
     <script src="{{ asset('js/app.js') }}"></script>
     @livewireScripts

@@ -55,7 +55,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col">
+                   <!--  <div class="col">
                         <label for="quantite" class="form-label">Quantité</label>
                         <div class="input-group">
                             <input type="number" step="0.01" class="form-control @error('quantite') is-invalid @enderror" id="quantite" name="quantite" value="{{ old('quantite', $stock->quantite) }}" required>
@@ -64,7 +64,7 @@
                         @error('quantite')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                    </div>
+                    </div> -->
                     <div class="col">
                         <label for="quantite_alert" class="form-label">Quantité d'Alerte</label>
                         <input type="number" step="0.01" class="form-control @error('quantite_alert') is-invalid @enderror" id="quantite_alert" name="quantite_alert" value="{{ old('quantite_alert', $stock->quantite_alert) }}">

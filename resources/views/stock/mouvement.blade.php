@@ -51,7 +51,7 @@
                         @method('POST')
                         <input type="hidden" name="item_code" value="{{ $stock->id }}">
                         <input type="hidden" name="stock_id" value="{{ $stock->id }}">
-                        <input type="hidden" name="item_measurement_unit" value="{{ $stock->unit_measure }}">
+                        <input type="hidden" name="item_measurement_unit" value="{{ $stock->unit_measure ?: 'unit' }}">
                         <input type="hidden" name="item_designation" value="{{ $stock->product_name }}">
                         <div class="mb-3">
                             <label for="item_movement_type" class="form-label">Type de mouvement</label>

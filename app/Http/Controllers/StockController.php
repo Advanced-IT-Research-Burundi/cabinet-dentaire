@@ -14,13 +14,14 @@ class StockController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-        $stocks = Stock::query()
+        $stocks = Stock::with('category')
             ->when($search, function ($query, $search) {
                 $query->where('product_name', 'like', "%{$search}%");
             })
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->latest()
             ->paginate(10);
 
         return view('stock.index', compact('stocks'));

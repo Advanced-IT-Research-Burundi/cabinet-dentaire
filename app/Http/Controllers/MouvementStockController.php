@@ -71,7 +71,6 @@ class MouvementStockController extends Controller
             $mouvementStock->save();
             // Update stock quantity based on movement type
             $stock = Stock::findOrFail($request->stock_id);
-
             // Entre Ajustements
             if ($request->item_movement_type == "EAJ") {
                 $stock->quantite = $request->item_quantity;
