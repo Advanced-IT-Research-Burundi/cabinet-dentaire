@@ -39,6 +39,7 @@ class TreatmentTypeController extends Controller
      */
     public function index(Request $request)
     {
+        
         $query = TreatmentType::query();
 
         if ($request->filled('search')) {
