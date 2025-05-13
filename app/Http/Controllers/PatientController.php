@@ -43,6 +43,7 @@ class PatientController extends Controller
         return view('patient.create', compact('assurances'));
     }
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
