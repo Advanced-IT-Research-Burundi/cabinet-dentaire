@@ -22,6 +22,7 @@ class CaisseDetail extends Model
         'total',
         'status',
         'user_id',
+        'description',
     ];
 
     /**

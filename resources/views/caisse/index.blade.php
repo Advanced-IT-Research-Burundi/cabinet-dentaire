@@ -12,7 +12,9 @@
                 <thead>
                     <tr>
                         <th>Type</th>
-                        <th>Date</th>
+                        <th>Nom</th>
+                        <th>Utilisateur</th>
+                        <th>Date de Création</th>
                         <th>Montant</th>
                         <th>Description</th>
                         <th>Status</th>
@@ -23,8 +25,10 @@
                     @forelse($caisses as $caisse)
                     <tr>
                         <td>{{ $caisse->type }}</td>
-                        <td>{{ $caisse->date->format('d/m/Y H:i') }}</td>
-                        <td>{{ number_format($caisse->montant, 2) }} €</td>
+                        <td>{{ $caisse->name }}</td>
+                        <td>{{ $caisse->user->name }}</td>
+                        <td>{{ $caisse->created_at->format('Y-m-d H:i') }}</td>
+                        <td>{{ number_format($caisse->montant, 2) }} </td>
                         <td>{{ $caisse->description }}</td>
                         <td>
                             <span class="badge
@@ -36,12 +40,8 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('caisse.edit', $caisse->id) }}" class="btn btn-sm btn-warning">Modifier</a>
-                            <form action="{{ route('caisse.destroy', $caisse->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr?')">Supprimer</button>
-                            </form>
+                            <a href="{{ route('caisses.edit', $caisse->id) }}" class="btn btn-sm btn-warning">Modifier</a>
+                            <a href="{{ route('caisses.show', $caisse->id) }}" class="btn btn-sm btn-primary">Voir</a>
                         </td>
                     </tr>
                     @empty

@@ -22,6 +22,7 @@ class Caisse extends Model
         'description',
         'status',
         'user_id',
+        'name'
     ];
 
     /**
@@ -38,6 +39,10 @@ class Caisse extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(Users,id::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function caisseDetails(){
+        return $this->hasMany(CaisseDetail::class , 'caisse_id');
     }
 }

@@ -25,7 +25,7 @@ class CaisseStoreRequest extends FormRequest
             'montant' => ['required', 'numeric'],
             'description' => ['nullable', 'string', 'max:250'],
             'status' => ['nullable', 'string', 'max:250'],
-            'user_id' => ['required', 'integer', 'exists:users,id,id'],
+            'user_id' => ['required', 'integer'],
         ];
     }
 }

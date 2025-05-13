@@ -20,6 +20,7 @@ return new class extends Migration
             $table->double('price')->default('0');
             $table->double('total')->default('0');
             $table->string('status', 250)->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('user_id');
             $table->timestamps();
             $table->softDeletes();

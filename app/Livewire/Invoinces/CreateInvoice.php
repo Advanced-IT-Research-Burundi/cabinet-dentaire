@@ -3,6 +3,7 @@
 namespace App\Livewire\Invoinces;
 
 use App\Models\Caisse;
+use App\Models\CaisseDetail;
 use App\Models\Company;
 use App\Models\MouvementStock;
 use App\Models\Patient;
@@ -147,6 +148,11 @@ class CreateInvoice extends Component
             return;
         }
 
+        $caisse = Caisse::where('user_id', auth()->user()->id)->first();
+        if(!$caisse){
+                 session()->flash('error', "Veuillez Nous excuse vous n'avez droit de créer une facture");
+           return;
+        }
         // if (empty($this->selectedTreatments)) {
         //     session()->flash('error', 'Veuillez sélectionner au moins un traitement');
         //     return;
@@ -215,6 +221,18 @@ class CreateInvoice extends Component
         foreach ($treatements as $treatement) {
             $treatement->update(['payment_status' => 'Payee', 'invoice_id' => $invoice->id]);
         }
+        // Enregistre montant sur la caisse de l'utilisateur
+        $caisse->montant +=  $invoice->total_amount;
+        $caisse->save();
+        CaisseDetail::create([
+            'caisse_id' => $caisse->id,
+            'type' => "MONTANT FACTURE No ". $invoice->id,
+            'price' => 0,
+            'total' => $invoice->total_amount,
+            'status' => '1',
+            'user_id' => auth()->user()->id,
+        ]);
+
         DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

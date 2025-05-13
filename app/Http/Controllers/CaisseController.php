@@ -31,6 +31,7 @@ class CaisseController extends Controller
 
     public function store(CaisseStoreRequest $request)
     {
+
         $caisse = Caisse::create($request->validated());
 
         $request->session()->flash('caisse.id', $caisse->id);
@@ -38,10 +39,12 @@ class CaisseController extends Controller
         return redirect()->route('caisses.index');
     }
 
-    public function show(Request $request, Caisse $caisse)
+    public function show(Request $request,  $caisse)
     {
+        $currentCaisse = Caisse::with(['caisseDetails'])->find($caisse);
+
         return view('caisse.show', [
-            'caisse' => $caisse,
+            'caisse' => $currentCaisse,
         ]);
     }
 
