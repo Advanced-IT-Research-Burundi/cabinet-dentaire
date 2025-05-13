@@ -200,9 +200,6 @@
         }
 
         .print-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
             padding: 10px 15px;
             background-color: #0a3d71;
             color: white;
@@ -211,17 +208,33 @@
             cursor: pointer;
             z-index: 1000;
         }
+        .print-show{
+            position: absolute;
+            top: 10px;
+            right: 10px;
+
+        }
 
         @media print {
             .print-button {
                 display: none;
             }
         }
+        .invoice{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
     </style>
 </head>
 <body>
-    <button class="print-button" onclick="window.print()">Imprimer</button>
+    <div class="print-show">
+        <a href="{{ route('invoices.index') }}" class="btn btn-primary print-button"><i class="bi bi-arrow-left"></i> Retour à la liste des factures</a>
+        <button class="print-button" onclick="window.print()"><i class="bi bi-printer"></i> Imprimer</button>
+    </div>
 
+    <div class="invoice">
     <div class="invoice-container">
         <div class="logo-header">
             <div class="logo">
@@ -242,7 +255,7 @@
 
         <div class="invoice-info">
             <div class="invoice-box">
-                <div class="invoice-box-title">FACTURE à</div>
+                <div class="invoice-box-title"> Patient  (Client)</div>
                 <table style="width: 100%">
                     <tr>
                         <td>Nom</td>
@@ -301,10 +314,10 @@
             <tbody>
                 @foreach($invoice->description as $item)
                 <tr>
-                    <td>{{ $item['item_designation'] }}</td>
-                    <td>{{ $item['item_quantity'] }}</td>
-                    <td>{{ number_format($item['item_price'], 2, ',', ' ') }}</td>
-                    <td>{{ number_format($item['item_total_amount'], 2, ',', ' ') }}</td>
+                    <td>{{ $item['item_designation'] ?? '-' }}</td>
+                    <td>{{ $item['item_quantity'] ?? '-' }}</td>
+                    <td>{{ number_format($item['item_price'] ?? 0, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($item['item_total_amount'] ?? 0, 2, ',', ' ') }}</td>
                 </tr>
                 @endforeach
 
@@ -386,6 +399,7 @@
                 }
             @endphp
         </div>
+    </div>
     </div>
 </body>
 </html>

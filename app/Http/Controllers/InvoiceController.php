@@ -44,6 +44,10 @@ class InvoiceController extends Controller
         return view('invoice.index', compact('invoices'));
     }
 
+    public function monthly(){
+        return back();
+    }
+
     public function create(Request $request)
     {
         return view('invoice.create');

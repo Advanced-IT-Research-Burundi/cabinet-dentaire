@@ -17,6 +17,7 @@ return new class extends Migration
             $table->double('coverage_percentage', 5, 2)->default(0); // Percentage of coverage
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

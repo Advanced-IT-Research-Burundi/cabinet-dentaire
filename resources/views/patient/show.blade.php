@@ -3,9 +3,9 @@
 @section('title', 'Détails du Patient')
 
 @section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
+<div class="px-4 container-fluid">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h1 class="mb-0 text-gray-800 h3">
             {{ $patient->first_name }} {{ $patient->last_name }}
         </h1>
         <div>
@@ -20,10 +20,10 @@
 
     <div class="row">
         <!-- Informations personnelles -->
-        <div class="col-md-6 mb-4">
+        <div class="mb-4 col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-person-vcard me-1"></i> Informations personnelles
                     </h5>
                 </div>
@@ -59,10 +59,10 @@
         </div>
 
         <!-- Contact -->
-        <div class="col-md-6 mb-4">
+        <div class="mb-4 col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-telephone me-1"></i> Contact
                     </h5>
                 </div>
@@ -94,10 +94,10 @@
         </div>
 
         <!-- Assurance -->
-        <div class="col-md-6 mb-4">
+        <div class="mb-4 col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-shield-check me-1"></i> Assurance
                     </h5>
                 </div>
@@ -117,10 +117,10 @@
         </div>
 
         <!-- Informations médicales -->
-        <div class="col-md-6 mb-4">
+        <div class="mb-4 col-md-6">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-clipboard2-pulse me-1"></i> Informations médicales
                     </h5>
                 </div>
@@ -140,10 +140,10 @@
         </div>
 
         <!-- Rendez-vous -->
-        <div class="col-12 mb-4">
+        <div class="mb-4 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-calendar-check me-1"></i> Rendez-vous
                     </h5>
                 </div>
@@ -198,17 +198,17 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-muted text-center py-4">Aucun rendez-vous enregistré</p>
+                        <p class="py-4 text-center text-muted">Aucun rendez-vous enregistré</p>
                     @endif
                 </div>
             </div>
         </div>
 
         <!-- Traitements -->
-        <div class="col-12 mb-4">
+        <div class="mb-4 col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-clipboard2-pulse me-1"></i> Traitements
                     </h5>
                 </div>
@@ -262,7 +262,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-muted text-center py-4">Aucun traitement enregistré</p>
+                        <p class="py-4 text-center text-muted">Aucun traitement enregistré</p>
                     @endif
                 </div>
             </div>
@@ -272,7 +272,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">
+                    <h5 class="mb-0 card-title">
                         <i class="bi bi-receipt me-1"></i> Factures
                     </h5>
                 </div>
@@ -334,7 +334,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-muted text-center py-4">Aucune facture enregistrée</p>
+                        <p class="py-4 text-center text-muted">Aucune facture enregistrée</p>
                     @endif
                 </div>
             </div>

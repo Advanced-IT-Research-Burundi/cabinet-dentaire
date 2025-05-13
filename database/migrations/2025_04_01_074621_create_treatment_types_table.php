@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('code', 20)->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

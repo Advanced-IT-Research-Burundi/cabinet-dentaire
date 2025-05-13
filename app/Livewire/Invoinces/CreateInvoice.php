@@ -147,10 +147,10 @@ class CreateInvoice extends Component
             return;
         }
 
-        if (empty($this->selectedTreatments)) {
-            session()->flash('error', 'Veuillez sélectionner au moins un traitement');
-            return;
-        }
+        // if (empty($this->selectedTreatments)) {
+        //     session()->flash('error', 'Veuillez sélectionner au moins un traitement');
+        //     return;
+        // }
 
         try {
             DB::beginTransaction();

@@ -15,13 +15,14 @@ return new class extends Migration
 
         Schema::create('caisse_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('caisse_id')->constrained('caisses,ids');
+            $table->foreignId('caisse_id');
             $table->string('type', 250)->nullable();
             $table->double('price')->default('0');
             $table->double('total')->default('0');
             $table->string('status', 250)->nullable();
-            $table->foreignId('user_id')->constrained('users,ids');
+            $table->foreignId('user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

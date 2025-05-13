@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('status', 250)->nullable();
             $table->boolean('is_syncronized')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::enableForeignKeyConstraints();

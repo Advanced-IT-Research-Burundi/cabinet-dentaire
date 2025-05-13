@@ -18,7 +18,7 @@
                             <p><strong>Quantité disponible:</strong> {{ $stock->available_quantity }} {{ $stock->unit_measure }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Catégorie:</strong> {{ $stock->category }}</p>
+                            <p><strong>Catégorie:</strong> {{ $stock->category->name }}</p>
                             <p><strong>Prix:</strong> {{ $stock->price }} FBU</p>
                             <p><strong>Statut:</strong> <span class="badge bg-{{ $stock->status === 'Faible_stock' ? 'warning' : 'success' }}">{{ $stock->status }}</span></p>
                             <p><strong>Emplacement:</strong> {{ $stock->location }}</p>
@@ -126,7 +126,7 @@
                                 @foreach($mouvements as $mouvement)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $mouvement->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $mouvement->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
                                         <td>{{ $mouvement->item_movement_type }}</td>
                                         <td>{{ $mouvement->item_quantity }} {{ $stock->unit_measure }}</td>
                                         <td>{{ number_format($mouvement->item_purchase_or_sale_price, 2) }} FBU</td>
