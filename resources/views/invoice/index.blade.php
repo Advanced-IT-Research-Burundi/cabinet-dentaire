@@ -56,7 +56,7 @@
                                 <th>Date d'émission</th>
                                 <th>Échéance</th>
                                 <th>Montant</th>
-                                <th>Statut</th>
+                                {{-- <th>Statut</th> --}}
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -69,9 +69,9 @@
                                     <td>{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</td>
                                     <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FBU</td>
                                     <td>
-                                        <span class="badge bg-{{ $invoice->status === 'Brouillon' ? 'warning' : ($invoice->status === 'Payée' ? 'success' : 'danger') }}">
+                                        {{-- <span class="badge bg-{{ $invoice->status === 'Brouillon' ? 'warning' : ($invoice->status === 'Payée' ? 'success' : 'danger') }}">
                                             {{ $invoice->status }}
-                                        </span>
+                                        </span> --}}
                                     </td>
                                     <td>
                                         <div class="btn-group">
