@@ -19,6 +19,67 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <!-- Filtres de recherche -->
+                    <div class="mb-4">
+                        <form action="{{ route('settings.treatment-types.index') }}" method="GET" class="row g-3">
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" name="search" value="{{ request('search') }}"
+                                           placeholder="Rechercher par code ou nom...">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" name="category">
+                                    <option value="">Toutes les catégories</option>
+                                    @foreach($categories ?? [] as $category)
+                                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>
+                                            {{ $category }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" name="status">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Actif</option>
+                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactif</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <span class="input-group-text">Prix min</span>
+                                    <input type="number" class="form-control" name="min_price" value="{{ request('min_price') }}"
+                                           placeholder="Min">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <span class="input-group-text">Prix max</span>
+                                    <input type="number" class="form-control" name="max_price" value="{{ request('max_price') }}"
+                                           placeholder="Max">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-filter me-1"></i> Filtrer
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Bouton de réinitialisation -->
+                        <div class="mt-2 text-end">
+                            <a href="{{ route('settings.treatment-types.index') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Réinitialiser les filtres
+                            </a>
+                            @if(request()->anyFilled(['search', 'category', 'status', 'min_price', 'max_price', 'sort', 'direction']))
+                                <span class="ms-2 badge bg-info">
+                                    <i class="bi bi-funnel-fill me-1"></i> Filtres actifs
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
                     @if($treatmentTypes->isEmpty())
                         <div class="py-5 text-center">
                             <i class="mb-3 bi bi-clipboard2-x fs-1 text-muted"></i>
@@ -29,12 +90,84 @@
                             <table class="table align-middle table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Code</th>
-                                        <th>Nom</th>
-                                        <th>Catégorie</th>
-                                        <th>Prix de base (BIF)</th>
-                                        <th>Durée (min)</th>
-                                        <th>Statut</th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'code',
+                                                'direction' => request('sort') == 'code' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Code
+                                                @if(request('sort') == 'code')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'name',
+                                                'direction' => request('sort') == 'name' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Nom
+                                                @if(request('sort') == 'name')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'category',
+                                                'direction' => request('sort') == 'category' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Catégorie
+                                                @if(request('sort') == 'category')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'base_price',
+                                                'direction' => request('sort') == 'base_price' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Prix de base (BIF)
+                                                @if(request('sort') == 'base_price')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'average_duration',
+                                                'direction' => request('sort') == 'average_duration' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Durée (min)
+                                                @if(request('sort') == 'average_duration')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
+                                        <th>
+                                            <a href="{{ route('settings.treatment-types.index', array_merge(request()->except('sort', 'direction'), [
+                                                'sort' => 'active',
+                                                'direction' => request('sort') == 'active' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                            ])) }}" class="text-decoration-none text-dark">
+                                                Statut
+                                                @if(request('sort') == 'active')
+                                                    <i class="bi {{ request('direction') == 'asc' ? 'bi-sort-down' : 'bi-sort-up' }}"></i>
+                                                @else
+                                                    <i class="bi bi-arrow-down-up text-muted"></i>
+                                                @endif
+                                            </a>
+                                        </th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -76,8 +209,16 @@
                             </table>
                         </div>
 
-                        <div class="mt-4 d-flex justify-content-center">
-                            {{ $treatmentTypes->links() }}
+                        <div class="mt-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">
+                                    Affichage de {{ $treatmentTypes->firstItem() ?? 0 }} à {{ $treatmentTypes->lastItem() ?? 0 }}
+                                    sur {{ $treatmentTypes->total() }} entrées
+                                </small>
+                            </div>
+                            <div>
+                                {{ $treatmentTypes->links() }}
+                            </div>
                         </div>
                     @endif
                 </div>
