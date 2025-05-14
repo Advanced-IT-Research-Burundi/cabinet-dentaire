@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     // Display a listing of the categories
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate(10);
+        $query = Category::query();
+
+        // Recherche
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $categories = $query->paginate(10)->withQueryString();
         return view('category.index', compact('categories'));
     }
 

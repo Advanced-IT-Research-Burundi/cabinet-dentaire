@@ -14,35 +14,44 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $query = Invoice::query();
+
         // Recherche par patient
-        if ($request->has('patient')) {
-            $query->whereHas('patient', function ($q) use ($request) {
-                $q->where('first_name', 'like', '%' . $request->patient . '%')
-                    ->orWhere('middle_name', 'like', '%' . $request->patient . '%')
-                    ->orWhere('last_name', 'like', '%' . $request->patient . '%')
-                    ->orWhere('phone', 'like', '%' . $request->patient . '%');
+        if ($request->filled('patient')) {
+            $searchTerm = $request->patient;
+
+            $query->whereHas('patient', function ($q) use ($searchTerm) {
+                $q->where('first_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('middle_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('phone', 'like', '%' . $searchTerm . '%');
             });
+            // dd($query->get());
         }
 
         // Recherche par date
-        if ($request->has('date_from') || $request->has('date_to')) {
+        if ($request->filled('date_from') && $request->filled('date_to')) {
             $query->whereBetween('issue_date', [
-                $request->date_from ?? '2000-01-01',
-                $request->date_to ?? now()
+                $request->date_from,
+                $request->date_to
             ]);
+        } elseif ($request->filled('date_from')) {
+            $query->where('issue_date', '>=', $request->date_from);
+        } elseif ($request->filled('date_to')) {
+            $query->where('issue_date', '<=', $request->date_to);
         }
 
         // Recherche par statut
-        if ($request->has('status') && $request->status !== '') {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $invoices = $query->with('patient')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('invoice.index', compact('invoices'));
-    }
+    return view('invoice.index', compact('invoices'));
+}
 
     public function monthly(){
         return back();

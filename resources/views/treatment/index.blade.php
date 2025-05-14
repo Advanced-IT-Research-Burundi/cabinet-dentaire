@@ -42,7 +42,7 @@
                                 <td>{{ $treatment->id }}</td>
                                 <td>
                                 <span class="badge bg-primary">
-                                    
+
                                     {{  $treatment->patient->id }}
                                 </span>
                                 {{ $treatment->patient->full_name }}
@@ -95,7 +95,7 @@
                     </tbody>
                 </table>
             </div>
-   
+
             <div class="mt-3">
                 {{ $treatments->links() }}
             </div>

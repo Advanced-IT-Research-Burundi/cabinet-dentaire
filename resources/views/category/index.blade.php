@@ -11,6 +11,24 @@
         </a>
     </div>
 
+    <!-- Search and Filter Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ route('categories.index') }}" method="GET" class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="search" value="{{ request('search') }}"
+                               placeholder="Rechercher par nom de catégorie, description...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -32,13 +50,13 @@
                                         <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm btn-outline-secondary">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ route('categories.destroy', $category) }}" method="POST" class="d-inline">
+                                        {{-- <form action="{{ route('categories.destroy', $category) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')">
                                                 <i class="bi bi-trash"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </div>
                                 </td>
                             </tr>

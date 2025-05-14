@@ -59,7 +59,7 @@
                                                         class="btn btn-sm btn-outline-primary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <form action="{{ route('settings.treatment-types.destroy', $type) }}"
+                                                    {{-- <form action="{{ route('settings.treatment-types.destroy', $type) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
@@ -67,7 +67,7 @@
                                                             onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce type de traitement ?')">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
-                                                    </form>
+                                                    </form> --}}
                                                 </div>
                                             </td>
                                         </tr>
