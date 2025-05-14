@@ -43,8 +43,45 @@ class DentistController extends Controller
      */
     public function index(): View
     {
-        $dentists = Dentist::with('user')->get();
-        return view('dentist.index', compact('dentists'));
+        $query = Dentist::with('user')
+            ->withCount('appointments');
+
+        if (request()->has('search') && request('search') != '') {
+            $searchTerm = request('search');
+            $query->whereHas('user', function($q) use ($searchTerm) {
+                $q->where('first_name', 'like', "%{$searchTerm}%")
+                ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                ->orWhere('email', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if (request()->has('specialty') && request('specialty') != '') {
+            $query->where('specialty', request('specialty'));
+        }
+        if (request()->has('status') && request('status') != '') {
+            $query->where('available', request('status'));
+        }
+
+        $sortField = request('sort', 'id');
+        $direction = request('direction', 'asc');
+
+        if ($sortField === 'name') {
+            $query->join('users', 'dentists.user_id', '=', 'users.id')
+                ->orderBy('users.last_name', $direction)
+                ->orderBy('users.first_name', $direction)
+                ->select('dentists.*');
+        } else {
+            $query->orderBy($sortField, $direction);
+        }
+
+        $dentists = $query->paginate(15)->withQueryString();
+
+        $specialties = Dentist::distinct('specialty')
+            ->orderBy('specialty')
+            ->pluck('specialty')
+            ->filter();
+
+        return view('dentist.index', compact('dentists', 'specialties'));
     }
 
     /**

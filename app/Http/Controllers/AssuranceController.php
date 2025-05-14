@@ -7,9 +7,30 @@ use Illuminate\Http\Request;
 
 class AssuranceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $assurances = Assurance::paginate(10);
+        $query = Assurance::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('min_coverage') && $request->min_coverage != '') {
+            $query->where('coverage_percentage', '>=', (float)$request->min_coverage);
+        }
+
+
+        if ($request->has('max_coverage')   && $request->max_coverage != '') {
+            $query->where('coverage_percentage', '<=', (float)$request->max_coverage);
+        }
+
+        // Tri
+        $sort = $request->sort ?? 'name';
+        $direction = $request->direction ?? 'asc';
+        $query->orderBy($sort, $direction);
+
+        $assurances = $query->paginate(10)->withQueryString();
+
         return view('assurance.index', compact('assurances'));
     }
 

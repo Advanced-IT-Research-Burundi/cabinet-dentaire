@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Modifier le type de traitement')
+@section('title', isset($treatmentType) ? 'Modifier le type de traitement' : 'Nouveau type de traitement')
 
 @section('content')
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h3 mb-0">Modifier le type de traitement</h1>
+                <h1 class="h3 mb-0">{{ isset($treatmentType) ? 'Modifier le type de traitement' : 'Nouveau type de traitement' }}</h1>
                 <a href="{{ route('settings.treatment-types.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-1"></i> Retour
                 </a>
@@ -16,92 +16,105 @@
     </div>
 
     <div class="row">
-        <div class="col-md-8 col-lg-6">
-            <div class="card">
+        <div class="col-md-8">
+            <form action="{{ isset($treatmentType) ? route('settings.treatment-types.update', $treatmentType) : route('settings.treatment-types.store') }}" method="POST">
+                @csrf
+                @if(isset($treatmentType))
+                    @method('PUT')
+                @endif
+
+                @include('settings.treatment-types._form')
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            {{-- Carte d'aide --}}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info bg-opacity-10">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Instructions
+                    </h5>
+                </div>
                 <div class="card-body">
-                    <form action="{{ route('settings.treatment-types.update', $treatmentType) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                    <p class="card-text">Remplissez les champs pour {{ isset($treatmentType) ? 'modifier' : 'ajouter' }} un type de traitement.</p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-hash text-primary me-2"></i>
+                            <span>Le code permet d'identifier rapidement le traitement</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-tag text-primary me-2"></i>
+                            <span>La catégorie permet de regrouper les traitements similaires</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-cash text-primary me-2"></i>
+                            <span>Le prix de base peut être ajusté lors de la facturation</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-clock text-primary me-2"></i>
+                            <span>La durée moyenne aide à planifier les rendez-vous</span>
+                        </li>
+                    </ul>
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i class="bi bi-lightbulb flex-shrink-0 me-2"></i>
+                        <div>
+                            Seul le nom du traitement est obligatoire. Les autres champs sont recommandés pour une meilleure organisation.
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="code" class="form-label">Code</label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror" 
-                                    id="code" name="code" value="{{ old('code', $treatmentType->code) }}" maxlength="20">
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <div class="form-text">Code unique pour identifier le traitement</div>
+            {{-- Exemples de catégories --}}
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Catégories suggérées
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action" onclick="setCategory('Prévention'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Prévention</h6>
                             </div>
-
-                            <div class="col-md-6">
-                                <label for="category" class="form-label">Catégorie</label>
-                                <input type="text" class="form-control @error('category') is-invalid @enderror" 
-                                    id="category" name="category" value="{{ old('category', $treatmentType->category) }}" maxlength="100">
-                                @error('category')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <small class="text-muted">Nettoyages, examens, radiographies</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="setCategory('Restauration'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Restauration</h6>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nom du traitement</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                id="name" name="name" value="{{ old('name', $treatmentType->name) }}" required maxlength="100">
-                            @error('name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" 
-                                id="description" name="description" rows="3">{{ old('description', $treatmentType->description) }}</textarea>
-                            @error('description')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="base_price" class="form-label">Prix de base (BIF)</label>
-                                <input type="number" class="form-control @error('base_price') is-invalid @enderror" 
-                                    id="base_price" name="base_price" value="{{ old('base_price', $treatmentType->base_price) }}" min="0" step="1000">
-                                @error('base_price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <small class="text-muted">Obturations, couronnes, bridges</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="setCategory('Chirurgie'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Chirurgie</h6>
                             </div>
-
-                            <div class="col-md-6">
-                                <label for="average_duration" class="form-label">Durée moyenne (minutes)</label>
-                                <input type="number" class="form-control @error('average_duration') is-invalid @enderror" 
-                                    id="average_duration" name="average_duration" value="{{ old('average_duration', $treatmentType->average_duration) }}" min="1">
-                                @error('average_duration')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <small class="text-muted">Extractions, implants</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="setCategory('Esthétique'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Esthétique</h6>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input type="checkbox" class="form-check-input @error('active') is-invalid @enderror" 
-                                    id="active" name="active" value="1" {{ old('active', $treatmentType->active) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="active">Actif</label>
-                                @error('active')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <small class="text-muted">Blanchiment, facettes</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="setCategory('Orthodontie'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Orthodontie</h6>
                             </div>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save me-1"></i> Enregistrer les modifications
-                            </button>
-                        </div>
-                    </form>
+                            <small class="text-muted">Appareils, aligneurs</small>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function setCategory(category) {
+        document.getElementById('category').value = category;
+    }
+</script>
+@endpush
 @endsection

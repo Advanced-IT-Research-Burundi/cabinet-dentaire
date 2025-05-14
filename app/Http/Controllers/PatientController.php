@@ -43,9 +43,13 @@ class PatientController extends Controller
         return view('patient.create', compact('assurances'));
     }
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'patient_type' => 'required|in:physique,morale',
+            'nif' => 'required_if:patient_type,morale|nullable|string|max:255',
+            'societe' =>'nullable|string|max:255',
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'nullable|string|max:100',
@@ -88,6 +92,9 @@ class PatientController extends Controller
     public function update(Request $request, Patient $patient)
     {
         $validated = $request->validate([
+            'patient_type' => 'required|in:physique,morale',
+            'nif' => 'required_if:patient_type,morale|nullable|string|max:255',
+            'societe' =>'nullable|string|max:255',
             'first_name' => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name' => 'nullable|string|max:100',

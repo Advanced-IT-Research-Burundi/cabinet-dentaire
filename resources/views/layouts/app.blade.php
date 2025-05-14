@@ -58,7 +58,7 @@
                                 <li><a class="dropdown-item" href="{{ route('patients.index') }}"><i class="bi bi-list-ul me-1"></i> Liste des patients</a></li>
                                 <li><a class="dropdown-item" href="{{ route('patients.create') }}"><i class="bi bi-person-plus-fill me-1"></i> Nouveau patient</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ route('patients.search') }}"><i class="bi bi-search me-1"></i> Recherche avancée</a></li>
+                                {{-- <li><a class="dropdown-item" href="{{ route('patients.search') }}"><i class="bi bi-search me-1"></i> Recherche avancée</a></li> --}}
                             </ul>
                         </li>
 

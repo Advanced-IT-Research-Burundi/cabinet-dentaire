@@ -18,14 +18,33 @@ class InvoiceController extends Controller
         // Recherche par patient
         if ($request->filled('patient')) {
             $searchTerm = $request->patient;
+            $searchTerms = explode(' ', $searchTerm);
 
-            $query->whereHas('patient', function ($q) use ($searchTerm) {
-                $q->where('first_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('middle_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('phone', 'like', '%' . $searchTerm . '%');
+            $query->whereHas('patient', function ($q) use ($searchTerm, $searchTerms) {
+                // Recherche exacte du terme complet
+                $q->where(function($query) use ($searchTerm) {
+                    $query->where('first_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('middle_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('phone', 'like', '%' . $searchTerm . '%');
+                });
+
+                // Si plusieurs mots sont saisis, recherche par combinaison
+                if (count($searchTerms) > 1) {
+                    $q->orWhere(function($query) use ($searchTerms) {
+                        foreach ($searchTerms as $term) {
+                            if (strlen($term) > 2) { 
+                                $query->orWhere('first_name', 'like', '%' . $term . '%')
+                                    ->orWhere('middle_name', 'like', '%' . $term . '%')
+                                    ->orWhere('last_name', 'like', '%' . $term . '%');
+                            }
+                        }
+                    });
+                }
+
+                // Recherche par concaténation des noms
+                $q->orWhereRaw("CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
             });
-            // dd($query->get());
         }
 
         // Recherche par date
@@ -48,10 +67,10 @@ class InvoiceController extends Controller
         $invoices = $query->with('patient')
             ->latest()
             ->paginate(10)
-            ->withQueryString();
+            ->withQueryString(); // Garde les paramètres de recherche lors de la pagination
 
-    return view('invoice.index', compact('invoices'));
-}
+        return view('invoice.index', compact('invoices'));
+    }
 
     public function monthly(){
         return back();
