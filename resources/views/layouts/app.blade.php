@@ -181,7 +181,7 @@
         <!-- Contenu principal -->
         <main class="py-4 flex-grow-1">
             <div class="container-fluid">
-                @if(session('success'))
+                {{-- @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -200,9 +200,9 @@
                         <i class="bi bi-exclamation-circle-fill me-2"></i> {{ session('warning') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                @endif
+                @endif --}}
 
-                <div class="mb-4 row">
+                <div class="mb-0 row">
                     <div class="col-12">
                         <h1 class="page-title">@yield('page-title')</h1>
                         @yield('breadcrumbs')

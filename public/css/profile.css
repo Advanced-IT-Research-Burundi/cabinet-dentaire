@@ -1,0 +1,49 @@
+.profile-header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .profile-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+        .form-control:focus {
+            border-color: #a777e3;
+            box-shadow: 0 0 0 0.25rem rgba(167, 119, 227, 0.25);
+        }
+        .btn-primary {
+            background-color: #6e8efb;
+            border-color: #6e8efb;
+        }
+        .btn-primary:hover {
+            background-color: #5c7df7;
+            border-color: #5c7df7;
+        }
+        .status-badge-active {
+            background-color: #28a745;
+        }
+        .status-badge-inactive {
+            background-color: #dc3545;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #6e8efb;
+        }
+        .tab-icon {
+            margin-right: 8px;
+        }
+        .last-connection {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }

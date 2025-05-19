@@ -3,7 +3,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-0">
     <!-- En-tête avec titre et bouton d'ajout -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>

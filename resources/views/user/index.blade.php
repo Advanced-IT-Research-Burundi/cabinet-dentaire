@@ -70,7 +70,7 @@
                                 <tr>
                                     <td>
                                         @if($user->photo_url)
-                                            <img src="{{ $user->photo_url }}" alt="Photo" class="rounded-circle" width="40" height="40">
+                                            <img src="{{ Storage::url($user->photo_url) }}" alt="Photo" class="rounded-circle" width="40" height="40">
                                         @else
                                             <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
                                                  style="width: 40px; height: 40px;">

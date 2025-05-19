@@ -91,7 +91,9 @@ class DentistController extends Controller
      */
     public function create(): View
     {
-        $users = User::all();
+        $users = User::whereNotIn('id', function ($query) {
+            $query->select('user_id')->from('dentists');
+        })->get();
         return view('dentist.create', compact('users'));
     }
 
@@ -110,7 +112,7 @@ class DentistController extends Controller
             'license_number' => 'required|string|max:255|unique:dentists',
             'biography' => 'nullable|string',
             'calendar_color' => 'required|string|max:7',
-            'is_active' => 'required|boolean',
+            'available' => 'required|boolean',
         ]);
 
         Dentist::create($validatedData);
@@ -140,7 +142,9 @@ class DentistController extends Controller
      */
     public function edit(Dentist $dentist): View
     {
-        $users = User::all();
+        $users = User::whereNotIn('id', function ($query) {
+            $query->select('user_id')->from('dentists');
+        })->get();
         return view('dentist.edit', compact('dentist', 'users'));
     }
 
@@ -154,6 +158,7 @@ class DentistController extends Controller
      */
     public function update(Request $request, Dentist $dentist): RedirectResponse
     {
+
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'specialty' => 'required|string|max:255',
@@ -161,7 +166,7 @@ class DentistController extends Controller
                 $dentist->id,
             'biography' => 'nullable|string',
             'calendar_color' => 'required|string|max:7',
-            'is_active' => 'required|boolean',
+            'available' => 'required|boolean',
         ]);
 
         $dentist->update($validatedData);
