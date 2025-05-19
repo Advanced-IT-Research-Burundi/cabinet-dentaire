@@ -541,9 +541,9 @@
                                                     <a href="{{ route('invoices.edit', $invoice) }}" class="btn btn-sm btn-warning">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="{{ route('invoices.print', $invoice) }}" class="btn btn-sm btn-success" target="_blank">
+                                                    {{-- <a href="{{ route('invoices.print', $invoice) }}" class="btn btn-sm btn-success" target="_blank">
                                                         <i class="bi bi-printer"></i>
-                                                    </a>
+                                                    </a> --}}
                                                 </div>
                                             </td>
                                         </tr>

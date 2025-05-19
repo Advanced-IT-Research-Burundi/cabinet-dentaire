@@ -120,6 +120,15 @@ Route::middleware(['auth'])->group(function () {
     )->name('appointments.today');
 
     Route::get(
+        'rendezvous/finish/{appointment}',
+        [AppointmentController::class, 'finish']
+    )->name('appointments.finish');
+    Route::get(
+        'rendezvous/cancel/{appointment}',
+        [AppointmentController::class, 'cancel']
+    )->name('appointments.cancel');
+
+    Route::get(
         'patients/new',
         [PatientController::class, 'new']
     )->name('patients.new');

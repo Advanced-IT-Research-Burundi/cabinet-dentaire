@@ -46,15 +46,15 @@
                                     @foreach($appointments as $appointment)
                                         <tr>
                                             <td>
-                                                {{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} - 
+                                                {{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} -
                                                 {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}
                                             </td>
                                             <td>
-                                                {{ $appointment->patient->user->prenom }} 
+                                                {{ $appointment->patient->user->prenom }}
                                                 {{ $appointment->patient->user->nom }}
                                             </td>
                                             <td>
-                                                Dr. {{ $appointment->dentist->user->prenom }} 
+                                                Dr. {{ $appointment->dentist->user->prenom }}
                                                 {{ $appointment->dentist->user->nom }}
                                             </td>
                                             <td>{{ $appointment->plannedTreatment->name }}</td>
@@ -81,33 +81,18 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a href="{{ route('appointments.edit', $appointment) }}" 
+                                                    <a href="{{ route('appointments.edit', $appointment) }}"
                                                         class="btn btn-sm btn-outline-primary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <button type="button" class="btn btn-sm btn-outline-success" 
-                                                        onclick="markAsComplete({{ $appointment->id }})">
-                                                        <i class="bi bi-check-lg"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                        onclick="markAsCancelled({{ $appointment->id }})">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
+
+                                                    <a href="{{ route('appointments.finish', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer ce rendez-vous ?')" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
+                                                    <a href="{{ route('appointments.cancel', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></a>
+
+                                                    {{-- <a href="{{ route('appointments.cancel', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></a> --}}
+
                                                 </div>
-                                                <form id="complete-form-{{ $appointment->id }}" 
-                                                    action="{{ route('appointments.update', $appointment) }}" 
-                                                    method="POST" class="d-none">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="Termine">
-                                                </form>
-                                                <form id="cancel-form-{{ $appointment->id }}" 
-                                                    action="{{ route('appointments.update', $appointment) }}" 
-                                                    method="POST" class="d-none">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <input type="hidden" name="status" value="Annule">
-                                                </form>
+
                                             </td>
                                         </tr>
                                     @endforeach

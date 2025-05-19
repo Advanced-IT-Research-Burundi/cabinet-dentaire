@@ -47,13 +47,66 @@ class TreatmentController extends Controller
      */
     public function index(Request $request): View
     {
-        $treatments = Treatment::with([
+        $query = Treatment::query()->with([
             'patient',
             'dentist',
             'treatmentType',
             'appointment'
-        ])->latest()->paginate(10);
-        return view('treatment.index', compact('treatments'));
+        ]);
+
+        // Filtres
+        if ($request->filled('patient_id')) {
+            $query->where('patient_id', $request->patient_id);
+        }
+
+        if ($request->filled('dentist_id')) {
+            $query->where('dentist_id', $request->dentist_id);
+        }
+
+        if ($request->filled('treatment_type_id')) {
+            $query->where('treatment_type_id', $request->treatment_type_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_start') && $request->filled('date_end')) {
+            $query->whereBetween('date', [$request->date_start, $request->date_end]);
+        } elseif ($request->filled('date_start')) {
+            $query->where('date', '>=', $request->date_start);
+        } elseif ($request->filled('date_end')) {
+            $query->where('date', '<=', $request->date_end);
+        }
+
+        // Tri
+        $sortBy = $request->input('sort_by', 'date');
+        $sortOrder = $request->input('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $treatments = $query->paginate($perPage)->withQueryString();
+
+        // Données pour les filtres
+        $patients = Patient::orderBy('last_name')->get();
+        $dentists = Dentist::orderBy('id')->get();
+        $treatmentTypes = TreatmentType::orderBy('name')->get();
+        $statuses = [
+            'Planifie' => 'Planifié',
+            'En_cours' => 'En cours',
+            'Termine' => 'Terminé',
+            'Annule' => 'Annulé'
+        ];
+
+        return view('treatment.index', compact(
+            'treatments',
+            'patients',
+            'dentists',
+            'treatmentTypes',
+            'statuses',
+            'request'
+        ));
     }
 
     /**

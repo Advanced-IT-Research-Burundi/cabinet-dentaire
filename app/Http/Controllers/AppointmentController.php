@@ -125,19 +125,19 @@ class AppointmentController extends Controller
      *
      * @return View
      */
-    public function create(): View
-    {
-        $patients = Patient::all();
-        $dentists = Dentist::with('user')
-           // ->where('is_active', true)
-            ->get();
-        $treatmentTypes = TreatmentType::orderBy('name')->get();
+    // public function create(): View
+    // {
+    //     $patients = Patient::all();
+    //     $dentists = Dentist::with('user')
+    //        // ->where('is_active', true)
+    //         ->get();
+    //     $treatmentTypes = TreatmentType::orderBy('name')->get();
 
-        return view(
-            'appointments.create',
-            compact('patients', 'dentists', 'treatmentTypes')
-        );
-    }
+    //     return view(
+    //         'appointments.create',
+    //         compact('patients', 'dentists', 'treatmentTypes')
+    //     );
+    // }
 
     /**
      * Enregistre un nouveau rendez-vous
@@ -146,6 +146,16 @@ class AppointmentController extends Controller
      *
      * @return RedirectResponse
      */
+
+     public function create()
+    {
+            $appointment = new Appointment();
+            $patients = Patient::orderBy('last_name')->get();
+            $dentists = Dentist::with('user')->get();
+            $treatmentTypes = TreatmentType::orderBy('name')->get();
+
+            return view('appointments.create', compact('appointment', 'patients', 'dentists', 'treatmentTypes'));
+        }
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -170,6 +180,35 @@ class AppointmentController extends Controller
             ->with('success', 'Le rendez-vous a été créé avec succès.');
     }
 
+     public function edit(Appointment $appointment)
+    {
+        $patients = Patient::orderBy('last_name')->get();
+        $dentists = Dentist::with('user')->get();
+        $treatmentTypes = TreatmentType::orderBy('name')->get();
+
+        return view('appointments.edit', compact('appointment', 'patients', 'dentists', 'treatmentTypes'));
+    }
+
+    public function update(Request $request, Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'patient_id' => 'required|exists:patients,id',
+            'dentist_id' => 'required|exists:dentists,id',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'planned_treatment_id' => 'required|exists:treatment_types,id',
+            'reason' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:En_attente,Confirme,Annule,Reporte',
+        ]);
+
+        $appointment->update($validated);
+
+        return redirect()->route('appointments.show', $appointment)
+            ->with('success', 'Rendez-vous mis à jour avec succès.');
+    }
+
     /**
      * Affiche les rendez-vous du jour
      *
@@ -191,7 +230,7 @@ class AppointmentController extends Controller
         $appointment->update(['status' => 'Termine']);
 
         return redirect()
-            ->route('appointments.index')
+            ->route('appointments.today')
             ->with('success', 'Le rendez-vous a été marqué comme terminé.');
     }
     // Annuler un rendez-vous
@@ -200,7 +239,7 @@ class AppointmentController extends Controller
         $appointment->update(['status' => 'Annule']);
 
         return redirect()
-            ->route('appointments.index')
+            ->route('appointments.today')
             ->with('success', 'Le rendez-vous a été annulé avec succès.');
     }
     // Reporter un rendez-vous

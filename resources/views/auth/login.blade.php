@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Connexion - Cabinet Dentaire</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.13.1/bootstrap-icons.min.css') }}">
     <style>
         :root {
             --primary: #1e73be;
@@ -392,12 +392,12 @@
                     <div class="form-group">
                         <label for="email">Adresse Email</label>
                         <div class="input-group">
-                            <i class="fas fa-envelope"></i>
+                            <i class="bi bi-envelope"></i>
                             <input type="email" id="email" name="email" class="form-control" placeholder="Entrez votre email" required autofocus>
                         </div>
                         @error('email')
                             <div class="error-message">
-                                <i class="fas fa-exclamation-circle"></i>
+                                <i class="bi bi-exclamation-circle"></i>
                                 {{ $message }}
                             </div>
                         @enderror
@@ -406,7 +406,7 @@
                     <div class="form-group">
                         <label for="password">Mot de passe</label>
                         <div class="input-group">
-                            <i class="fas fa-lock"></i>
+                            <i class="bi bi-lock"></i>
                             <input type="password" id="password" name="password" class="form-control" placeholder="Entrez votre mot de passe" required>
                         </div>
                         @error('password')
