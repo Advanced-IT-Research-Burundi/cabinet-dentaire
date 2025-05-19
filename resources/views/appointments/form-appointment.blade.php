@@ -1,4 +1,10 @@
 <div class="card">
+    @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
     <div class="card-body">
         <form action="{{ $appointment->exists ? route('appointments.update', $appointment) : route('appointments.store') }}" method="POST">
             @csrf
@@ -8,34 +14,67 @@
 
             <div class="mb-3 row">
                 <div class="col-md-6">
-                    <label for="patient_id" class="form-label">Patient</label>
-                    <select name="patient_id" id="patient_id" class="form-select @error('patient_id') is-invalid @enderror" required>
-                        <option value="">Sélectionner un patient</option>
-                        @foreach($patients as $patient)
-                            <option value="{{ $patient->id }}" {{ old('patient_id', $appointment->patient_id) == $patient->id ? 'selected' : '' }}>
-                                {{ $patient->first_name }} {{ $patient->last_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('patient_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                    <div class="form-group mb-3">
+                        <label for="patient_select" class="form-label fw-bold">Patient <span class="text-danger">*</span></label>
+                        <div class="select-container">
+                            <div class="custom-select @error('patient_id') is-invalid @enderror">
+                                <div class="select-selected" id="patient_selected">
+                                    {{ isset($treatment) && $treatment->patient ? $treatment->patient->full_name : 'Sélectionnez un patient' }}
+                                </div>
+                                <div class="select-dropdown">
+                                    <div class="select-search">
+                                        <input type="text" class="form-control" placeholder="Rechercher un patient..." id="patient_search">
+                                    </div>
+                                    <div class="select-options" id="patient_options">
+                                        @foreach($patients as $patient)
+                                            <div class="select-option" data-value="{{ $patient->id }}" data-display="{{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}">
+                                                {{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="patient_id" id="patient_id" value="{{ old('patient_id', isset($treatment) ? $treatment->patient_id : '') }}">
+                            @error('patient_id')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="dentist_id" class="form-label">Dentiste</label>
-                    <select name="dentist_id" id="dentist_id" class="form-select @error('dentist_id') is-invalid @enderror" required>
-                        <option value="">Sélectionner un dentiste</option>
-                        @foreach($dentists as $dentist)
-                            <option value="{{ $dentist->id }}" {{ old('dentist_id', $appointment->dentist_id) == $dentist->id ? 'selected' : '' }}>
-                                Dr. {{ $dentist->user->first_name }} {{ $dentist->user->last_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('dentist_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="form-group mb-3">
+                    <label for="dentist_select" class="form-label fw-bold">Dentiste <span class="text-danger">*</span></label>
+                    <div class="select-container">
+                        <div class="custom-select @error('dentist_id') is-invalid @enderror">
+                            <div class="select-selected" id="dentist_selected">
+                                @if (isset($treatment))
+                                        {{ $treatment->dentist ? ($treatment->dentist->user?->full_name ?? "#{$treatment->dentist_id}") : 'Sélectionnez un dentiste' }}
+                                    @else
+                                        Sélectionnez un dentiste
+                                    @endif
+
+                            </div>
+                            <div class="select-dropdown">
+                                <div class="select-search">
+                                    <input type="text" class="form-control" placeholder="Rechercher un dentiste..." id="dentist_search">
+                                </div>
+                                <div class="select-options" id="dentist_options">
+                                    @foreach($dentists as $dentist)
+                                        <div class="select-option" data-value="{{ $dentist->id }}" data-display="{{ $dentist->id }} - {{ isset($treatment) ? $dentist->user->full_name : $dentist->user->first_name . ' ' . $dentist->user->last_name }}">
+                                            {{ $dentist->id }} - {{ isset($treatment) ? $dentist->user->full_name : $dentist->user->first_name . ' ' . $dentist->user->last_name }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="dentist_id" id="dentist_id" value="{{ old('dentist_id', isset($treatment) ? $treatment->dentist_id : '') }}">
+                        @error('dentist_id')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
+            </div>
             </div>
 
             <div class="mb-3 row">
@@ -67,19 +106,33 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="planned_treatment_id" class="form-label">Type de traitement</label>
-                <select name="planned_treatment_id" id="planned_treatment_id" class="form-select @error('planned_treatment_id') is-invalid @enderror" required>
-                    <option value="">Sélectionner un traitement</option>
-                    @foreach($treatmentTypes as $type)
-                        <option value="{{ $type->id }}" {{ old('planned_treatment_id', $appointment->planned_treatment_id) == $type->id ? 'selected' : '' }}>
-                            {{ $type->name }} - {{ number_format($type->cost, 2) }} FBU
-                        </option>
-                    @endforeach
-                </select>
-                @error('planned_treatment_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+             <div class="col-md-12">
+                <div class="form-group mb-3">
+                    <label for="treatment_type_select" class="form-label fw-bold">Type de traitement <span class="text-danger">*</span></label>
+                    <div class="select-container">
+                        <div class="custom-select @error('planned_treatment_id') is-invalid @enderror">
+                            <div class="select-selected" id="treatment_type_selected">
+                                {{ isset($treatment) && $treatment->treatmentType ? $treatment->treatmentType->name : 'Sélectionnez un type' }}
+                            </div>
+                            <div class="select-dropdown">
+                                <div class="select-search">
+                                    <input type="text" class="form-control" placeholder="Rechercher un type..." id="treatment_type_search">
+                                </div>
+                                <div class="select-options" id="treatment_type_options">
+                                    @foreach($treatmentTypes as $type)
+                                        <div class="select-option" data-value="{{ $type->id }}" data-price="{{ $type->base_price }}">
+                                            {{ $type->name }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="planned_treatment_id" id="planned_treatment_id" value="{{ old('planned_treatment_id', isset($treatment) ? $treatment->planned_treatment_id : '') }}">
+                        @error('planned_treatment_id')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3">

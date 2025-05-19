@@ -121,4 +121,8 @@ class DashboardController extends Controller
 
         return response()->json(['monthlyInvoices' => $monthlyInvoices]);
     }
+    public function parametrage()
+    {
+        return view('admin.parametrage');
+    }
 }

@@ -92,6 +92,9 @@ class User extends Authenticatable
     {
         return $this->role === 'Pharmacist';
     }
-
+    public function dentist()
+    {
+        return $this->hasOne(Dentist::class);
+    }
 
 }

@@ -23,6 +23,8 @@ use App\Models\TreatmentType;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  * Gestion des rendez-vous dans l'application.
@@ -156,29 +158,59 @@ class AppointmentController extends Controller
 
             return view('appointments.create', compact('appointment', 'patients', 'dentists', 'treatmentTypes'));
         }
+
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'patient_id' => 'required|exists:patients,id',
-            'dentist_id' => 'required|exists:dentists,id',
-            'date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'reason' => 'nullable|string|max:1000',
-            'notes' => 'nullable|string|max:1000',
-            'status' => 'required|in:Confirme,Annule,Termine,En_attente,Reporte',
-            'planned_treatment_id' => 'required|exists:treatment_types,id',
-        ]);
+        try {
+            $validated = $request->validate([
+                'patient_id' => 'required|exists:patients,id',
+                'dentist_id' => 'required|exists:dentists,id',
+                'date' => 'required|date|after_or_equal:today',
+                'start_time' => 'required|date_format:H:i',
+                'end_time' => 'required|date_format:H:i|after:start_time',
+                'reason' => 'nullable|string|max:1000',
+                'notes' => 'nullable|string|max:1000',
+                'status' => 'required|in:Confirme,Annule,Termine,En_attente,Reporte',
+                'planned_treatment_id' => 'required|exists:treatment_types,id',
+            ]);
 
-        $validated['creator_id'] = auth()->id();
-        $validated['reminder_sent'] = false;
+            // Vérifier les conflits de rendez-vous pour le dentiste
+            $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
+                ->where('date', $validated['date'])
+                ->where(function ($query) use ($validated) {
+                    $query->whereBetween('start_time', [$validated['start_time'], $validated['end_time']])
+                        ->orWhereBetween('end_time', [$validated['start_time'], $validated['end_time']])
+                        ->orWhere(function ($query) use ($validated) {
+                            $query->where('start_time', '<=', $validated['start_time'])
+                                    ->where('end_time', '>=', $validated['end_time']);
+                        });
+                })
+                ->exists();
 
-        Appointment::create($validated);
+            if ($conflict) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Un autre rendez-vous existe déjà dans ce créneau horaire pour ce dentiste.');
+            }
 
-        return redirect()
-            ->route('appointments.index')
-            ->with('success', 'Le rendez-vous a été créé avec succès.');
+            $validated['creator_id'] = auth()->id();
+            $validated['reminder_sent'] = false;
+
+            Appointment::create($validated);
+
+            return redirect()
+                ->route('appointments.index')
+                ->with('success', 'Le rendez-vous a été créé avec succès.');
+
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la création du rendez-vous. Vérifiez les données saisies et veuillez réessayer.');
+        }
     }
+
 
      public function edit(Appointment $appointment)
     {
@@ -203,6 +235,25 @@ class AppointmentController extends Controller
             'status' => 'required|in:En_attente,Confirme,Annule,Reporte',
         ]);
 
+        // Vérifier les conflits de rendez-vous pour le dentiste
+            $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
+                ->where('date', $validated['date'])
+                ->where(function ($query) use ($validated) {
+                    $query->whereBetween('start_time', [$validated['start_time'], $validated['end_time']])
+                        ->orWhereBetween('end_time', [$validated['start_time'], $validated['end_time']])
+                        ->orWhere(function ($query) use ($validated) {
+                            $query->where('start_time', '<=', $validated['start_time'])
+                                    ->where('end_time', '>=', $validated['end_time']);
+                        });
+                })
+                ->exists();
+
+            if ($conflict) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Un autre rendez-vous existe déjà dans ce créneau horaire pour ce dentiste.');
+            }
         $appointment->update($validated);
 
         return redirect()->route('appointments.show', $appointment)

@@ -50,8 +50,8 @@
                                                 {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}
                                             </td>
                                             <td>
-                                                {{ $appointment->patient->user->prenom }}
-                                                {{ $appointment->patient->user->nom }}
+                                                {{ $appointment->patient->first_name }}
+                                                {{ $appointment->patient->last_name }}
                                             </td>
                                             <td>
                                                 Dr. {{ $appointment->dentist->user->prenom }}

@@ -22,7 +22,7 @@
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/sweetalert2@11.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/custom-select.css') }}">
     @stack('styles')
     @livewireStyles
 </head>
@@ -155,7 +155,7 @@
                                 <li><a class="dropdown-item" href="{{ route('settings') }}"><i class="bi bi-gear me-1"></i> Paramètres</a></li>
                                 @if(Auth::user()->role === 'Admin')
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('parametres') }}"><i class="bi bi-shield-lock me-1"></i> Administration</a></li>
                                     <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="bi bi-people me-1"></i> Utilisateurs</a></li>
                                     <li><a class="dropdown-item" href="{{ route('dentists.index') }}"><i class="bi bi-hospital me-1"></i> Gestion des dentistes</a></li>
                                     <li><a class="dropdown-item" href="{{ route('assurances.index') }}"><i class="bi bi-shield-plus me-1"></i> Gestion des assurances</a></li>
@@ -236,6 +236,7 @@
     <script src="{{asset('js/sweetalert2@11.js')}}"></script>
     <!-- Custom JS -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/custom-select.js') }}"></script>
     @livewireScripts
     @yield('scripts')
     @stack('scripts')

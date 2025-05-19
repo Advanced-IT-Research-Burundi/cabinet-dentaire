@@ -34,6 +34,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\MouvementStockController;
 use App\Http\Controllers\MovementStockController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\ParametrageController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -55,6 +56,14 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile/address', [ProfileController::class, 'updateAddress'])->name('profile.update.address');
     Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
+    Route::get('parametres', [ParametrageController::class, 'index'])->name('parametres');
+
+    // Route::get('/parametrage', [ParametrageController::class, 'index'])->name('parametrage.index');
+
+    // Routes pour les informations de l'entreprise
+    Route::put('/parametrage/company/update', [ParametrageController::class, 'updateCompany'])->name('parametrage.company.update');
+
+
 
     Route::resource('patients', PatientController::class);
     Route::resource('dentists', DentistController::class);

@@ -57,6 +57,8 @@ final class AppointmentControllerTest extends TestCase
     #[Test]
     public function store_saves_and_redirects(): void
     {
+        dd('test');
+
         $patient = Patient::factory()->create();
         $dentist = Dentist::factory()->create();
         $date = Carbon::parse(fake()->date());
