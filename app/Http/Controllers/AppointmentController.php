@@ -107,6 +107,7 @@ class AppointmentController extends Controller
                 'start' => $appointment->date->format('Y-m-d') . 'T' . $appointment->start_time,
                 'end' => $appointment->date->format('Y-m-d') . 'T' . $appointment->end_time,
                 'treatment' => $appointment->plannedTreatment->name,
+                'notes' => $appointment->notes,
                 'backgroundColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
                 'borderColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
                 'extendedProps' => [
