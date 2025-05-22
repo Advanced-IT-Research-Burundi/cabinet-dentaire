@@ -96,6 +96,9 @@
                                             @case('Secretaire')
                                                 <span class="badge bg-info">Secrétaire</span>
                                                 @break
+                                             @case('Pharmacist')
+                                                <span class="badge bg-secondary">Pharmacien</span>
+                                            @break
                                         @endswitch
                                     </td>
                                     <td>

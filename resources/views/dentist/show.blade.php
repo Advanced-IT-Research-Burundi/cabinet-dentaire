@@ -26,7 +26,7 @@
             <div class="row align-items-center">
                 <div class="col-auto">
                     @if($dentist->user->photo_url)
-                        <img src="{{ $dentist->user->photo_url }}" alt="Photo de Profil" class="rounded-circle" width="80" height="80">
+                        <img src="{{ Storage::url($dentist->user->photo_url) }}" alt="Photo de Profil" class="rounded-circle" width="80" height="80">
                     @else
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2rem;">
                             <i class="bi bi-person"></i>

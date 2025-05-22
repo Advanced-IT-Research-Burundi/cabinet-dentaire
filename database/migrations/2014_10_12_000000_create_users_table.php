@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('photo_url')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['Admin', 'Dentiste', 'Secretaire']);
+            $table->enum('role', ['Admin', 'Dentiste', 'Secretaire','Pharmacist']);
             $table->timestamp('derniere_connexion')->nullable();
             $table->enum('statut', ['Actif', 'Inactif'])->default('Actif');
             $table->rememberToken();

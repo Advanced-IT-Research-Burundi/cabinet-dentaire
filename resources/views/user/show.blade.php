@@ -29,9 +29,9 @@
                     <div class="row align-items-center mb-4">
                         <div class="col-auto">
                             @if($user->photo_url)
-                                <img src="{{ $user->photo_url }}" alt="Photo" class="rounded-circle" width="100" height="100">
+                                <img src="{{ Storage::url($user->photo_url) }}" alt="Photo" class="rounded-circle" width="100" height="100">
                             @else
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" 
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
                                      style="width: 100px; height: 100px; font-size: 2.5rem;">
                                     {{ strtoupper(substr($user->first_name, 0, 1)) }}
                                 </div>

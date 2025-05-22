@@ -52,7 +52,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:Admin,Dentiste,Secretaire',
+            'role' => 'required|in:Admin,Dentiste,Secretaire,Pharmacist',
             'phone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string|max:255',
             'ville' => 'nullable|string|max:100',
@@ -64,6 +64,13 @@ class UserController extends Controller
             'statut' => 'required|in:Actif,Inactif',
         ]);
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $filename = 'user_' . time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+            $photoPath = $photo->storeAs('users/photos', $filename, 'public');
+        }
+        $validated['photo_url'] = $photoPath;
         $validated['password'] = Hash::make($validated['password']);
         $validated['name'] = $validated['first_name'] . ' ' . $validated['last_name'];
 
@@ -90,7 +97,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:Admin,Dentiste,Secretaire',
+            'role' => 'required|in:Admin,Dentiste,Secretaire,Pharmacist',
             'phone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string|max:255',
             'ville' => 'nullable|string|max:100',
@@ -101,6 +108,18 @@ class UserController extends Controller
             'photo_url' => 'nullable|string|max:255',
             'statut' => 'required|in:Actif,Inactif',
         ]);
+
+        $photoPath = $user->photo_url;
+        if ($request->hasFile('photo')) {
+            if ($user->photo_url && Storage::disk('public')->exists($user->photo_url)) {
+                Storage::disk('public')->delete($user->photo_url);
+            }
+
+            $photo = $request->file('photo');
+            $filename = 'user_' . $user->id . '_' . time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+            $photoPath = $photo->storeAs('users/photos', $filename, 'public');
+        }
+        $validated['photo_url'] = $photoPath;
 
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($validated['password']);
