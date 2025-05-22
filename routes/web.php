@@ -35,6 +35,7 @@ use App\Http\Controllers\MouvementStockController;
 use App\Http\Controllers\MovementStockController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ParametrageController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -224,6 +225,19 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::resource('stock_movements', StockMovementController::class);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::prefix('admin/sessions')->name('admin.sessions.')->group(function () {
+        Route::post('/logout/{userId}', [AdminController::class, 'logoutUser'])->name('logout.user');
+        Route::post('/logout-all', [AdminController::class, 'logoutAllUsers'])->name('logout.all');
+        Route::post('/suspend/{sessionId}', [AdminController::class, 'suspendSession'])->name('suspend');
+        Route::post('/suspend-inactive', [AdminController::class, 'suspendInactiveSessions'])->name('suspend.inactive');
+        Route::get('/export', [AdminController::class, 'exportSessions'])->name('export');
+    });
+    Route::get('/admin/stats/update', [AdminController::class, 'updateStats'])->name('admin.stats.update');
+    Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings.index');
+});
 
 require __DIR__.'/auth.php';
 

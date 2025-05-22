@@ -97,4 +97,66 @@ class User extends Authenticatable
         return $this->hasOne(Dentist::class);
     }
 
+    public function sessions()
+    {
+        return \DB::table('sessions')->where('user_id', $this->id);
+    }
+    public function activeSessions()
+    {
+        $now = now()->timestamp;
+
+        return \DB::table('sessions')
+            ->where('user_id', $this->id)
+            ->get()
+            ->map(function ($session) use ($now) {
+                return [
+                    'session_id'   => $session->id,
+                    'ip_address'   => $session->ip_address,
+                    'user_agent'   => $session->user_agent,
+                    'last_activity'=> Carbon\Carbon::createFromTimestamp($session->last_activity),
+                    'duration'     => Carbon\Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
+                    'is_active'    => ($now - $session->last_activity) <= config('session.lifetime') * 60,
+                ];
+            });
+    }
+    public function lastConnection()
+    {
+        $session = \DB::table('sessions')
+            ->where('user_id', $this->id)
+            ->orderByDesc('last_activity')
+            ->first();
+
+        return $session
+            ? Carbon\Carbon::createFromTimestamp($session->last_activity)
+            : null;
+    }
+    public function isOnline()
+    {
+        $sessionLifetime = config('session.lifetime') * 30;
+
+        return \DB::table('sessions')
+            ->where('user_id', $this->id)
+            ->where('last_activity', '>=', now()->timestamp - $sessionLifetime)
+            ->exists();
+    }
+    public function onlineUsers()
+    {
+        $online = \DB::table('sessions')
+            ->whereNotNull('user_id')
+            ->where('last_activity', '>=', now()->timestamp - config('session.lifetime') * 60)
+            ->pluck('user_id')
+            ->unique();
+
+        return User::whereIn('id', $online)->get();
+    }
+    public function isEnabled()
+    {
+        return $this->is_active;
+    }
+    public function logoutUserSessions($userId)
+    {
+        DB::table('sessions')->where('user_id', $userId)->delete();
+    }
+
+
 }

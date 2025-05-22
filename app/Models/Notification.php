@@ -27,6 +27,7 @@ class Notification extends Model
         'sent_date',
         'read_date',
         'send_method',
+        'read_at'
     ];
 
     /**
