@@ -129,6 +129,8 @@ Route::middleware(['auth'])->group(function () {
         'rendezvous/cancel/{appointment}',
         [AppointmentController::class, 'cancel']
     )->name('appointments.cancel');
+    Route::get('rendezvous/reschedule/{appointment}',[AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+    Route::get('rendezvous/confirm/{appointment}',[AppointmentController::class, 'confirm'])->name('appointments.confirm');
 
     Route::get(
         'patients/new',

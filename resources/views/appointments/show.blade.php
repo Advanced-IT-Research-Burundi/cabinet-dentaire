@@ -126,7 +126,6 @@
                 </div>
             </div>
 
-            {{-- Section pour les historiques et commentaires si nécessaire --}}
             <div class="card">
                 <div class="card-header bg-white">
                     <h5 class="mb-0">Historique</h5>
@@ -155,59 +154,58 @@
 
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        @if($appointment->status !== 'Confirme')
-                            <a href="#" onclick="event.preventDefault(); document.getElementById('confirm-form').submit();" class="btn btn-success mb-2">
-                                <i class="bi bi-check-circle me-1"></i> Confirmer ce rendez-vous
-                            </a>
-                            <form id="confirm-form" action="{{ route('appointments.update', $appointment) }}" method="POST" class="d-none">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="patient_id" value="{{ $appointment->patient_id }}">
-                                <input type="hidden" name="dentist_id" value="{{ $appointment->dentist_id }}">
-                                <input type="hidden" name="date" value="{{ $appointment->date }}">
-                                <input type="hidden" name="start_time" value="{{ $appointment->start_time }}">
-                                <input type="hidden" name="end_time" value="{{ $appointment->end_time }}">
-                                <input type="hidden" name="planned_treatment_id" value="{{ $appointment->planned_treatment_id }}">
-                                <input type="hidden" name="reason" value="{{ $appointment->reason }}">
-                                <input type="hidden" name="notes" value="{{ $appointment->notes }}">
-                                <input type="hidden" name="status" value="Confirme">
-                            </form>
-                        @endif
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Actions</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
 
-                        @if($appointment->status !== 'Annule')
-                            <a href="#" onclick="event.preventDefault(); document.getElementById('cancel-form').submit();" class="btn btn-outline-danger mb-2">
-                                <i class="bi bi-x-circle me-1"></i> Annuler ce rendez-vous
-                            </a>
-                            <form id="cancel-form" action="{{ route('appointments.update', $appointment) }}" method="POST" class="d-none">
-                                @csrf
-                                @method('PUT')
-                                <input type="hidden" name="patient_id" value="{{ $appointment->patient_id }}">
-                                <input type="hidden" name="dentist_id" value="{{ $appointment->dentist_id }}">
-                                <input type="hidden" name="date" value="{{ $appointment->date }}">
-                                <input type="hidden" name="start_time" value="{{ $appointment->start_time }}">
-                                <input type="hidden" name="end_time" value="{{ $appointment->end_time }}">
-                                <input type="hidden" name="planned_treatment_id" value="{{ $appointment->planned_treatment_id }}">
-                                <input type="hidden" name="reason" value="{{ $appointment->reason }}">
-                                <input type="hidden" name="notes" value="{{ $appointment->notes }}">
-                                <input type="hidden" name="status" value="Annule">
-                            </form>
-                        @endif
+            @if($appointment->status === 'Confirme')
+                <a href="#" class="btn btn-success mb-2">
+                    <i class="bi bi-check2-circle me-1"></i> Terminer ce rendez-vous
+                </a>
 
-                        <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-outline-primary mb-2">
-                            <i class="bi bi-pencil me-1"></i> Modifier ce rendez-vous
-                        </a>
+                <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-outline-primary mb-2">
+                    <i class="bi bi-calendar2-plus me-1"></i> Replanifier
+                </a>
 
-                        <button type="button" class="btn btn-outline-secondary mb-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="bi bi-trash me-1"></i> Supprimer ce rendez-vous
-                        </button>
-                    </div>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('cancel-form').submit();" class="btn btn-outline-danger mb-2">
+                    <i class="bi bi-x-circle me-1"></i> Annuler
+                </a>
+
+            @elseif($appointment->status === 'En_attente' || $appointment->status === 'Reporte')
+                <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-outline-primary mb-2">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </a>
+
+                <a href="#" onclick="event.preventDefault(); document.getElementById('confirm-form').submit();" class="btn btn-success mb-2">
+                    <i class="bi bi-check-circle me-1"></i> Confirmer
+                </a>
+
+                <a href="#" onclick="event.preventDefault(); document.getElementById('cancel-form').submit();" class="btn btn-outline-danger mb-2">
+                    <i class="bi bi-x-circle me-1"></i> Annuler
+                </a>
+
+                    @elseif($appointment->status === 'Termine' || $appointment->status === 'Annule')
+                        <span class="text-muted"><i class="bi bi-eye"></i> Vue uniquement</span>
+                    @endif
+
+                    <form id="cancel-form" action="{{ route('appointments.update', $appointment) }}" method="POST" class="d-none">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status" value="Annule">
+                    </form>
+
+                    <form id="confirm-form" action="{{ route('appointments.update', $appointment) }}" method="POST" class="d-none">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="status" value="Confirme">
+                    </form>
+
                 </div>
             </div>
+        </div>
+
 
             <div class="card">
                 <div class="card-header bg-white">

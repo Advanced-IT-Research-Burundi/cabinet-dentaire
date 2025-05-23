@@ -87,9 +87,8 @@
                                                     </a>
 
                                                     <a href="{{ route('appointments.finish', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer ce rendez-vous ?')" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
+                                                    <a href=" {{ route('appointments.reschedule', $appointment)}}"  class="btn btn-sm btn-outline-warning"><i class="bi bi-arrow-clockwise"></i></a>
                                                     <a href="{{ route('appointments.cancel', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></a>
-
-                                                    {{-- <a href="{{ route('appointments.cancel', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></a> --}}
 
                                                 </div>
 

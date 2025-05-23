@@ -282,7 +282,7 @@ class AppointmentController extends Controller
         $appointment->update(['status' => 'Termine']);
 
         return redirect()
-            ->route('appointments.today')
+            ->back()
             ->with('success', 'Le rendez-vous a été marqué comme terminé.');
     }
     // Annuler un rendez-vous
@@ -291,7 +291,7 @@ class AppointmentController extends Controller
         $appointment->update(['status' => 'Annule']);
 
         return redirect()
-            ->route('appointments.today')
+            ->back()
             ->with('success', 'Le rendez-vous a été annulé avec succès.');
     }
     // Reporter un rendez-vous
@@ -299,9 +299,32 @@ class AppointmentController extends Controller
     {
         $appointment->update(['status' => 'Reporte']);
 
+        $nextAvailableSlot = $this->findNextAvailableSlot($appointment);
+
+        if (!$nextAvailableSlot) {
+            return redirect()->back()->with('error', 'Aucun créneau disponible trouvé pour reprogrammer ce rendez-vous.');
+        }
+
+        $appointment->update([
+            'date' => $nextAvailableSlot['date'],
+            'start_time' => $nextAvailableSlot['start_time'],
+            'end_time' => $nextAvailableSlot['end_time'],
+            'status' => 'En_attente',
+        ]);
+
         return redirect()
-            ->route('appointments.index')
-            ->with('success', 'Le rendez-vous a été reporté avec succès.');
+            ->back()
+            ->with('success', 'Le rendez-vous a été reprogrammé avec succès.');
+    }
+
+    // Confirmer un rendez-vous
+    public function confirm(Appointment $appointment): RedirectResponse
+    {
+        $appointment->update(['status' => 'Confirme']);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Le rendez-vous a été confirmé avec succès.');
     }
     // Supprimer un rendez-vous
     public function destroy(Appointment $appointment): RedirectResponse
@@ -309,7 +332,47 @@ class AppointmentController extends Controller
         $appointment->delete();
 
         return redirect()
-            ->route('appointments.index')
+            ->back()
             ->with('success', 'Le rendez-vous a été supprimé avec succès.');
     }
+
+    protected function findNextAvailableSlot(Appointment $appointment)
+    {
+        $duration = strtotime($appointment->end_time) - strtotime($appointment->start_time);
+        $startDate = now();
+        $maxDaysToLook = 7;
+
+        for ($i = 0; $i < $maxDaysToLook; $i++) {
+            $date = $startDate->copy()->addDays($i)->format('Y-m-d');
+
+            // Exemple : créneaux de 7h à 18h
+            for ($hour = 8; $hour <= 17; $hour++) {
+                $start = sprintf('%02d:00:00', $hour);
+                $end = date('H:i:s', strtotime("+$duration seconds", strtotime($start)));
+
+                $conflict = Appointment::where('dentist_id', $appointment->dentist_id)
+                    ->where('date', $date)
+                    ->where(function ($query) use ($start, $end) {
+                        $query->whereBetween('start_time', [$start, $end])
+                            ->orWhereBetween('end_time', [$start, $end])
+                            ->orWhere(function ($query) use ($start, $end) {
+                                $query->where('start_time', '<=', $start)
+                                    ->where('end_time', '>=', $end);
+                            });
+                    })
+                    ->exists();
+
+                if (!$conflict) {
+                    return [
+                        'date' => $date,
+                        'start_time' => $start,
+                        'end_time' => $end,
+                    ];
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

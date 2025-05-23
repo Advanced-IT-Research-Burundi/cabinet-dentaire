@@ -31,10 +31,13 @@
                     <h5 class="card-title">Informations</h5>
                     <p class="card-text">Vous êtes en train de modifier un rendez-vous existant.</p>
                     <div class="mb-3">
-                        <strong>Patient:</strong> {{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}
+                        <strong>Patient:</strong> {{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }} &nbsp; <strong>ID</strong> #{{ $appointment->patient->id }}
                     </div>
                     <div class="mb-3">
                         <strong>Dentiste:</strong> Dr. {{ $appointment->dentist->user->first_name }} {{ $appointment->dentist->user->last_name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Traitement:</strong> {{ $appointment->plannedTreatment->name }}
                     </div>
                     <div class="mb-3">
                         <strong>Date créée:</strong> {{ $appointment->created_at->format('d/m/Y H:i') }}
