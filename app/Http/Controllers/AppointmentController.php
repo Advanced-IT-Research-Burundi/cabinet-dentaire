@@ -283,7 +283,7 @@ class AppointmentController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', 'Le rendez-vous a été marqué comme terminé.');
+            ->with('info', 'Le rendez-vous a été marqué comme terminé.');
     }
     // Annuler un rendez-vous
     public function cancel(Appointment $appointment): RedirectResponse

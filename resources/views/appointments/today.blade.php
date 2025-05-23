@@ -58,41 +58,72 @@
                                                 {{ $appointment->dentist->user->nom }}
                                             </td>
                                             <td>{{ $appointment->plannedTreatment->name }}</td>
-                                            <td>
-                                                @php
-                                                    $statusClasses = [
-                                                        'Confirme' => 'bg-success',
-                                                        'Annule' => 'bg-danger',
-                                                        'Termine' => 'bg-info',
-                                                        'En_attente' => 'bg-warning',
-                                                        'Reporte' => 'bg-secondary'
-                                                    ];
-                                                    $statusLabels = [
-                                                        'Confirme' => 'Confirmé',
-                                                        'Annule' => 'Annulé',
-                                                        'Termine' => 'Terminé',
-                                                        'En_attente' => 'En attente',
-                                                        'Reporte' => 'Reporté'
-                                                    ];
-                                                @endphp
-                                                <span class="badge {{ $statusClasses[$appointment->status] }}">
-                                                    {{ $statusLabels[$appointment->status] }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group">
+                                                <td>
+                                            @php
+                                                $statusClasses = [
+                                                    'Confirme' => 'bg-success',
+                                                    'Annule' => 'bg-danger',
+                                                    'Termine' => 'bg-info',
+                                                    'En_attente' => 'bg-warning',
+                                                    'Reporte' => 'bg-secondary'
+                                                ];
+                                                $statusLabels = [
+                                                    'Confirme' => 'Confirmé',
+                                                    'Annule' => 'Annulé',
+                                                    'Termine' => 'Terminé',
+                                                    'En_attente' => 'En attente',
+                                                    'Reporte' => 'Reporté'
+                                                ];
+                                            @endphp
+                                            <span class="badge {{ $statusClasses[$appointment->status] }}">
+                                                {{ $statusLabels[$appointment->status] }}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <div class="btn-group">
+                                                @if(in_array($appointment->status, ['Confirme', 'En_attente', 'Reporte']))
                                                     <a href="{{ route('appointments.edit', $appointment) }}"
                                                         class="btn btn-sm btn-outline-primary">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
+                                                @endif
 
-                                                    <a href="{{ route('appointments.finish', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer ce rendez-vous ?')" class="btn btn-sm btn-outline-success"><i class="bi bi-check-lg"></i></a>
-                                                    <a href=" {{ route('appointments.reschedule', $appointment)}}"  class="btn btn-sm btn-outline-warning"><i class="bi bi-arrow-clockwise"></i></a>
-                                                    <a href="{{ route('appointments.cancel', $appointment) }}" onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></a>
-
-                                                </div>
-
-                                            </td>
+                                                @if($appointment->status === 'Confirme')
+                                                    <a href="{{ route('appointments.finish', $appointment) }}"
+                                                        onclick="return confirm('Êtes-vous sûr de vouloir terminer ce rendez-vous ?')"
+                                                        class="btn btn-sm btn-outline-success">
+                                                        <i class="bi bi-check2-circle"></i>
+                                                    </a>
+                                                    <a href="{{ route('appointments.reschedule', $appointment)}}"
+                                                        class="btn btn-sm btn-outline-warning">
+                                                        <i class="bi bi-arrow-clockwise"></i>
+                                                    </a>
+                                                    <a href="{{ route('appointments.cancel', $appointment) }}"
+                                                        onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')"
+                                                        class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </a>
+                                                @elseif(in_array($appointment->status, ['En_attente', 'Reporte']))
+                                                    <a href="{{ route('appointments.confirm', $appointment) }}"
+                                                        onclick="return confirm('Confirmer ce rendez-vous ?')"
+                                                        class="btn btn-sm btn-outline-success">
+                                                        <i class="bi bi-check-lg"></i>
+                                                    </a>
+                                                    <a href="{{ route('appointments.cancel', $appointment) }}"
+                                                        onclick="return confirm('Êtes-vous sûr de vouloir annuler ce rendez-vous ?')"
+                                                        class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </a>
+                                                @endif
+                                                @if(in_array($appointment->status, ['Termine', 'Annule']))
+                                                    <a href="{{ route('appointments.show', $appointment) }}"
+                                                        class="btn btn-sm btn-outline-secondary">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -201,29 +201,18 @@
                                                 <td>{{ $lastActivity->diffForHumans() }}</td>
                                                 <td>{{ $duration }}</td>
                                                 <td>
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                            <i class="bi bi-three-dots"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('users.show',$user->id)}}">
-                                                                    <i class="bi bi-info-circle me-2"></i>Détails
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item text-warning" href="#" onclick="suspendSession('{{ $session->id }}')">
-                                                                    <i class="bi bi-pause-circle me-2"></i>Suspendre
-                                                                </a>
-                                                            </li>
-                                                            <li><hr class="dropdown-divider"></li>
-                                                            <li>
-                                                                <a class="dropdown-item text-danger" href="#" onclick="logoutUser('{{ $user->id }}')">
-                                                                    <i class="bi bi-power me-2"></i>Déconnecter
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+                                                    <div class="btn-group btn-group-sm" role="group" aria-label="Actions utilisateur">
+                                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-outline-secondary" title="Détails">
+                                                        <i class="bi bi-info-circle"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-warning" title="Suspendre" onclick="suspendSession('{{ $session->id }}')">
+                                                        <i class="bi bi-pause-circle"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger" title="Déconnecter" onclick="logoutUser('{{ $user->id }}')">
+                                                        <i class="bi bi-power"></i>
+                                                    </button>
+                                                </div>
+
                                                 </td>
                                             </tr>
                                         @empty
@@ -897,7 +886,7 @@
         }
     }
 
-    
+
 
     // Filtrage des journaux
     document.getElementById('logLevelFilter')?.addEventListener('change', function() {

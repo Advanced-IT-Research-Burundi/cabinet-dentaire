@@ -136,7 +136,7 @@
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('categories.index') }}">
                                     <i class="bi bi-tag"></i>Categories
                                 </a></li>
-                                <li><a class="dropdown-item modern-dropdown-item" href="">
+                                <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoice.alert') }}">
                                     <i class="bi bi-exclamation-circle"></i>Alertes de stock
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="">
@@ -311,6 +311,11 @@
                 document.body.appendChild(toastContainer);
             }
 
+            // Déclencher la sonnerie si le type est 'info'
+            if (type === 'info') {
+                playAlarmSound();
+            }
+
             const toastId = 'toast-' + Date.now();
             const iconMap = {
                 'success': 'bi-check-circle-fill',
@@ -319,7 +324,6 @@
                 'error': 'bi-x-circle-fill',
                 'info': 'bi-info-circle-fill'
             };
-
             const titleMap = {
                 'success': 'Succès',
                 'warning': 'Attention',
@@ -335,7 +339,6 @@
             toast.style.minWidth = '300px';
 
             const toastTitle = title || titleMap[type];
-
             toast.innerHTML = `
                 <div class="d-flex w-100">
                     <div class="toast-body text-white">
@@ -363,7 +366,6 @@
             // Animation d'entrée
             toast.style.transform = 'translateX(100%)';
             toast.style.opacity = '0';
-
             setTimeout(() => {
                 toast.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
                 toast.style.transform = 'translateX(0)';
@@ -376,6 +378,21 @@
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
             });
+        }
+
+        // Fonction pour jouer la sonnerie
+        function playAlarmSound() {
+            try {
+                const audio = new Audio('/audios/info.mp3');
+                audio.volume = 0.7; // Volume à 50% (ajustable)
+                audio.play().catch(error => {
+                    console.warn('Impossible de jouer la sonnerie:', error);
+                    // Note: Les navigateurs modernes bloquent l'autoplay audio
+                    // sans interaction utilisateur
+                });
+            } catch (error) {
+                console.error('Erreur lors du chargement du fichier audio:', error);
+            }
         }
 
         // Fonction pour marquer toutes les notifications comme lues

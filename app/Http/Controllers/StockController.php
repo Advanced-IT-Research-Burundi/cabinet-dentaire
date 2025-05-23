@@ -134,4 +134,22 @@ class StockController extends Controller
 
         return redirect()->route('stocks.index')->with('success', 'Stock supprimé avec succès.');
     }
+
+    // Liste des produits du stock en alerte
+    public function alert(Request $request)
+    {
+         $search = $request->input('search');
+        $status = $request->input('status');
+        $stocks = Stock::with('category')
+            ->where('quantite', '<=', 'quantite_alert')
+                ->when($search, function ($query, $search) {
+                $query->where('product_name', 'like', "%{$search}%");
+            })
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->paginate(10);
+        return view('stock.alert', compact('stocks'));
+    }
 }
