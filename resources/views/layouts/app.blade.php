@@ -139,7 +139,7 @@
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoice.alert') }}">
                                     <i class="bi bi-exclamation-circle"></i>Alertes de stock
                                 </a></li>
-                                <li><a class="dropdown-item modern-dropdown-item" href="">
+                                <li><a class="dropdown-item modern-dropdown-item" href="{{ route('stock.utilisateur')}}">
                                     <i class="bi bi-graph-up"></i>Utilisation
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('suppliers.index') }}">

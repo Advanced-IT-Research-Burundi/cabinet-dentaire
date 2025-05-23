@@ -271,10 +271,16 @@ class CreateInvoice extends Component
                     'updated_at' => now(),
                 ];
                 unset($stock->created_at, $stock->updated_at);
-                $listeUpdateStocks[] = [
-                    ...$stock->toArray(),
+                $arrayStock = $stock->toArray();
+
+                // Vérifie si la date est présente et la convertit
+                if (!empty($arrayStock['date_expiration'])) {
+                    $arrayStock['date_expiration'] = \Carbon\Carbon::parse($arrayStock['date_expiration'])->format('Y-m-d H:i:s');
+                }
+
+                $listeUpdateStocks[] = array_merge($arrayStock, [
                     'quantite' => $stock->quantite - $product['quantite']
-                ];
+                ]);
             }
         }
         try {

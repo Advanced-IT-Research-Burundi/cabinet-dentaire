@@ -242,6 +242,32 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings.index');
 });
 
+Route::prefix('stock')->name('stock.')->group(function () {
+    // Tableau de bord utilisateur
+    Route::get('/utilisateur', [StockController::class, 'utilisateur'])->name('utilisateur');;
+
+    // Routes pour les rapports et statistiques
+    Route::get('/reports/analytics', [StockController::class, 'analytics'])->name('reports.analytics');
+    Route::get('/reports/movements', [StockController::class, 'movementReport'])->name('reports.movements');
+    Route::get('/reports/alerts', [StockController::class, 'alertsReport'])->name('reports.alerts');
+    Route::get('/reports/valuation', [StockController::class, 'valuationReport'])->name('reports.valuation');
+
+    // Routes API pour les données des graphiques
+    Route::get('/api/evolution-data', [StockController::class, 'getEvolutionData'])->name('api.evolution');
+    Route::get('/api/movement-types', [StockController::class, 'getMovementTypes'])->name('api.movement-types');
+    Route::get('/api/popular-products', [StockController::class, 'getPopularProducts'])->name('api.popular-products');
+    Route::get('/api/category-values', [StockController::class, 'getCategoryValues'])->name('api.category-values');
+
+    // Routes pour les alertes
+    Route::get('/alerts/low-stock', [StockController::class, 'lowStockAlert'])->name('alerts.low-stock');
+    Route::get('/alerts/expiring', [StockController::class, 'expiringAlert'])->name('alerts.expiring');
+    Route::get('/alerts/expired', [StockController::class, 'expiredAlert'])->name('alerts.expired');
+
+    // Export routes
+    Route::get('/export/excel', [StockController::class, 'exportExcel'])->name('export.excel');
+    Route::get('/export/pdf', [StockController::class, 'exportPdf'])->name('export.pdf');
+});
+
 require __DIR__.'/auth.php';
 
 

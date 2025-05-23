@@ -13,7 +13,7 @@
     <!-- Search and Filter Card -->
     <div class="mb-4 card">
         <div class="card-body">
-            <form action="{{ route('stocks.index') }}" method="GET" class="row g-3">
+            <form action="{{ route('invoice.alert') }}" method="GET" class="row g-3">
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>

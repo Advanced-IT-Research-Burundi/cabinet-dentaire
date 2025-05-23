@@ -75,4 +75,96 @@ class Stock extends Model
     {
         return $this->hasMany(MouvementStock::class);
     }
+
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    // Scopes pour faciliter les requêtes
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeLowStock($query)
+    {
+        return $query->whereRaw('quantite <= quantite_alert');
+    }
+
+    public function scopeExpirationSoon($query, $days = 30)
+    {
+        return $query->where('date_expiration', '<=', now()->addDays($days))
+                    ->where('date_expiration', '>', now());
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('date_expiration', '<=', now());
+    }
+
+    // Accesseurs pour améliorer l'affichage
+    public function getStatusBadgeAttribute()
+    {
+        $badges = [
+            'active' => '<span class="badge badge-success">Actif</span>',
+            'inactive' => '<span class="badge badge-secondary">Inactif</span>',
+            'discontinued' => '<span class="badge badge-danger">Discontinué</span>',
+        ];
+
+        return $badges[$this->status] ?? '<span class="badge badge-secondary">Non défini</span>';
+    }
+
+    public function getStockStatusAttribute()
+    {
+        if ($this->quantite <= 0) {
+            return ['status' => 'out_of_stock', 'label' => 'Rupture', 'class' => 'text-red-600 bg-red-100'];
+        } elseif ($this->quantite <= $this->quantite_alert) {
+            return ['status' => 'low_stock', 'label' => 'Stock Faible', 'class' => 'text-yellow-600 bg-yellow-100'];
+        } else {
+            return ['status' => 'in_stock', 'label' => 'En Stock', 'class' => 'text-green-600 bg-green-100'];
+        }
+    }
+
+    public function getExpirationStatusAttribute()
+    {
+        if (!$this->date_expiration) {
+            return ['status' => 'no_expiration', 'label' => 'Sans expiration', 'class' => 'text-gray-600 bg-gray-100'];
+        }
+
+        $daysUntilExpiration = now()->diffInDays($this->date_expiration, false);
+
+        if ($daysUntilExpiration < 0) {
+            return ['status' => 'expired', 'label' => 'Expiré', 'class' => 'text-red-600 bg-red-100'];
+        } elseif ($daysUntilExpiration <= 30) {
+            return ['status' => 'expires_soon', 'label' => 'Expire bientôt', 'class' => 'text-orange-600 bg-orange-100'];
+        } else {
+            return ['status' => 'valid', 'label' => 'Valide', 'class' => 'text-green-600 bg-green-100'];
+        }
+    }
+
+    // Méthodes utilitaires
+    public function getTotalValue()
+    {
+        return $this->quantite * $this->price;
+    }
+
+    public function getFormattedPrice()
+    {
+        return number_format($this->price, 0, ',', ' ') . ' BIF';
+    }
+
+    public function getFormattedTotalValue()
+    {
+        return number_format($this->getTotalValue(), 0, ',', ' ') . ' BIF';
+    }
 }
