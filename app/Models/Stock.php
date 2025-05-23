@@ -93,7 +93,7 @@ class Stock extends Model
     // Scopes pour faciliter les requêtes
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', 'Disponible');
     }
 
     public function scopeLowStock($query)
@@ -116,13 +116,15 @@ class Stock extends Model
     public function getStatusBadgeAttribute()
     {
         $badges = [
-            'active' => '<span class="badge badge-success">Actif</span>',
-            'inactive' => '<span class="badge badge-secondary">Inactif</span>',
-            'discontinued' => '<span class="badge badge-danger">Discontinué</span>',
+            'Disponible'     => '<span class="badge badge-success">Disponible</span>',
+            'Faible_stock'   => '<span class="badge badge-warning">Faible stock</span>',
+            'En_rupture'     => '<span class="badge badge-danger">En rupture</span>',
+            'Expire'         => '<span class="badge badge-dark">Expiré</span>',
         ];
 
         return $badges[$this->status] ?? '<span class="badge badge-secondary">Non défini</span>';
     }
+
 
     public function getStockStatusAttribute()
     {

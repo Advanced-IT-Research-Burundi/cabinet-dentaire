@@ -161,7 +161,7 @@ class StockController extends Controller
     public function utilisateur()
     {
         // Statistiques générales
-        $totalStock = Stock::active()->count();
+        $totalStock = Stock::count();
         $stockFaible = Stock::lowStock()->count();
         $stockExpire = Stock::expirationSoon(30)->count();
         $valeurTotale = Stock::active()->sum(DB::raw('quantite * price'));
@@ -266,7 +266,7 @@ class StockController extends Controller
                     DB::raw('SUM(stocks.quantite * stocks.price) as valeur'),
                     DB::raw('COUNT(stocks.id) as nombre_produits'),
                     DB::raw('SUM(stocks.quantite) as quantite_totale'))
-            ->where('stocks.status', 'active')
+            ->where('stocks.status', 'Disponible')
             ->groupBy('categories.name')
             ->orderBy('valeur', 'desc')
             ->get()
@@ -382,7 +382,7 @@ class StockController extends Controller
                 ->select('suppliers.name as supplier',
                         DB::raw('SUM(stocks.quantite * stocks.price) as valeur'),
                         DB::raw('COUNT(stocks.id) as nombre_produits'))
-                ->where('stocks.status', 'active')
+                ->where('stocks.status', 'Disponible')
                 ->groupBy('suppliers.name')
                 ->orderBy('valeur', 'desc')
                 ->get(),
