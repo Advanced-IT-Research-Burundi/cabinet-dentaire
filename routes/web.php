@@ -225,6 +225,11 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('companies', CompanyController::class);
+    Route::resource('caisses', App\Http\Controllers\CaisseController::class);
+    Route::patch('/{caisse}/withdraw', [App\Http\Controllers\CaisseController::class, 'withdraw'])->name('caisses.withdraw');
+
+    Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);
+
 });
 
 Route::resource('stock_movements', StockMovementController::class);
@@ -272,6 +277,3 @@ require __DIR__.'/auth.php';
 
 
 
-Route::resource('caisses', App\Http\Controllers\CaisseController::class);
-
-Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);

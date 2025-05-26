@@ -287,13 +287,17 @@
                                        title="Voir les détails">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <button type="button"
+
+                                    @if($caisse->montant > 0)
+                                        @include('caisse.withdraw-modal', ['caisse' => $caisse])
+                                    @endif
+                                    {{-- <button type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal{{ $caisse->id }}"
                                             title="Supprimer">
                                         <i class="bi bi-trash"></i>
-                                    </button>
+                                    </button> --}}
                                 </div>
 
                                 <!-- Modal de suppression -->

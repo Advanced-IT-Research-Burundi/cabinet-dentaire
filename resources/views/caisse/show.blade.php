@@ -18,6 +18,15 @@
             <a href="{{ route('caisses.index') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left me-2"></i>Retour
             </a>
+            @if($caisse->montant > 0)
+                <!-- Button to trigger modal -->
+                <div class="btn btn-outline d-flex">
+                    Retrait
+                </div>
+                <!-- Include modal -->
+                @include('caisse.withdraw-modal', ['caisse' => $caisse])
+            @endif
+
         </div>
     </div>
 
@@ -146,8 +155,9 @@
                                     <tr>
                                         <th>Type</th>
                                         <th>Description</th>
-                                        <th>Prix Unit.</th>
-                                        <th>Quantité</th>
+                                        <th>Facture N°</th>
+                                        {{-- <th>Prix Unit.</th>
+                                        <th>Quantité</th> --}}
                                         <th>Total</th>
                                         <th>Statut</th>
                                         <th>Utilisateur</th>
@@ -157,34 +167,47 @@
                                 <tbody>
                                     @foreach($caisse->caisseDetails as $detail)
                                     <tr>
+                                        @php
+                                                $pos = strpos($detail->type, 'No ');
+                                                $invoiceId = $pos !== false ? substr($detail->type, $pos + 3) : '0';
+                                            @endphp
                                         <td>
                                             <div class="mt-1">
-                                                @if($caisse->type == 'income')
-                                                    <span class="badge bg-success-soft text-success px-3 py-2 rounded-pill fs-6">
-                                                        <i class="bi bi-arrow-up me-1"></i>Revenu
-                                                    </span>
-                                                @elseif($caisse->type == 'expense')
-                                                    <span class="badge bg-danger-soft text-danger px-3 py-2 rounded-pill fs-6">
-                                                        <i class="bi bi-arrow-down me-1"></i>Dépense
-                                                    </span>
-                                                @else
-                                                    <span class="badge bg-warning-soft text-warning px-3 py-2 rounded-pill fs-6">
+                                                @if($invoiceId == 0)
+                                                     <span class="badge bg-warning-soft text-warning px-3 py-2 rounded-pill fs-6">
                                                         <i class="bi bi-arrow-right me-1"></i>Transfert
                                                     </span>
+                                                @else
+                                                    @if($caisse->type == 'income')
+                                                        <span class="badge bg-success-soft text-success px-3 py-2 rounded-pill fs-6">
+                                                        <i class="bi bi-arrow-up me-1"></i>Revenu
+                                                    </span>
+                                                    @elseif($caisse->type == 'expense')
+                                                        <span class="badge bg-danger-soft text-danger px-3 py-2 rounded-pill fs-6">
+                                                            <i class="bi bi-arrow-down me-1"></i>Dépense
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-warning-soft text-warning px-3 py-2 rounded-pill fs-6">
+                                                            <i class="bi bi-arrow-right me-1"></i>Transfert
+                                                        </span>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
                                         <td>
                                             <div class="fw-semibold">{{ $detail->description ?? '--' }}</div>
-                                            @if($detail->remarque)
+                                            {{-- @if($detail->remarque)
                                                 <small class="text-muted">{{ Str::limit($detail->remarque, 50) }}</small>
-                                            @endif
+                                            @endif --}}
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             <span class="fw-semibold">{{ number_format($detail->price, 0, ',', ' ') }} FBU</span>
-                                        </td>
-                                        <td>
+                                        </td> --}}
+                                        {{-- <td>
                                             <span class="badge bg-light text-dark">{{ $detail->quantite ?? 1 }}</span>
+                                        </td> --}}
+                                        <td>
+                                            <span class="fw-semibold">{{ $detail->type ?? 'N/A' }}</span>
                                         </td>
                                         <td>
                                             <span class="fw-bold text-primary">{{ number_format($detail->total, 0, ',', ' ') }} FBU</span>
@@ -224,13 +247,14 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
+
                                             <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-outline-primary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#detailModal{{ $detail->id }}"
-                                                        title="Voir détails">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
+                                                @if($invoiceId && $invoiceId > 0)
+                                                    <a href="{{ route('invoices.show', $invoiceId) }}" class="btn btn-sm btn-outline-primary"
+                                                            title="Voir détails">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

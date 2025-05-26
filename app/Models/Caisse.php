@@ -44,6 +44,6 @@ class Caisse extends Model
     }
 
     public function caisseDetails(){
-        return $this->hasMany(CaisseDetail::class , 'caisse_id');
+        return $this->hasMany(CaisseDetail::class , 'caisse_id')->latest();
     }
 }
