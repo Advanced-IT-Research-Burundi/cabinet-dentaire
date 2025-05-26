@@ -33,7 +33,7 @@ class Caisse extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'date' => 'timestamp',
+        'date' => 'date',
         'montant' => 'double',
         'user_id' => 'integer',
     ];

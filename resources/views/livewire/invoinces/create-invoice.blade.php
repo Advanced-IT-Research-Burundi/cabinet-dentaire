@@ -141,26 +141,7 @@
             </div>
             </div>
             @endif
-        </div>
-    </div>
-    <div class="col-md-4">
-        @if ($patient)
-        <h6>Informations sur le patient</h6>
-        <ul class="list-group">
-            <li class="list-group-item"><strong>ID:</strong> {{ $patient['id'] }}</li>
-            <li class="list-group-item"><strong>Nom:</strong> {{ $patient['first_name'] }} {{ $patient['middle_name'] }} {{ $patient['last_name'] }}</li>
-            <li class="list-group-item"><strong>Date de naissance:</strong> {{ $patient['birth_date'] }}</li>
-            <li class="list-group-item"><strong>Genre:</strong> {{ $patient['gender'] }}</li>
-            <li class="list-group-item"><strong>Téléphone:</strong> {{ $patient['phone'] }}</li>
-            <li class="list-group-item"><strong>Email:</strong> {{ $patient['email'] }}</li>
-            <li class="list-group-item"><strong>Adresse:</strong> {{ $patient['address'] }}, {{ $patient['city'] }}, {{ $patient['postal_code'] }}, {{ $patient['country'] }}</li>
-            <li class="list-group-item"><strong>Assurance:</strong> {{ $patient['insurance_number'] }} - {{ $patient['insurance_company'] }}</li>
-        </ul>
-        @endif
-    </div>
-</div>
-  <div class="row">
-    <div class="col-md-8">
+            <div class="col-md-8">
         <h6>Facturation sur les produits Pharmaceutiques</h6>
         @if ($patient)
         <div>
@@ -217,8 +198,188 @@
         </div>
         @endif
     </div>
-    <div class="col-md-4">
-        <h6>Historique des factures</h6>
+        </div>
     </div>
-  </div>
+
+    <div class="col-md-4">
+        @if ($patient)
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-person-fill me-2"></i>
+                    Informations sur le patient
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="bi bi-hash me-2 text-primary"></i>
+                        <strong>ID:</strong>
+                        <span class="badge bg-secondary ms-2">{{ $patient['id'] }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-person-badge me-2 text-success"></i>
+                        <strong>Nom:</strong>
+                        {{ $patient['first_name'] }} {{ $patient['middle_name'] }} {{ $patient['last_name'] }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-calendar-date me-2 text-info"></i>
+                        <strong>Date de naissance:</strong>
+                        {{ $patient['birth_date'] }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'person-standing' : 'person-standing-dress' }} me-2 text-warning"></i>
+                        <strong>Genre:</strong>
+                        <span class="badge bg-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'primary' : 'secondary' }}">
+                            {{ $patient['gender'] }}
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-telephone-fill me-2 text-success"></i>
+                        <strong>Téléphone:</strong>
+                        <a href="tel:{{ $patient['phone'] }}" class="text-decoration-none">
+                            {{ $patient['phone'] }}
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-envelope-fill me-2 text-danger"></i>
+                        <strong>Email:</strong>
+                        <a href="mailto:{{ $patient['email'] }}" class="text-decoration-none">
+                            {{ $patient['email'] }}
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-geo-alt-fill me-2 text-warning"></i>
+                        <strong>Adresse:</strong>
+                        <div class="mt-1">
+                            <i class="bi bi-house-door me-1 text-muted"></i>{{ $patient['address'] }}<br>
+                            <i class="bi bi-building me-1 text-muted"></i>{{ $patient['city'] }}, {{ $patient['postal_code'] }}<br>
+                            <i class="bi bi-flag me-1 text-muted"></i>{{ $patient['country'] }}
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-shield-check me-2 text-primary"></i>
+                        <strong>Assurance:</strong>
+                        <div class="mt-1">
+                            <span class="badge bg-info me-2">{{ $patient['insurance_number'] }}</span>
+                            <br>
+                            <small class="text-muted">
+                                <i class="bi bi-building-check me-1"></i>
+                                {{ $patient['insurance_company'] }}
+                            </small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        @else
+        <div class="card">
+            <div class="card-body text-center ">
+                <i class="bi bi-person-x display-4 text-muted mb-2"></i>
+                <h6 class="text-muted">Aucun patient sélectionné</h6>
+                <p class="text-muted small mb-0">Veuillez rechercher et sélectionner un patient</p>
+            </div>
+        </div>
+        @endif
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>
+                    Historique des factures
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                @if ($patient?->invoices?->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center">
+                                        <i class="bi bi-hash me-1"></i>
+                                        N°
+                                    </th>
+                                    <th>
+                                        <i class="bi bi-calendar-date me-1"></i>
+                                        Date
+                                    </th>
+                                    <th>
+                                        <i class="bi bi-cash-stack me-1"></i>
+                                        Montant
+                                    </th>
+                                    <th class="text-center">
+                                        <i class="bi bi-activity me-1"></i>
+                                        Statut
+                                    </th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($patient->invoices->take(10) as $invoice)
+                                <tr>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary">
+                                            {{ $invoice->invoice_number }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-check me-1"></i>
+                                            {{ \Carbon\Carbon::parse($invoice->issue_date)->format('d/m/Y') }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">
+                                            {{ number_format($invoice->total_amount, 0) }} FBU
+                                        </strong>
+                                    </td>
+                                    <td class="text-center">
+                                        @php
+                                            $statusConfig = [
+                                                'paid' => ['class' => 'success', 'icon' => 'check-circle-fill', 'text' => 'Payée'],
+                                                'pending' => ['class' => 'warning', 'icon' => 'clock-fill', 'text' => 'En attente'],
+                                                'overdue' => ['class' => 'danger', 'icon' => 'exclamation-triangle-fill', 'text' => 'Échue'],
+                                                'cancelled' => ['class' => 'secondary', 'icon' => 'x-circle-fill', 'text' => 'Annulée'],
+                                                'draft' => ['class' => 'info', 'icon' => 'file-earmark', 'text' => 'Brouillon']
+                                            ];
+                                            $config = $statusConfig[$invoice->status] ?? ['class' => 'secondary', 'icon' => 'question-circle', 'text' => ucfirst($invoice->status)];
+                                        @endphp
+                                        <span class="badge bg-{{ $config['class'] }}">
+                                            <i class="bi bi-{{ $config['icon'] }} me-1"></i>
+                                            {{ $config['text'] }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ route('invoices.show', $invoice->id) }}"
+                                        class="btn btn-outline-primary btn-sm"
+                                        title="Visualiser la facture">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if ($patient->invoices->count() > 10)
+                    <div class="card-footer text-center">
+                        <a href="{{ route('invoices.index', ['patient_id' => $patient['id']]) }}"
+                        class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-eye me-1"></i>
+                            Voir toutes les factures ({{ $patient->invoices->count() }})
+                        </a>
+                    </div>
+                    @endif
+                @else
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-receipt-cutoff display-4 text-muted mb-2"></i>
+                        <h6 class="text-muted">Aucune facture</h6>
+                        <p class="text-muted small mb-3">Ce patient n'a pas encore de factures enregistrées</p>
+
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 </div>

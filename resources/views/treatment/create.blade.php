@@ -18,12 +18,20 @@
             <form action="{{ route('treatments.store') }}" method="POST">
                 @include('treatment._form')
 
-                <div class="row">
-                    <div class="col">
+                <div class="d-flex justify-content-end mt-4 gap-2">
+                    @if(isset($treatment))
+                        <a href="{{ route('treatments.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Annuler
+                        </a>
+                    @else
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Réinitialiser
+                        </button>
+                    @endif
+
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-1"></i> Enregistrer
                         </button>
-                    </div>
                 </div>
             </form>
         </div>

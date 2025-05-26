@@ -263,6 +263,7 @@ class CreateInvoice extends Component
                     'item_measurement_unit' => $stock->unit_measure ?? 'unité',
                     'item_purchase_or_sale_price' => $stock->price,
                     'item_purchase_or_sale_currency' => 'FBU',
+                    'item_movement_date' => now()->format('Y-m-d H:i:s'),
                     'item_movement_invoice_ref' => $invoiceID,
                     'item_movement_type' => 'SN',
                     'stock_id' => $stock->id,

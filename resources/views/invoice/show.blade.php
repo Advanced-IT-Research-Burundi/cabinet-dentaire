@@ -230,7 +230,7 @@
 </head>
 <body>
     <div class="print-show">
-        <a href="{{ route('invoices.index') }}" class="btn btn-primary print-button"><i class="bi bi-arrow-left"></i> Retour à la liste des factures</a>
+        <a href="{{ url()->previous() }}" class="btn btn-primary print-button"><i class="bi bi-arrow-left"></i> Retour à la liste des factures</a>
         <button class="print-button" onclick="window.print()"><i class="bi bi-printer"></i> Imprimer</button>
     </div>
 

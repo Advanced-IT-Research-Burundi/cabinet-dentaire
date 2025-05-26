@@ -46,6 +46,6 @@ class CaisseDetail extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(Users,id::class);
+        return $this->belongsTo(User::class);
     }
 }

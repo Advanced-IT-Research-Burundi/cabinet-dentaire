@@ -207,6 +207,7 @@ class StockController extends Controller
                 ->whereYear('item_movement_date', $date->year)
                 ->sum('item_quantity');
 
+
             $sorties = MouvementStock::sorties()
                 ->whereMonth('item_movement_date', $date->month)
                 ->whereYear('item_movement_date', $date->year)
