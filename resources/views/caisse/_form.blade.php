@@ -117,14 +117,15 @@
         <label for="status" class="form-label">
             <i class="bi bi-check-circle-fill text-primary me-2"></i>Statut
         </label>
-        <select name="status" id="status"
+        <input type="hidden" name="status" value="{{ old('status', $caisse->status ?? 'active') }}">
+        <select disabled name="status" id="status"
                 class="form-control @error('status') is-invalid @enderror"
                 required>
             <option value="">Sélectionner un statut</option>
             <option value="pending" {{ old('status', $caisse->status ?? '') == 'pending' ? 'selected' : '' }}>
                 <i class="bi bi-clock-fill text-warning"></i> En attente
             </option>
-            <option value="completed" {{ old('status', $caisse->status ?? '') == 'completed' ? 'selected' : '' }}>
+            <option value="completed" {{ old('status', $caisse->status ?? '') == 'completed' ? 'selected' : '' }}selected>
                 <i class="bi bi-check-circle-fill text-success"></i> Complété
             </option>
             <option value="cancelled" {{ old('status', $caisse->status ?? '') == 'cancelled' ? 'selected' : '' }}>
