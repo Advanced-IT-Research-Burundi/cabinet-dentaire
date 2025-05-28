@@ -82,7 +82,7 @@ class MouvementStockController extends Controller
                 // Exit movement types decrease stock
                 $stock->quantite -= $request->item_quantity;
             }
-           // $stock->price = $request->item_purchase_or_sale_price;
+           $stock->price = $request->item_purchase_or_sale_price;
             $stock->save();
             DB::commit();
             return redirect()->route('stocks.index')

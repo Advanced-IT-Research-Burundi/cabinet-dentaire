@@ -65,11 +65,11 @@ class CaisseController extends Controller
 
         $validated = $request->validated();
 
-        if ($validated['montant'] <= 0) {
-            return back()->withErrors([
-                'error' => 'Le montant doit etre supérieur à 0.'
-            ])->withInput();
-        }
+        // if ($validated['montant'] <= 0) {
+        //     return back()->withErrors([
+        //         'error' => 'Le montant doit etre supérieur à 0.'
+        //     ])->withInput();
+        // }
         \DB::beginTransaction();
 
 
@@ -78,7 +78,7 @@ class CaisseController extends Controller
                 'caisse_id' => $caisse->id,
                 'type' => "MONTANT RETRAIT",
                 'price' => 0,
-                'total' => ($validated['montant']),
+                'total' => 0,
                 'status' => '1',
                 'user_id' => auth()->user()->id,
                 'description' => $validated['description'],

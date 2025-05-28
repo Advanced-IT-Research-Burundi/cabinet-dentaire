@@ -93,7 +93,7 @@ class DentistController extends Controller
     {
         $users = User::whereNotIn('id', function ($query) {
             $query->select('user_id')->from('dentists');
-        })->get();
+        })->where('role', 'Dentiste')->get();
         return view('dentist.create', compact('users'));
     }
 
@@ -144,7 +144,7 @@ class DentistController extends Controller
     {
         $users = User::whereNotIn('id', function ($query) {
             $query->select('user_id')->from('dentists');
-        })->get();
+        })->where('role', 'Dentiste')->get();
         return view('dentist.edit', compact('dentist', 'users'));
     }
 

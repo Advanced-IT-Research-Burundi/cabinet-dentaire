@@ -46,7 +46,7 @@
     </div>
 
     {{-- Montant --}}
-    <div class="mb-3">
+    {{-- <div class="mb-3">
         <label for="montant" class="form-label">
             <i class="bi bi-currency-euro text-success me-2"></i>Montant
         </label>
@@ -57,16 +57,16 @@
             <input type="number" name="montant" id="montant"
                    class="form-control @error('montant') is-invalid @enderror"
                    step="0.01" min="0"
-                   value="{{ old('montant', $caisse->montant ?? '0') }}"
-                   required>
-            <span class="input-group-text">€</span>
+                   value="0.00"
+                   required deseabled>
+            <span class="input-group-text">FBU</span>
         </div>
         @error('montant')
             <div class="invalid-feedback">
                 <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $message }}
             </div>
         @enderror
-    </div>
+    </div> --}}
 
     {{-- Description --}}
     <div class="mb-3">
