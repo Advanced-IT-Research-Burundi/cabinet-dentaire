@@ -84,6 +84,11 @@ class TreatmentController extends Controller
         $sortOrder = $request->input('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
+        // If is dentist
+        if (auth()->user()->isDentiste()) {
+            $query->where('dentist_id', auth()->user()->dentist_id);
+        }
+
         // Pagination
         $perPage = $request->input('per_page', 10);
         $treatments = $query->paginate($perPage)->withQueryString();

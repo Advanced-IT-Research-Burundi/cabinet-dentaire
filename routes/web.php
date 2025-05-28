@@ -51,8 +51,9 @@ Route::get('patients/search',[PatientController::class, 'search'])->name('patien
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 //->can('is-admin');
 
-Route::middleware(['auth', 'can:is-admin'])->group(function () {
+Route::middleware(['auth', 'can:is-admin', 'can:is-pharmacist'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
+    Route::resource('orders', OrderController::class);
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -78,7 +79,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('suppliers', SupplierController::class);
-    Route::resource('orders', OrderController::class);
+
     Route::resource('assurances', AssuranceController::class);
     Route::get('invoices/{id}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
     Route::get('stock/alert', [StockController::class, 'alert'])->name('invoice.alert');
