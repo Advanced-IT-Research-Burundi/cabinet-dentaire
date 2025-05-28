@@ -153,7 +153,7 @@ class AppointmentController extends Controller
      public function create()
     {
             $appointment = new Appointment();
-            $patients = Patient::orderBy('last_name')->get();
+            $patients = Patient::orderBy('last_name')->take(1000)->get();
             $dentists = Dentist::with('user')->get();
             $treatmentTypes = TreatmentType::orderBy('name')->get();
 
