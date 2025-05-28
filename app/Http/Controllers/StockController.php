@@ -144,9 +144,8 @@ class StockController extends Controller
     {
          $search = $request->input('search');
         $status = $request->input('status');
-        $stocks = Stock::with('category')
-            ->where('quantite', '<=', 'quantite_alert')
-                ->when($search, function ($query, $search) {
+        $stocks = Stock::lowStock()->with('category')
+        ->when($search, function ($query, $search) {
                 $query->where('product_name', 'like', "%{$search}%");
             })
             ->when($status, function ($query, $status) {
@@ -154,6 +153,7 @@ class StockController extends Controller
             })
             ->latest()
             ->paginate(10);
+
         return view('stock.alert', compact('stocks'));
     }
 
@@ -164,6 +164,7 @@ class StockController extends Controller
         $totalStock = Stock::count();
         $stockFaible = Stock::lowStock()->count();
         $stockExpire = Stock::expirationSoon(30)->count();
+
         $valeurTotale = Stock::active()->sum(DB::raw('quantite * price'));
 
         // Mouvements récents (derniers 30 jours)
@@ -185,6 +186,7 @@ class StockController extends Controller
             'expiration_proche' => Stock::expirationSoon(30)->with('category')->get(),
             'stock_expire' => Stock::expired()->with('category')->get()
         ];
+        // dd($alertes['stock_expire']);
 
         return view('stock.utilisation', compact(
             'totalStock', 'stockFaible', 'stockExpire', 'valeurTotale',
