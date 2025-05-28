@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
         // Insert a default caisse de l'entreprise
 
         \DB::table('caisses')->insert([
+            'id' => 1,
             'name' => 'Caisse de l\'Entreprise',
             'type' => 'Caisse',
             'date' => now(),

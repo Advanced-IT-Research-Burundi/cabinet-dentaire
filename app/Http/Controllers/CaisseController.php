@@ -41,14 +41,14 @@ class CaisseController extends Controller
         $totalCaisses = Caisse::count();
         $montantTotal = Caisse::sum('montant');
         $caissesActives = Caisse::where('status', 'active')->count();
-        $caissesEnAttente = Caisse::where('status', 'pending')->count();
+        $caissePrincipale = Caisse::find(1)->first()->montant; // Assuming the main caisse has ID 1
 
         return view('caisse.index', [
             'caisses' => $caisses,
             'totalCaisses' => $totalCaisses,
             'montantTotal' => $montantTotal,
             'caissesActives' => $caissesActives,
-            'caissesEnAttente' => $caissesEnAttente,
+            'caissePrincipale' => $caissePrincipale,
         ]);
     }
 
@@ -151,7 +151,20 @@ class CaisseController extends Controller
             $caisse->update([
                 'montant' => $nouveauMontant
             ]);
+            // Ajout du montant retraint dans la caisse principale
+            Caisse::where('id', 1)->increment('montant', $validated['montant_retrait']);
+            // Enregistrement du retrait dans les détails de la caisse principale
+            CaisseDetail::create([
+                'caisse_id' => 1,
+                'type' => "MONTANT RETRAIT",
+                'price' => $validated['montant_retrait'],
+                'total' => $validated['montant_retrait'],
+                'status' => '1',
+                'user_id' => auth()->user()->id,
+                'description' => $validated['motif_retrait'],
+            ]);
 
+            // Enregistrement du retrait dans les détails de la caisse spécifique
             CaisseDetail::create([
                 'caisse_id' => $caisse->id,
                 'type' => "MONTANT RETRAIT",
