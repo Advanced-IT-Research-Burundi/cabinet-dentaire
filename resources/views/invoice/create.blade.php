@@ -12,7 +12,7 @@
                             <div >
                                 <h5>
                                     <i class="bi bi-cash-stack"></i>
-                                    Caisse: <strong>{{ Auth::user()->caisses()->sum('montant') ?? '0' }} Fbu</strong>
+                                    Caisse: <strong> {{ Auth::user()->caisses()->sum('montant') ?? '0' }} Fbu</strong>
                                 </h5>
                             </div>
                         </div>

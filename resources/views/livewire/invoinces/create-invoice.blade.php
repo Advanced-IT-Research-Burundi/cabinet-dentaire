@@ -306,10 +306,10 @@
                                         <i class="bi bi-cash-stack me-1"></i>
                                         Montant
                                     </th>
-                                    <th class="text-center">
+                                    {{-- <th class="text-center">
                                         <i class="bi bi-activity me-1"></i>
                                         Statut
-                                    </th>
+                                    </th> --}}
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -332,7 +332,7 @@
                                             {{ number_format($invoice->total_amount, 0) }} FBU
                                         </strong>
                                     </td>
-                                    <td class="text-center">
+                                    {{-- <td class="text-center">
                                         @php
                                             $statusConfig = [
                                                 'paid' => ['class' => 'success', 'icon' => 'check-circle-fill', 'text' => 'Payée'],
@@ -347,7 +347,7 @@
                                             <i class="bi bi-{{ $config['icon'] }} me-1"></i>
                                             {{ $config['text'] }}
                                         </span>
-                                    </td>
+                                    </td> --}}
                                     <td class="text-center">
                                         <a href="{{ route('invoices.show', $invoice->id) }}"
                                         class="btn btn-outline-primary btn-sm"
