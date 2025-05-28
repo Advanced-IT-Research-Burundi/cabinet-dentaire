@@ -42,3 +42,5 @@ const ROLE_USERS = [
     'Secretaire' => 'Secretaire',
     'Pharmacist' => 'Pharmacist',
 ];
+
+const LOAD_DATA = 1000;

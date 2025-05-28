@@ -222,7 +222,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-    var currentView = 'all'; 
+    var currentView = 'all';
     var calendar;
 
     var calendarOptions = {

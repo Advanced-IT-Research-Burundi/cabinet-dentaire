@@ -44,11 +44,13 @@
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Menu Gauche -->
                     <ul class="mb-2 navbar-nav me-auto mb-lg-0">
+                        @can('is-admin')
                         <li class="nav-item">
                             <a class="nav-link modern-nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                 <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
                             </a>
                         </li>
+                        @endcan
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('patients*') ? 'active' : '' }}" href="#" id="patientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -84,6 +86,8 @@
                             </ul>
                         </li>
 
+                        @canany(['is-admin', 'is-pharmacist'])
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('invoices*') || request()->is('payments*') ? 'active' : '' }}" href="#" id="facturationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-receipt me-2"></i>Facturation
@@ -107,6 +111,7 @@
                                 </a></li> -->
                             </ul>
                         </li>
+                        @endcanany
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('treatments*')  ? 'active' : '' }}" href="#" id="traitementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -124,6 +129,8 @@
                                 </a></li>
                             </ul>
                         </li>
+
+                        @canany(['is-admin', 'is-pharmacist'])
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('stocks*') ||request()->is('categories*') || request()->is('suppliers*') || request()->is('medicines*')   ? 'active' : '' }}" href="#" id="stocksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -147,6 +154,7 @@
                                 </a></li>
                             </ul>
                         </li>
+                        @endcanany
                     </ul>
 
                     <!-- Menu Droite -->

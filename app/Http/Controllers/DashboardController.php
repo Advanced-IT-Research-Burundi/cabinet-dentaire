@@ -20,9 +20,7 @@ class DashboardController extends Controller
             'rdvToday' => Appointment::whereDate('date', $today)->count(),
             'newPatients' => Patient::where('created_at', '>=', $firstDayOfMonth)->count(),
             'unpaidInvoices' => Invoice::whereIn('status', ['Emise', 'Partiellement_payee', 'En_retard'])->count(),
-            'revenue' => Invoice::where('created_at', '>=', $firstDayOfMonth)
-                              ->where('status', 'Payee')
-                              ->sum('total_amount'),
+            'revenue' => Invoice::where('created_at', '>=', $firstDayOfMonth)->sum('total_amount'),
             'appointments' => Appointment::with(['patient', 'dentist.user'])
                                       ->whereDate('date', $today)
                                       ->orderBy('start_time')

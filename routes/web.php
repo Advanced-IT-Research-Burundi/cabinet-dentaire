@@ -49,6 +49,11 @@ Route::get(
 Route::get('patients/search',[PatientController::class, 'search'])->name('patients.search');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+//->can('is-admin');
+
+Route::middleware(['auth', 'can:is-admin'])->group(function () {
+    Route::resource('invoices', InvoiceController::class);
+});
 
 Route::middleware(['auth'])->group(function () {
 
@@ -63,14 +68,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes pour les informations de l'entreprise
     Route::put('/parametrage/company/update', [ParametrageController::class, 'updateCompany'])->name('parametrage.company.update');
-
-
-
     Route::resource('patients', PatientController::class);
     Route::resource('dentists', DentistController::class);
     Route::resource('treatments', TreatmentController::class);
     Route::resource('mouvements_stocks', MouvementStockController::class);
-    Route::resource('invoices', InvoiceController::class);
+    // Can is Admin
     Route::resource('payments', PaymentController::class);
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);

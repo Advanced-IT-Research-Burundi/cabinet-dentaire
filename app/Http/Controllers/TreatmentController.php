@@ -89,9 +89,9 @@ class TreatmentController extends Controller
         $treatments = $query->paginate($perPage)->withQueryString();
 
         // Données pour les filtres
-        $patients = Patient::orderBy('last_name')->get();
-        $dentists = Dentist::orderBy('id')->get();
-        $treatmentTypes = TreatmentType::orderBy('name')->get();
+        $patients = Patient::orderBy('last_name')->take(LOAD_DATA)->get();
+        $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
+        $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
         $statuses = [
             'Planifie' => 'Planifié',
             'En_cours' => 'En cours',
@@ -116,9 +116,9 @@ class TreatmentController extends Controller
      */
     public function create(): View
     {
-        $patients = Patient::all();
-        $dentists = Dentist::with('user')->get();
-        $treatmentTypes = TreatmentType::all();
+        $patients = Patient::orderBy('last_name')->take(LOAD_DATA)->get();
+        $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
+        $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
         $appointments = Appointment::with('patient')->get();
 
         return view('treatment.create', compact(
