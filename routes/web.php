@@ -51,7 +51,7 @@ Route::get('patients/search',[PatientController::class, 'search'])->name('patien
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 //->can('is-admin');
 
-Route::middleware(['auth', 'can:is-admin', 'can:is-pharmacist'])->group(function () {
+Route::middleware(['auth', 'canany:is-admin,is-pharmacist'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('orders', OrderController::class);
 });
