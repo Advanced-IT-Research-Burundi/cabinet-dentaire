@@ -93,7 +93,8 @@ class Stock extends Model
     // Scopes pour faciliter les requêtes
     public function scopeActive($query)
     {
-        return $query->where('status', 'Disponible');
+        // return $query->where('status', 'Disponible');
+        return $query;
     }
 
     public function scopeLowStock($query)

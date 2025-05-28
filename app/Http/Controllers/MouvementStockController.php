@@ -85,7 +85,7 @@ class MouvementStockController extends Controller
            // $stock->price = $request->item_purchase_or_sale_price;
             $stock->save();
             DB::commit();
-            return redirect()->back()
+            return redirect()->route('stocks.index')
             ->with('success', 'Stock movement created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();

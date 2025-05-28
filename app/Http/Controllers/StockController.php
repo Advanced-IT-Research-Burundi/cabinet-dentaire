@@ -269,7 +269,7 @@ class StockController extends Controller
                     DB::raw('SUM(stocks.quantite * stocks.price) as valeur'),
                     DB::raw('COUNT(stocks.id) as nombre_produits'),
                     DB::raw('SUM(stocks.quantite) as quantite_totale'))
-            ->where('stocks.status', 'Disponible')
+            // ->where('stocks.status', 'Disponible')
             ->groupBy('categories.name')
             ->orderBy('valeur', 'desc')
             ->get()

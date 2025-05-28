@@ -14,7 +14,7 @@
         @endif
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg border-0" aria-labelledby="notificationsDropdown" style="min-width: 380px; max-height: 500px; overflow-y: auto;">
+    <ul class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg border-0" aria-labelledby="notificationsDropdown" style="min-width: 380px; max-height: 500px;">
         <!-- Header -->
         <li class="p-0">
             <div class="notification-header bg-primary text-white  d-flex justify-content-between align-items-center">
