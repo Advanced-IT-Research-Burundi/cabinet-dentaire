@@ -8,20 +8,18 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\StockMovement;
 use App\Models\MouvementStock;
+use App\Exports\StockExport;
+use App\Imports\StockImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class StockController extends Controller
 {
 
-    public function report()
-    {
-        $produits = Stock::with('category')
-            ->orderBy('product_name')
-            ->get();
 
-        return view('stock.report', compact('produits'));
-    }
 
     // Display a listing of the stocks
     public function index(Request $request)
@@ -40,6 +38,16 @@ class StockController extends Controller
 
         return view('stock.index', compact('stocks'));
     }
+
+    public function rapport()
+    {
+        $produits = Stock::with(['category', 'supplier', 'user'])
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return view('stock.rapport', compact('produits'));
+    }
+
 
     /**
      * Display the specified stock.
@@ -429,5 +437,145 @@ class StockController extends Controller
     {
         $expiredItems = Stock::expired()->with(['category'])->orderBy('date_expiration', 'desc')->paginate(20);
         return view('stock.alerts.expired', compact('expiredItems'));
+    }
+
+
+
+    // EXPORT AND IMPORT DATA FOR STOCKS
+     public function exportExcel()
+    {
+        return Excel::download(new StockExport, 'rapport_stock_' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        $stocks = Stock::with(['category', 'supplier', 'user'])
+                      ->orderBy('created_at', 'desc')
+                      ->get();
+
+        $pdf = Pdf::loadView('stock.pdf', compact('stocks'));
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->download('rapport_stock_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function importForm()
+    {
+        return view('stock.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            // Get row count before import
+            $rowCount = Excel::toArray(new StockImport(Auth::id()), $request->file('file'));
+            $totalRows = count($rowCount[0] ?? []);
+
+            $import = new StockImport(Auth::id());
+            Excel::import($import, $request->file('file'));
+
+            $errorCount = count($import->errors());
+            $failureCount = count($import->failures());
+            $successCount = $totalRows - $errorCount - $failureCount;
+
+            $message = "Import terminé avec succès : {$successCount} lignes importées";
+
+            if ($errorCount > 0) {
+                $message .= ", {$errorCount} erreurs";
+            }
+
+            if ($failureCount > 0) {
+                $message .= ", {$failureCount} échecs de validation";
+            }
+
+            return redirect()->route('stocks.index')->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()->route('stocks.index')->with('error', 'Erreur lors de l\'import: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'nom_du_produit',
+            'marque',
+            'code_produit',
+            'categorie',
+            'fournisseur',
+            'unite_de_mesure',
+            'quantite_en_stock',
+            'quantite_dalerte',
+            'prix_unitaire_htva',
+            'prix_ttc',
+            'prix_maximum',
+            'prix_tvac',
+            'taux_tva',
+            'taxe_ott',
+            'taxe_tsce',
+            'prix_minimum',
+            'date_dexpiration',
+            'description',
+            'emplacement'
+        ];
+
+        $sampleData = [
+            [
+                'Ordinateur portable',
+                'Dell',
+                'DELL-001',
+                'Informatique',
+                'Dell Inc.',
+                'Pièce',
+                10,
+                2,
+                800.00,
+                928.00,
+                1000.00,
+                928.00,
+                16.00,
+                0.00,
+                0.00,
+                700.00,
+                '31/12/2025',
+                'Ordinateur portable Dell Inspiron',
+                'Magasin A'
+            ]
+        ];
+
+        $data = array_merge([$headers], $sampleData);
+
+        $filename = 'template_import_stock.xlsx';
+
+        return Excel::download(new class($data) implements \Maatwebsite\Excel\Concerns\FromArray {
+            private $data;
+
+            public function __construct($data) {
+                $this->data = $data;
+            }
+
+            public function array(): array {
+                return $this->data;
+            }
+        }, $filename);
+    }
+    private function determineStatus($quantite, $quantite_alert, $date_expiration)
+    {
+        // Vérifier si le produit est expiré
+        if ($date_expiration && now()->gt($date_expiration)) {
+            return 'Expire';
+        }
+
+        // Vérifier le stock
+        if ($quantite <= 0) {
+            return 'En_rupture';
+        } elseif ($quantite_alert > 0 && $quantite <= $quantite_alert) {
+            return 'Faible_stock';
+        } else {
+            return 'Disponible';
+        }
     }
 }

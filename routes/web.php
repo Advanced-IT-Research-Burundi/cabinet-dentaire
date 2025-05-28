@@ -255,7 +255,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::prefix('stock')->name('stock.')->group(function () {
     // Tableau de bord utilisateur
     Route::get('/utilisateur', [StockController::class, 'utilisateur'])->name('utilisateur');
-    Route::get('/report', [StockController::class, 'report'])->name('report');
+    // Route pour le rapport
+    Route::get('/stocks-rapport', [StockController::class, 'rapport'])->name('rapport');
+
+    // Routes d'export
+    Route::get('/stocks/export/excel', [StockController::class, 'exportExcel'])->name('export-excel');
+    Route::get('/stocks/export/pdf', [StockController::class, 'exportPdf'])->name('export-pdf');
+
+    // Routes d'import
+    Route::get('/stocks/import/form', [StockController::class, 'importForm'])->name('import-form');
+    Route::post('/stocks/import', [StockController::class, 'import'])->name('import');
+    Route::get('/stocks/template/download', [StockController::class, 'downloadTemplate'])->name('download-template');
+    // Route::get('/report', [StockController::class, 'report'])->name('report');
 
     // Routes pour les rapports et statistiques
     Route::get('/reports/analytics', [StockController::class, 'analytics'])->name('reports.analytics');
