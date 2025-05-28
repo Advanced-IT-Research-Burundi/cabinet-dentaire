@@ -152,6 +152,7 @@
                     <!-- Menu Droite -->
                     <ul class="navbar-nav align-items-center">
                         <!-- Notifications -->
+                        @include('stock.notification')
                         {{-- <li class="nav-item dropdown me-3">
                             <a class="nav-link notification-bell" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-bell-fill fs-5"></i>
