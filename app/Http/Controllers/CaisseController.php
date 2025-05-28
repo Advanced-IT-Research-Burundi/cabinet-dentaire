@@ -175,7 +175,6 @@ class CaisseController extends Controller
                 'description' => $validated['motif_retrait'],
             ]);
 
-
             // Message de succès
             $message = sprintf(
                 'Retrait de %s FBU effectué avec succès. Nouveau solde : %s FBU',
