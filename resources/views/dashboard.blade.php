@@ -73,9 +73,9 @@
                 <div class="stat-title">Ce mois-ci</div>
             </div>
             <div class="py-2 bg-transparent border-0 card-footer">
-                <a href="{{ route('factures.monthly') }}" class="text-decoration-none text-info small">
+                {{-- <a href="{{ route('factures.monthly') }}" class="text-decoration-none text-info small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
-                </a>
+                </a> --}}
             </div>
             <i class="bi bi-cash-stack stat-icon text-info"></i>
         </div>
@@ -85,18 +85,18 @@
         <div class="bg-opacity-10 border-0 card stat-card h-100 bg-warning">
             <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <div class="text-warning fw-bold">Factures impayées</div>
+                    <div class="text-warning fw-bold">Utilisateurs</div>
                     <div class="p-2 text-white bg-warning rounded-circle">
-                        <i class="bi bi-receipt"></i>
+                        <i class="bi bi-people"></i>
                     </div>
                 </div>
-                <div class="stat-value text-warning">{{ $unpaidInvoices ?? 0 }}</div>
-                <div class="stat-title">Total en attente</div>
+                <div class="stat-value text-warning">{{ $totalusers ?? 0 }}</div>
+                <div class="stat-title">Total des utilisateurs</div>
             </div>
             <div class="py-2 bg-transparent border-0 card-footer">
-                <a href="{{ route('factures.unpaid') }}" class="text-decoration-none text-warning small">
+                {{-- <a href="{{ route('factures.unpaid') }}" class="text-decoration-none text-warning small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
-                </a>
+                </a> --}}
             </div>
             <i class="bi bi-receipt stat-icon text-warning"></i>
         </div>
@@ -104,7 +104,7 @@
 </div>
 
 <!-- Rendez-vous d'aujourd'hui et alertes -->
-<div class="row">
+<div class="row g-4 justify-content-center">
     <!-- Rendez-vous d'aujourd'hui -->
     <div class="mb-4 col-xl-8">
         <div class="border-0 card h-100">
