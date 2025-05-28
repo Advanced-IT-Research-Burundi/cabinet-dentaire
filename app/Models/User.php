@@ -157,6 +157,10 @@ class User extends Authenticatable
     {
         DB::table('sessions')->where('user_id', $userId)->delete();
     }
+    public function caisses()
+    {
+        return $this->hasMany(Caisse::class);
+    }
 
 
 }

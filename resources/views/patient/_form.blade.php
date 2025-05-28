@@ -13,7 +13,7 @@
     <select class="form-select @error('patient_type') is-invalid @enderror"
             id="patient_type" name="patient_type" required>
         <option value="">Sélectionner...</option>
-        <option value="physique" {{ old('patient_type', $patient->patient_type ?? '') == 'physique' ? 'selected' : '' }}>Personne physique</option>
+        <option value="physique" {{ old('patient_type', $patient->patient_type ?? 'physique') == 'physique' ? 'selected' : '' }}>Personne physique</option>
         <option value="morale" {{ old('patient_type', $patient->patient_type ?? '') == 'morale' ? 'selected' : '' }}>Personne morale</option>
     </select>
     @error('patient_type')
@@ -22,7 +22,7 @@
 </div>
 
 <!-- NIF (Visible uniquement pour personne morale) -->
-<div class="col-md-8" id="nif_container" style="display: {{ old('patient_type', $patient->patient_type ?? '') == 'morale' ? 'flex' : 'none' }}; flex-wrap: wrap;">
+<div class="col-md-8" id="nif_container" style="display: {{ old('patient_type', $patient->patient_type ?? 'physique') == 'morale' ? 'flex' : 'none' }}; flex-wrap: wrap;">
     <div class="row w-100">
         <div class="col-md-6">
             <label for="nif" class="form-label required">
@@ -30,7 +30,7 @@
             </label>
             <input type="text" class="form-control @error('nif') is-invalid @enderror"
                    id="nif" name="nif" value="{{ old('nif', $patient->nif ?? '') }}"
-                   {{ old('patient_type', $patient->patient_type ?? '') == 'morale' ? 'required' : '' }}>
+                   {{ old('patient_type', $patient->patient_type ?? 'physique') == 'morale' ? 'required' : '' }}>
             @error('nif')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -41,7 +41,7 @@
             </label>
             <input type="text" class="form-control @error('societe') is-invalid @enderror"
                    id="societe" name="societe" value="{{ old('societe', $patient->societe ?? '') }}"
-                   {{ old('patient_type', $patient->patient_type ?? '') == 'morale' ? 'required' : '' }}>
+                   {{ old('patient_type', $patient->patient_type ?? 'physique') == 'morale' ? 'required' : '' }}>
             @error('societe')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -49,70 +49,74 @@
     </div>
 </div>
 
+<!-- Informations personnelles (Masquées pour personne morale) -->
+<div id="personal_info_container" style="display: {{ old('patient_type', $patient->patient_type ?? 'physique') == 'morale' ? 'none' : 'contents' }};" class="row g-3">
+    <div class="col-md-4">
+        <label for="first_name" class="form-label required">
+            <i class="bi bi-person-fill me-2"></i>Prénom
+        </label>
+        <input type="text" class="form-control @error('first_name') is-invalid @enderror"
+               id="first_name" name="first_name"
+               {{ old('patient_type', $patient->patient_type ?? 'physique') == 'physique' ? 'required' : '' }}
+               value="{{ old('first_name', $patient->first_name ?? '') }}">
+        @error('first_name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 
-<!-- Informations personnelles -->
-<div class="col-md-4">
-    <label for="first_name" class="form-label required">
-        <i class="bi bi-person-fill me-2"></i>Prénom
-    </label>
-    <input type="text" class="form-control @error('first_name') is-invalid @enderror"
-           id="first_name" name="first_name" required
-           value="{{ old('first_name', $patient->first_name ?? '') }}">
-    @error('first_name')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+    <div class="col-md-4">
+        <label for="middle_name" class="form-label">
+            <i class="bi bi-person me-2"></i>Deuxième prénom
+        </label>
+        <input type="text" class="form-control @error('middle_name') is-invalid @enderror"
+               id="middle_name" name="middle_name"
+               value="{{ old('middle_name', $patient->middle_name ?? '') }}">
+        @error('middle_name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 
-<div class="col-md-4">
-    <label for="middle_name" class="form-label">
-        <i class="bi bi-person me-2"></i>Deuxième prénom
-    </label>
-    <input type="text" class="form-control @error('middle_name') is-invalid @enderror"
-           id="middle_name" name="middle_name"
-           value="{{ old('middle_name', $patient->middle_name ?? '') }}">
-    @error('middle_name')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+    <div class="col-md-4">
+        <label for="last_name" class="form-label">
+            <i class="bi bi-person-badge me-2"></i>Nom
+        </label>
+        <input type="text" class="form-control @error('last_name') is-invalid @enderror"
+               id="last_name" name="last_name"
+               value="{{ old('last_name', $patient->last_name ?? '') }}">
+        @error('last_name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 
-<div class="col-md-4">
-    <label for="last_name" class="form-label">
-        <i class="bi bi-person-badge me-2"></i>Nom
-    </label>
-    <input type="text" class="form-control @error('last_name') is-invalid @enderror"
-           id="last_name" name="last_name"
-           value="{{ old('last_name', $patient->last_name ?? '') }}">
-    @error('last_name')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+    <div class="col-md-4">
+        <label for="birth_date" class="form-label required">
+            <i class="bi bi-calendar-heart-fill me-2"></i>Date de naissance
+        </label>
+        <input type="date" class="form-control @error('birth_date') is-invalid @enderror"
+               id="birth_date" name="birth_date"
+               {{ old('patient_type', $patient->patient_type ?? 'physique') == 'physique' ? 'required' : '' }}
+               value="{{ old('birth_date', isset($patient->birth_date) ? $patient->birth_date->format('Y-m-d') : '') }}">
+        @error('birth_date')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 
-<div class="col-md-4">
-    <label for="birth_date" class="form-label required">
-        <i class="bi bi-calendar-heart-fill me-2"></i>Date de naissance
-    </label>
-    <input type="date" class="form-control @error('birth_date') is-invalid @enderror"
-           id="birth_date" name="birth_date" required
-           value="{{ old('birth_date', isset($patient->birth_date) ? $patient->birth_date->format('Y-m-d') : '') }}">
-    @error('birth_date')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
-
-<div class="col-md-4">
-    <label for="gender" class="form-label required">
-        <i class="bi bi-gender-ambiguous me-2"></i>Genre
-    </label>
-    <select class="form-select @error('gender') is-invalid @enderror"
-            id="gender" name="gender" required>
-        <option value="">Sélectionner...</option>
-        <option value="M" {{ old('gender', $patient->gender ?? '') == 'M' ? 'selected' : '' }}>Homme</option>
-        <option value="F" {{ old('gender', $patient->gender ?? '') == 'F' ? 'selected' : '' }}>Femme</option>
-        <option value="Autre" {{ old('gender', $patient->gender ?? '') == 'Autre' ? 'selected' : '' }}>Autre</option>
-    </select>
-    @error('gender')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
+    <div class="col-md-4">
+        <label for="gender" class="form-label required">
+            <i class="bi bi-gender-ambiguous me-2"></i>Genre
+        </label>
+        <select class="form-select @error('gender') is-invalid @enderror"
+                id="gender" name="gender"
+                {{ old('patient_type', $patient->patient_type ?? 'physique') == 'physique' ? 'required' : '' }}>
+            <option value="">Sélectionner...</option>
+            <option value="M" {{ old('gender', $patient->gender ?? '') == 'M' ? 'selected' : '' }}>Homme</option>
+            <option value="F" {{ old('gender', $patient->gender ?? '') == 'F' ? 'selected' : '' }}>Femme</option>
+            <option value="Autre" {{ old('gender', $patient->gender ?? '') == 'Autre' ? 'selected' : '' }}>Autre</option>
+        </select>
+        @error('gender')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
 </div>
 
 <!-- Contact -->
@@ -275,24 +279,72 @@
     document.addEventListener('DOMContentLoaded', function() {
         const patientTypeSelect = document.getElementById('patient_type');
         const nifContainer = document.getElementById('nif_container');
+        const personalInfoContainer = document.getElementById('personal_info_container');
         const nifInput = document.getElementById('nif');
+        const societeInput = document.getElementById('societe');
+        const firstNameInput = document.getElementById('first_name');
+        const birthDateInput = document.getElementById('birth_date');
+        const genderSelect = document.getElementById('gender');
 
-        // Fonction pour afficher/masquer le champ NIF
-        function toggleNifField() {
+        // Fonction pour afficher/masquer les champs selon le type de patient
+        function toggleFields() {
             if (patientTypeSelect.value === 'morale') {
-                nifContainer.style.display = 'block';
+                // Afficher les champs entreprise
+                nifContainer.style.display = 'flex';
                 nifInput.setAttribute('required', 'required');
-            } else {
+                societeInput.setAttribute('required', 'required');
+
+                // Masquer les champs personnels
+                personalInfoContainer.style.display = 'none';
+                firstNameInput.removeAttribute('required');
+                birthDateInput.removeAttribute('required');
+                genderSelect.removeAttribute('required');
+
+                // Vider les valeurs des champs personnels si nécessaire
+                if (!firstNameInput.value) firstNameInput.value = '';
+                if (!birthDateInput.value) birthDateInput.value = '';
+                if (!genderSelect.value) genderSelect.value = '';
+
+            } else if (patientTypeSelect.value === 'physique') {
+                // Masquer les champs entreprise
                 nifContainer.style.display = 'none';
                 nifInput.removeAttribute('required');
+                societeInput.removeAttribute('required');
+
+                // Afficher les champs personnels
+                personalInfoContainer.style.display = 'contents';
+                firstNameInput.setAttribute('required', 'required');
+                birthDateInput.setAttribute('required', 'required');
+                genderSelect.setAttribute('required', 'required');
+
+                // Vider les valeurs des champs entreprise si nécessaire
+                if (!nifInput.value) nifInput.value = '';
+                if (!societeInput.value) societeInput.value = '';
+
+            } else {
+                // Aucun type sélectionné - masquer tous les champs spécifiques
+                nifContainer.style.display = 'none';
+                personalInfoContainer.style.display = 'none';
+
+                // Retirer tous les required
+                nifInput.removeAttribute('required');
+                societeInput.removeAttribute('required');
+                firstNameInput.removeAttribute('required');
+                birthDateInput.removeAttribute('required');
+                genderSelect.removeAttribute('required');
             }
         }
 
+        // Définir la valeur par défaut si aucune valeur n'est présente
+        if (!patientTypeSelect.value && !{{ isset($patient) ? 'true' : 'false' }}) {
+            patientTypeSelect.value = 'physique';
+        }
+
         // Initial check
-        toggleNifField();
+        toggleFields();
 
         // Event listener pour les changements
-        patientTypeSelect.addEventListener('change', toggleNifField);
+        patientTypeSelect.addEventListener('change', toggleFields);
     });
 </script>
 @endpush

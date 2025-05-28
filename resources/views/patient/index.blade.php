@@ -58,13 +58,26 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-sm bg-primary-subtle text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
-                                            {{ strtoupper(substr($patient->first_name, 0, 1)) }}{{ strtoupper(substr($patient->last_name, 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <div class="fw-medium">{{ $patient->first_name }} {{ $patient->last_name }}</div>
-                                            <small class="text-muted">ID: {{ $patient->id }}</small>
-                                        </div>
+                                        @if ($patient->patient_type == 'physique')
+                                                <div class="avatar-sm bg-primary-subtle text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                                    <div class="p-2">
+                                                        {{ strtoupper(substr($patient->first_name, 0, 1)) }}{{ strtoupper(substr($patient->last_name, 0, 1)) }}
+                                                    </div>
+                                            </div>
+                                            <div>
+                                                <div class="fw-medium">{{ $patient->first_name }} {{ $patient->last_name }}</div>
+                                                <small class="text-muted">ID: {{ $patient->id }}</small>
+                                            </div>
+                                        @else
+                                            <div class="avatar-sm bg-primary-subtle text-primary rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-building-fill p-2"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-medium">{{ $patient->societe }}</div>
+                                                <small class="text-muted">ID: {{ $patient->id }}</small>
+                                            </div>
+                                        @endif
+
                                     </div>
                                 </td>
                                 <td>{{ $patient->birth_date ? \Carbon\Carbon::parse($patient->birth_date)->format('d/m/Y') : '-' }}</td>

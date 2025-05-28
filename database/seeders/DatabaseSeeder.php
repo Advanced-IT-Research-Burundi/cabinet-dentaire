@@ -33,6 +33,19 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        // Insert a default caisse de l'entreprise
+
+        \DB::table('caisses')->insert([
+            'name' => 'Caisse de l\'Entreprise',
+            'type' => 'Caisse',
+            'date' => now(),
+            'montant' => 0,
+            'description' => 'Caisse initiale de l\'entreprise',
+            'status' => 'active',
+            'user_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         $this->call([
             CompanySeeder::class,
         ]);
