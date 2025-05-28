@@ -153,10 +153,10 @@ class CreateInvoice extends Component
                  session()->flash('error', "Veuillez Nous excuse vous n'avez droit de créer une facture");
            return;
         }
-        // if (empty($this->selectedTreatments)) {
-        //     session()->flash('error', 'Veuillez sélectionner au moins un traitement');
-        //     return;
-        // }
+        if (empty($this->selectedTreatments) && empty($this->productsChoosed)) {
+            session()->flash('error', 'Veuillez sélectionner au moins un élément ');
+            return;
+     }
 
         try {
             DB::beginTransaction();
@@ -240,7 +240,7 @@ class CreateInvoice extends Component
             return;
         }
         session()->flash('success', 'Facture créée avec succès');
-        return redirect()->route('invoices.index');
+        return redirect()->route('invoices.show', $invoice->id);
     }
 
     public function updateStockQuantite($invoiceID)
