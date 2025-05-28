@@ -51,7 +51,7 @@
                 <div class="stat-title">Ce mois-ci</div>
             </div>
             <div class="py-2 bg-transparent border-0 card-footer">
-                <a href="{{ route('patients.new') }}" class="text-decoration-none text-success small">
+                <a href="{{ route('patients.index') }}" class="text-decoration-none text-success small">
                     <i class="bi bi-arrow-right"></i> Voir les détails
                 </a>
             </div>
