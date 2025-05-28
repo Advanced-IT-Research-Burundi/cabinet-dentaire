@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <div class="row mb-3">
+                    <div style="display:none" class="row mb-3">
                         <div class="col-md-6">
                             <div class="btn-group" role="group">
                                 <button id="view-all" class="btn btn-outline-secondary active">Tous</button>
@@ -235,7 +235,8 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: 'fr',
         timeZone: 'local',
         slotMinTime: '07:00:00',
-        slotMaxTime: '24:00:00',
+        // slotMaxTime: '24:00:00',
+        slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
         slotLabelInterval: '01:00:00',
         allDaySlot: false,
