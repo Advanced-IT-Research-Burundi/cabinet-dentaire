@@ -37,13 +37,13 @@
                     <span class="brand-text">Budental Services</span>
                 </a>
 
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="border-0 navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Menu Gauche -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="mb-2 navbar-nav me-auto mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link modern-nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                 <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
@@ -96,7 +96,7 @@
                                     <i class="bi bi-file-earmark-plus"></i>Nouvelle facture
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item modern-dropdown-item" href="{{ route('payments.index') }}">
+                                <!-- <li><a class="dropdown-item modern-dropdown-item" href="{{ route('payments.index') }}">
                                     <i class="bi bi-cash-coin"></i>Paiements
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="">
@@ -104,7 +104,7 @@
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoices.index') }}">
                                     <i class="bi bi-check2"></i>Factures payées
-                                </a></li>
+                                </a></li> -->
                             </ul>
                         </li>
 
@@ -174,18 +174,18 @@
                                     @foreach(auth()->user()->notifications->take(5) as $notification)
                                         <li class="notification-item {{ $notification->read_at ? '' : 'unread' }}">
                                             <div class="d-flex align-items-start">
-                                                <i class="bi bi-info-circle me-3 mt-1 text-primary"></i>
+                                                <i class="mt-1 bi bi-info-circle me-3 text-primary"></i>
                                                 <div class="flex-grow-1">
                                                     <div class="fw-semibold">{{ $notification->data['message'] ?? 'Nouvelle notification' }}</div>
-                                                    <div class="text-muted small mt-1">
+                                                    <div class="mt-1 text-muted small">
                                                         <i class="bi bi-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
                                     @endforeach
-                                    <li><hr class="dropdown-divider m-0"></li>
-                                    <li class="text-center p-2">
+                                    <li><hr class="m-0 dropdown-divider"></li>
+                                    <li class="p-2 text-center">
                                         <a class="btn btn-outline-primary btn-sm me-2" href="{{ route('notifications.index') }}">
                                             Voir toutes
                                         </a>
@@ -194,8 +194,8 @@
                                         </a>
                                     </li>
                                 @else
-                                    <li class="notification-item text-center">
-                                        <i class="bi bi-bell-slash text-muted fs-1 d-block mb-2"></i>
+                                    <li class="text-center notification-item">
+                                        <i class="mb-2 bi bi-bell-slash text-muted fs-1 d-block"></i>
                                         <div class="text-muted">Aucune notification</div>
                                     </li>
                                 @endif
@@ -210,7 +210,7 @@
                                 </div>
                                 <div class="d-none d-md-block">
                                     <div class="fw-semibold">{{ Auth::user()->full_name }} </div>
-                                    <div class="small opacity-75">{{ Auth::user()->role }}</div>
+                                    <div class="opacity-75 small">{{ Auth::user()->role }}</div>
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end modern-dropdown-menu" aria-labelledby="userDropdown">
@@ -260,7 +260,7 @@
         <!-- Contenu principal -->
         <main class="py-4 flex-grow-1">
             <div class="container-fluid">
-                <div class="row mb-0">
+                <div class="mb-0 row">
                     <div class="col-12">
                         <h1 class="page-title">@yield('page-title')</h1>
                         @yield('breadcrumbs')
@@ -272,15 +272,15 @@
         </main>
 
         <!-- Pied de page -->
-        <footer class="py-0.5 mt-auto bg-light border-top shadow-sm">
+        <footer class="py-0.5 mt-auto shadow-sm bg-light border-top">
             <div class="container-fluid">
                 <div class="row align-items-center">
-                    <div class="col-md-6 text-center text-md-start">
+                    <div class="text-center col-md-6 text-md-start">
                         <p class="mb-0 text-muted">
                             &copy; {{ date('Y') }} <strong>Clinique Dentaire</strong>. Tous droits réservés.
                         </p>
                     </div>
-                    <div class="col-md-6 text-center text-md-end">
+                    <div class="text-center col-md-6 text-md-end">
                         <p class="mb-0 text-muted">
                             <i class="bi bi-code-slash me-1"></i> Version {{ config('app.version', '1.0.0') }}
                         </p>
@@ -291,7 +291,7 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+    <div id="toast-container" class="top-0 p-3 toast-container position-fixed end-0"></div>
 
     <!-- Bootstrap JS -->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
@@ -342,16 +342,16 @@
             const toastTitle = title || titleMap[type];
             toast.innerHTML = `
                 <div class="d-flex w-100">
-                    <div class="toast-body text-white">
+                    <div class="text-white toast-body">
                         <div class="d-flex align-items-start">
                             <i class="bi ${iconMap[type]} me-3 mt-1 fs-5"></i>
                             <div class="flex-grow-1">
-                                ${toastTitle ? `<div class="fw-semibold mb-1">${toastTitle}</div>` : ''}
+                                ${toastTitle ? `<div class="mb-1 fw-semibold">${toastTitle}</div>` : ''}
                                 <div>${message}</div>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    <button type="button" class="m-auto btn-close btn-close-white me-2" data-bs-dismiss="toast"></button>
                 </div>
             `;
 
