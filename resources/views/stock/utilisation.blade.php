@@ -246,6 +246,38 @@
                                 </div>
                             </div>
                         @endif
+                        @if(count($alertes['stock_expire']) > 0)
+                            <div class="alert alert-danger border-start border-danger border-4 mt-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exclamation-circle text-danger"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="alert-heading">Produits Expirés ({{ count($alertes['stock_expire']) }} produits)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-borderless mb-0">
+                                                @foreach($alertes['stock_expire']->take(5) as $stock)
+                                                    <tr>
+                                                        <td class="ps-0">
+                                                            <strong>{{ $stock->product_name }}</strong>
+                                                        </td>
+                                                        <td class="text-end pe-0">
+                                                            <span class="badge bg-dark">
+                                                                {{ $stock->date_expiration->format('d/m/Y') }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                        @if(count($alertes['stock_expire']) > 5)
+                                            <small class="text-muted">... et {{ count($alertes['stock_expire']) - 5 }} autres</small>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>
