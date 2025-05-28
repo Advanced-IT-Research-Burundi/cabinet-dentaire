@@ -16,6 +16,7 @@
 
 @section('content')
 <!-- Cartes de statistiques -->
+@canany(['is-admin', 'is-reception'])
 <div class="row">
     <div class="mb-4 col-xl-3 col-md-6">
         <div class="bg-opacity-10 border-0 card stat-card h-100 bg-primary">
@@ -167,4 +168,5 @@
         </div>
     </div>
 </div>
+@endcanany
 @endsection

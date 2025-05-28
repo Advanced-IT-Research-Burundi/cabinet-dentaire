@@ -49,6 +49,12 @@ Route::get(
 Route::get('patients/search',[PatientController::class, 'search'])->name('patients.search');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+//->can('is-admin');
+
+Route::middleware(['auth', 'canany:is-admin,is-pharmacist'])->group(function () {
+    Route::resource('invoices', InvoiceController::class);
+    Route::resource('orders', OrderController::class);
+});
 
 Route::middleware(['auth'])->group(function () {
 
@@ -63,20 +69,17 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes pour les informations de l'entreprise
     Route::put('/parametrage/company/update', [ParametrageController::class, 'updateCompany'])->name('parametrage.company.update');
-
-
-
     Route::resource('patients', PatientController::class);
     Route::resource('dentists', DentistController::class);
     Route::resource('treatments', TreatmentController::class);
     Route::resource('mouvements_stocks', MouvementStockController::class);
-    Route::resource('invoices', InvoiceController::class);
+    // Can is Admin
     Route::resource('payments', PaymentController::class);
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('suppliers', SupplierController::class);
-    Route::resource('orders', OrderController::class);
+
     Route::resource('assurances', AssuranceController::class);
     Route::get('invoices/{id}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
     Route::get('stock/alert', [StockController::class, 'alert'])->name('invoice.alert');
