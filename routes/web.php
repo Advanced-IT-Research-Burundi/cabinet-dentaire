@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('appointments', AppointmentController::class);
     Route::get('stocks/{id}/movement', [StockController::class, 'movement'])->name('stocks.movement');
 
+
+
     // Dashboard related routes
     Route::get(
         'dashboard/revenue',
@@ -252,7 +254,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::prefix('stock')->name('stock.')->group(function () {
     // Tableau de bord utilisateur
-    Route::get('/utilisateur', [StockController::class, 'utilisateur'])->name('utilisateur');;
+    Route::get('/utilisateur', [StockController::class, 'utilisateur'])->name('utilisateur');
+    Route::get('/report', [StockController::class, 'report'])->name('report');
 
     // Routes pour les rapports et statistiques
     Route::get('/reports/analytics', [StockController::class, 'analytics'])->name('reports.analytics');
@@ -277,6 +280,3 @@ Route::prefix('stock')->name('stock.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-
-

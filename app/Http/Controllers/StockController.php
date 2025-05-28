@@ -13,6 +13,16 @@ use Carbon\Carbon;
 
 class StockController extends Controller
 {
+
+    public function report()
+    {
+        $produits = Stock::with('category')
+            ->orderBy('product_name')
+            ->get();
+
+        return view('stock.report', compact('produits'));
+    }
+
     // Display a listing of the stocks
     public function index(Request $request)
     {
