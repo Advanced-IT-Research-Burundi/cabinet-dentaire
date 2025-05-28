@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\User;
 use App\Models\Invoice;
 use App\Models\Treatment;
 use Carbon\Carbon;
@@ -19,7 +20,7 @@ class DashboardController extends Controller
         return view('dashboard', [
             'rdvToday' => Appointment::whereDate('date', $today)->count(),
             'newPatients' => Patient::where('created_at', '>=', $firstDayOfMonth)->count(),
-            'unpaidInvoices' => Invoice::whereIn('status', ['Emise', 'Partiellement_payee', 'En_retard'])->count(),
+            'totalusers' => User::count(),
             'revenue' => Invoice::where('created_at', '>=', $firstDayOfMonth)->sum('total_amount'),
             'appointments' => Appointment::with(['patient', 'dentist.user'])
                                       ->whereDate('date', $today)

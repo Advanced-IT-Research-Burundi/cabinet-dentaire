@@ -86,10 +86,10 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                En Attente
+                                Caisse Principale
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $caisses->where('status', 'pending')->count() }}
+                                {{ $caissePrincipale ?? 'N/A' }} FBU
                             </div>
                         </div>
                         <div class="col-auto">
@@ -126,7 +126,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">Statut</label>
                                 <select name="status" class="form-select">
@@ -136,7 +136,7 @@
                                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Terminé</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">Date de début</label>
@@ -149,9 +149,7 @@
                                 <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
+                        <div class="col-md-3 mt-4">
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="bi bi-search me-1"></i>Filtrer
                             </button>
@@ -159,7 +157,9 @@
                                 <i class="bi bi-times me-1"></i>Réinitialiser
                             </a>
                         </div>
+
                     </div>
+
                 </form>
             </div>
         </div>
