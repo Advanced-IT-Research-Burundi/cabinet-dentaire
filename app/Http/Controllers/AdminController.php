@@ -33,7 +33,7 @@ class AdminController extends Controller
         $sessionStats = $this->getSessionStats();
 
         // Métriques système
-        $systemMetrics = $this->getSystemMetrics();
+        // $systemMetrics = $this->getSystemMetrics();
 
         // Alertes récentes
         $recentAlerts = $this->getRecentAlerts();
@@ -52,7 +52,7 @@ class AdminController extends Controller
             'systemHealth',
             'activeAlerts',
             'sessionStats',
-            'systemMetrics',
+            // 'systemMetrics',
             'recentAlerts',
             'treatmentTypesCount',
             'paymentMethodsCount',

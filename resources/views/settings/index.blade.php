@@ -80,11 +80,11 @@
                 <i class="bi bi-gear me-2"></i>Configuration
             </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" data-bs-toggle="pill" href="#monitoring">
                 <i class="bi bi-graph-up me-2"></i>Surveillance
             </a>
-        </li>
+        </li> --}}
         {{-- <li class="nav-item">
             <a class="nav-link" data-bs-toggle="pill" href="#logs">
                 <i class="bi bi-journal-text me-2"></i>Journaux
@@ -426,7 +426,7 @@
         </div>
 
         <!-- Surveillance -->
-        <div class="tab-pane fade" id="monitoring">
+        {{-- <div class="tab-pane fade" id="monitoring">
             <div class="row g-4">
                 <div class="col-md-8">
                     <div class="card admin-card">
@@ -511,7 +511,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 </div>
