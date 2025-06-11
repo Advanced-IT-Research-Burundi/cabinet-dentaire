@@ -15,13 +15,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // \App\Models\User::factory(10)->create();
-
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-
         \DB::table('users')->insert([
             'name' => 'budental services',
             'first_name' => 'budental',
@@ -38,7 +35,6 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         // Insert a default caisse de l'entreprise
-
         \DB::table('caisses')->insert([
             'id' => 1,
             'name' => 'Caisse de l\'Entreprise',
