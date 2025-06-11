@@ -50,6 +50,9 @@ class DentistController extends Controller
             $searchTerm = trim(request('search'));
             $parts = explode(' ', $searchTerm, 5);
 
+            $parts = array_filter($parts, function($part) {
+                return !empty(trim($part));
+            });
             $query->whereHas('user', function($q) use ($parts, $searchTerm) {
                 if (count($parts) >= 2) {
                     $q->where(function($sub) use ($parts) {
