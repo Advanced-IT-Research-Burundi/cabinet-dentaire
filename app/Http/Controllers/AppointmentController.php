@@ -162,8 +162,7 @@ class AppointmentController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        try {
-            $validated = $request->validate([
+        $validated = $request->validate([
                 'patient_id' => 'required|exists:patients,id',
                 'dentist_id' => 'required|exists:dentists,id',
                 'date' => 'required|date|after_or_equal:today',
@@ -175,6 +174,15 @@ class AppointmentController extends Controller
                 'planned_treatment_id' => 'required|exists:treatment_types,id',
             ]);
 
+        try {
+
+
+            if ($validated['start_time'] < now()->format('H:i')) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
+            }
             // Vérifier les conflits de rendez-vous pour le dentiste
             $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
                 ->where('date', $validated['date'])
