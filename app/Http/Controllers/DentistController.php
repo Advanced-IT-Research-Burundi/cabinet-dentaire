@@ -67,9 +67,9 @@ class DentistController extends Controller
             });
         }
 
-        if (request()->has('specialty') && request('specialty') != '') {
-            $query->where('specialty', request('specialty'));
-        }
+        // if (request()->has('specialty') && request('specialty') != '') {
+        //     $query->where('specialty', request('specialty'));
+        // }
         if (request()->has('status') && request('status') != '') {
             $query->where('available', request('status'));
         }

@@ -55,7 +55,9 @@
 
                     <!-- Filtre par statut -->
                     <div class="col-md-2">
-                        <select class="form-select" name="status" onchange="this.form.submit()">
+                        <select class="form-select" name="status"
+                        {{-- onchange="this.form.submit()" --}}
+                        >
                             <option value="">Tous les statuts</option>
                             <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Disponible</option>
                             <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Non disponible</option>
