@@ -206,6 +206,7 @@ class AppointmentController extends Controller
             $validated['creator_id'] = auth()->id();
             $validated['reminder_sent'] = false;
 
+            // dd($validated);
             Appointment::create($validated);
 
             return redirect()
