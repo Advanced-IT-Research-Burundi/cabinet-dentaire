@@ -26,9 +26,11 @@
                                         <input type="text" class="form-control" placeholder="Rechercher un patient..." id="patient_search">
                                     </div>
                                     <div class="select-options" id="patient_options">
-                                        @foreach($patients as $patient)
-                                            <div class="select-option" data-value="{{ $patient->id }}" data-display="{{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}">
-                                                {{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}
+                                       @foreach($patients as $patient)
+                                            <div class="select-option"
+                                                data-value="{{ $patient->id }}"
+                                                data-display="{{ $patient->id }} - {{ $patient->full_name }}">
+                                                {{ $patient->id }} - {{ $patient->full_name }}
                                             </div>
                                         @endforeach
                                     </div>

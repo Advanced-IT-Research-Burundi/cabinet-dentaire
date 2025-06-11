@@ -65,9 +65,15 @@ class Patient extends Model
 
     public function getFullNameAttribute(): string
     {
-        return $this->patient_type == 'physique' ? $this->first_name??'' . ' ' . $this->last_name??'' : $this->societe;
-        // return $this->first_name . ' ' . $this->last_name;
+        if ($this->patient_type === 'physique') {
+            $first = $this->first_name ?? '';
+            $last = $this->last_name ?? '';
+            return trim($first . ' ' . $last);
+        }
+
+        return $this->societe ?? '';
     }
+
 
     public function appointments(){
         return $this->hasMany(Appointment::class, 'patient_id');
