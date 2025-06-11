@@ -40,18 +40,18 @@
                     </div>
 
                     <!-- Filtre par spécialité -->
-                    <div class="col-md-3">
-                    <select class="form-select" name="specialty">
-                        <option value="">Toutes les spécialités</option>
-                        @foreach($specialties as $specialty)
-                            @if(strlen($specialty) <= 50 && !str_contains($specialty, 'error'))
-                                <option value="{{ $specialty }}" {{ request('specialty') == $specialty ? 'selected' : '' }}>
-                                    {{ Str::limit($specialty, 40) }}
-                                </option>
-                            @endif
-                        @endforeach
-                    </select>
-                </div>
+                    {{-- <div class="col-md-3">
+                        <select class="form-select" name="specialty">
+                            <option value="">Toutes les spécialités</option>
+                            @foreach($specialties as $specialty)
+                                @if(strlen($specialty) <= 50 && !str_contains($specialty, 'error'))
+                                    <option value="{{ $specialty }}" {{ request('specialty') == $specialty ? 'selected' : '' }}>
+                                        {{ Str::limit($specialty, 40) }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div> --}}
 
                     <!-- Filtre par statut -->
                     <div class="col-md-2">

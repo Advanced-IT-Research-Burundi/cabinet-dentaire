@@ -79,14 +79,14 @@ class DentistController extends Controller
 
         $dentists = $query->paginate(15)->withQueryString();
 
-        $specialties = Dentist::select('specialty')
-            ->distinct()
-            ->whereNotNull('specialty')
-            ->where('specialty', '!=', '')
-            ->orderBy('specialty')
-            ->pluck('specialty');
+        // $specialties = Dentist::select('specialty')
+        //     ->distinct()
+        //     ->whereNotNull('specialty')
+        //     ->where('specialty', '!=', '')
+        //     ->orderBy('specialty')
+        //     ->pluck('specialty');
 
-        return view('dentist.index', compact('dentists', 'specialties'));
+        return view('dentist.index', compact('dentists'));
     }
 
     /**
