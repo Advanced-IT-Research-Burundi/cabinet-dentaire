@@ -111,7 +111,6 @@
             <option value="">Sélectionner...</option>
             <option value="M" {{ old('gender', $patient->gender ?? '') == 'M' ? 'selected' : '' }}>Homme</option>
             <option value="F" {{ old('gender', $patient->gender ?? '') == 'F' ? 'selected' : '' }}>Femme</option>
-            <option value="Autre" {{ old('gender', $patient->gender ?? '') == 'Autre' ? 'selected' : '' }}>Autre</option>
         </select>
         @error('gender')
             <div class="invalid-feedback">{{ $message }}</div>
