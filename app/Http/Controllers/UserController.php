@@ -17,14 +17,27 @@ class UserController extends Controller
 
         // Search functionality
         if ($request->has('search') && $request->search != '') {
-            $search = $request->get('search');
-            $query->where(function($q) use ($search) {
+        $search = trim($request->get('search'));
+        $parts = preg_split('/\s+/', $search, 5);
+
+        $query->where(function($q) use ($parts, $search) {
+            if (count($parts) >= 2) {
+                $q->where(function($sub) use ($parts) {
+                    $sub->where('first_name', 'like', "%{$parts[0]}%")
+                        ->where('last_name', 'like', "%{$parts[1]}%");
+                })->orWhere(function($sub) use ($parts) {
+                    $sub->where('first_name', 'like', "%{$parts[1]}%")
+                        ->where('last_name', 'like', "%{$parts[0]}%");
+                });
+            } else {
+
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%");
+            }
+        });
+    }
 
         // Role filter
         if ($request->has('role') && $request->role != '') {

@@ -47,11 +47,23 @@ class DentistController extends Controller
             ->withCount('appointments');
 
         if (request()->has('search') && request('search') != '') {
-            $searchTerm = request('search');
-            $query->whereHas('user', function($q) use ($searchTerm) {
-                $q->where('first_name', 'like', "%{$searchTerm}%")
-                ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                ->orWhere('email', 'like', "%{$searchTerm}%");
+            $searchTerm = trim(request('search'));
+            $parts = preg_split('/\s+/', $searchTerm, 5);
+
+            $query->whereHas('user', function($q) use ($parts, $searchTerm) {
+                if (count($parts) >= 2) {
+                    $q->where(function($sub) use ($parts) {
+                        $sub->where('first_name', 'like', "%{$parts[0]}%")
+                            ->where('last_name', 'like', "%{$parts[1]}%");
+                    })->orWhere(function($sub) use ($parts) {
+                        $sub->where('first_name', 'like', "%{$parts[1]}%")
+                            ->where('last_name', 'like', "%{$parts[0]}%");
+                    });
+                } else {
+                    $q->where('first_name', 'like', "%{$searchTerm}%")
+                    ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                    ->orWhere('email', 'like', "%{$searchTerm}%");
+                }
             });
         }
 
