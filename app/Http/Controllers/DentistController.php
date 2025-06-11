@@ -44,36 +44,24 @@ class DentistController extends Controller
     public function index(): View
     {
         $query = Dentist::with('user')
-            ->withCount('appointments');
+        ->withCount('appointments');
 
-        if (request()->has('search') && request('search') != '') {
-            $searchTerm = trim(request('search'));
-            $parts = explode(' ', $searchTerm, 5);
-
-            $parts = array_filter($parts, function($part) {
-                return !empty(trim($part));
-            });
-            $query->whereHas('user', function($q) use ($parts, $searchTerm) {
-                if (count($parts) >= 2) {
-                    $q->where(function($sub) use ($parts) {
-                        $sub->where('first_name', 'like', "%{$parts[0]}%")
-                            ->where('last_name', 'like', "%{$parts[1]}%");
-                    })->orWhere(function($sub) use ($parts) {
-                        $sub->where('first_name', 'like', "%{$parts[1]}%")
-                            ->where('last_name', 'like', "%{$parts[0]}%");
-                    });
-                } else {
-                    $q->where('first_name', 'like', "%{$searchTerm}%")
-                    ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                    ->orWhere('email', 'like', "%{$searchTerm}%");
-                }
+        // Recherche simplifiée
+        if (request()->filled('search')) {
+            $searchTerm = request('search');
+            $query->whereHas('user', function($q) use ($searchTerm) {
+                $q->where('first_name', 'like', "%{$searchTerm}%")
+                ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                ->orWhere('email', 'like', "%{$searchTerm}%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%{$searchTerm}%"]);
             });
         }
 
-        if (request()->has('specialty') && request('specialty') != '') {
+        if (request()->filled('specialty')) {
             $query->where('specialty', request('specialty'));
         }
-        if (request()->has('status') && request('status') != '') {
+
+        if (request()->filled('status')) {
             $query->where('available', request('status'));
         }
 
@@ -91,10 +79,12 @@ class DentistController extends Controller
 
         $dentists = $query->paginate(15)->withQueryString();
 
-        $specialties = Dentist::distinct('specialty')
+        $specialties = Dentist::select('specialty')
+            ->distinct()
+            ->whereNotNull('specialty')
+            ->where('specialty', '!=', '')
             ->orderBy('specialty')
-            ->pluck('specialty')
-            ->filter();
+            ->pluck('specialty');
 
         return view('dentist.index', compact('dentists', 'specialties'));
     }
