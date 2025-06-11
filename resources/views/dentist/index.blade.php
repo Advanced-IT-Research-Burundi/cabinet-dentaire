@@ -41,7 +41,9 @@
 
                     <!-- Filtre par spécialité -->
                     <div class="col-md-3">
-                        <select class="form-select" name="specialty" onchange="this.form.submit()">
+                        <select class="form-select" name="specialty"
+                        {{-- onchange="this.form.submit()" --}}
+                        >
                             <option value="">Toutes les spécialités</option>
                             @foreach($specialties as $specialty)
                                 <option value="{{ $specialty }}" {{ request('specialty') == $specialty ? 'selected' : '' }}>
