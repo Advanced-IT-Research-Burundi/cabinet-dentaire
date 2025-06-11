@@ -507,7 +507,7 @@ class AdminController extends Controller
         if (!$free) return null;
 
         $lines = explode("\n", trim($free));
-        $mem = preg_split('/\s+/', $lines[1]); // ligne "Mem:"
+        $mem = explode(' ', $lines[1]); // ligne "Mem:"
 
         $total = (int) $mem[1];
         $used = (int) $mem[2];

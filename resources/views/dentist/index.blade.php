@@ -33,7 +33,7 @@
                     <!-- Recherche par nom/email -->
                     <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text" id="search-addon"><i class="bi bi-search"></i></span>
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
                             <input type="text" class="form-control" placeholder="Rechercher par nom ou email"
                                 aria-label="Recherche" name="search" value="{{ request('search') }}">
                         </div>

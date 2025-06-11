@@ -18,7 +18,7 @@ class UserController extends Controller
         // Search functionality
         if ($request->has('search') && $request->search != '') {
         $search = trim($request->get('search'));
-        $parts = preg_split('/\s+/', $search, 5);
+        $parts = explode(' ', $search, 5);
 
         $query->where(function($q) use ($parts, $search) {
             if (count($parts) >= 2) {
