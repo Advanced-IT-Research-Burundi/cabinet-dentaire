@@ -46,33 +46,33 @@ class DentistController extends Controller
         $query = Dentist::with('user')
             ->withCount('appointments');
 
-        if (request()->has('search') && request('search') != '') {
-            $searchTerm = trim(request('search'));
-            $parts = preg_split('/\s+/', $searchTerm, 5);
+        // if (request()->has('search') && request('search') != '') {
+        //     $searchTerm = trim(request('search'));
+        //     $parts = preg_split('/\s+/', $searchTerm, 5);
 
-            $query->whereHas('user', function($q) use ($parts, $searchTerm) {
-                if (count($parts) >= 2) {
-                    $q->where(function($sub) use ($parts) {
-                        $sub->where('first_name', 'like', "%{$parts[0]}%")
-                            ->where('last_name', 'like', "%{$parts[1]}%");
-                    })->orWhere(function($sub) use ($parts) {
-                        $sub->where('first_name', 'like', "%{$parts[1]}%")
-                            ->where('last_name', 'like', "%{$parts[0]}%");
-                    });
-                } else {
-                    $q->where('first_name', 'like', "%{$searchTerm}%")
-                    ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                    ->orWhere('email', 'like', "%{$searchTerm}%");
-                }
-            });
-        }
+        //     $query->whereHas('user', function($q) use ($parts, $searchTerm) {
+        //         if (count($parts) >= 2) {
+        //             $q->where(function($sub) use ($parts) {
+        //                 $sub->where('first_name', 'like', "%{$parts[0]}%")
+        //                     ->where('last_name', 'like', "%{$parts[1]}%");
+        //             })->orWhere(function($sub) use ($parts) {
+        //                 $sub->where('first_name', 'like', "%{$parts[1]}%")
+        //                     ->where('last_name', 'like', "%{$parts[0]}%");
+        //             });
+        //         } else {
+        //             $q->where('first_name', 'like', "%{$searchTerm}%")
+        //             ->orWhere('last_name', 'like', "%{$searchTerm}%")
+        //             ->orWhere('email', 'like', "%{$searchTerm}%");
+        //         }
+        //     });
+        // }
 
         // if (request()->has('specialty') && request('specialty') != '') {
         //     $query->where('specialty', request('specialty'));
         // }
-        if (request()->has('status') && request('status') != '') {
-            $query->where('available', request('status'));
-        }
+        // if (request()->has('status') && request('status') != '') {
+        //     $query->where('available', request('status'));
+        // }
 
         $sortField = request('sort', 'id');
         $direction = request('direction', 'asc');
