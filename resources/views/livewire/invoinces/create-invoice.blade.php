@@ -83,13 +83,13 @@
                             <td>{{ $product['product_name'] }}</td>
                             <td>{{ $product['quantite_disponible'] }}</td>
                             <td>
-                                <input type="number" wire:model="productsChoosed.{{ $index }}.price"
+                                <input min="0" type="number" wire:model="productsChoosed.{{ $index }}.price"
                                 class="form-control form-control-sm"
                                 step="0.01"
                                 >
                             </td>
                             <td>
-                                <input type="number" wire:model="productsChoosed.{{ $index }}.quantite"
+                                <input type="number" min="0" wire:model="productsChoosed.{{ $index }}.quantite"
                                 class="form-control form-control-sm
                                 @if ($product['quantite'] > $product['quantite_disponible'])
                                 is-invalid
@@ -186,7 +186,7 @@
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->quantite }}</td>
                         <td>
-                            <button wire:click="addProduct({{ $product->id }})" class="btn-sm">
+                            <button wire:click="addProduct({{ $product->id }})" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-plus"></i>
                             </button>
                         </td>
@@ -225,7 +225,7 @@
                     <li class="list-group-item">
                         <i class="bi bi-calendar-date me-2 text-info"></i>
                         <strong>Date de naissance:</strong>
-                        {{ $patient['birth_date'] }}
+                        {{ \Carbon\Carbon::parse($patient['date_of_birth'])->format('d-m-Y') }}
                     </li>
                     <li class="list-group-item">
                         <i class="bi bi-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'person-standing' : 'person-standing-dress' }} me-2 text-warning"></i>
