@@ -33,7 +33,8 @@
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead>
-                                    <tr>
+                                     <tr>
+                                        <th>Date</th>
                                         <th>Heure</th>
                                         <th>Patient</th>
                                         <th>Dentiste</th>
@@ -44,21 +45,25 @@
                                 </thead>
                                 <tbody>
                                     @foreach($appointments as $appointment)
-                                        <tr>
+                                         <tr>
+                                            <td>{{ \Carbon\Carbon::parse($appointment->date)->format('d/m/Y') }}</td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} -
                                                 {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}
                                             </td>
                                             <td>
-                                                {{ $appointment->patient->first_name }}
-                                                {{ $appointment->patient->last_name }}
+                                                <span class="badge bg-primary">
+                                                {{ $appointment->patient->id }}
+                                                </span>
+                                                {{ $appointment->patient->full_name }}
+                                                {{-- {{ $appointment->patient->last_name }} --}}
                                             </td>
                                             <td>
-                                                Dr. {{ $appointment->dentist->user->prenom }}
-                                                {{ $appointment->dentist->user->nom }}
+                                                Dr. {{ $appointment->dentist->user->first_name }}
+                                                {{ $appointment->dentist->user->last_name}}
                                             </td>
                                             <td>{{ $appointment->plannedTreatment->name }}</td>
-                                                <td>
+                                            <td>
                                             @php
                                                 $statusClasses = [
                                                     'Confirme' => 'bg-success',
@@ -124,6 +129,7 @@
                                                 @endif
                                             </div>
                                         </td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>
