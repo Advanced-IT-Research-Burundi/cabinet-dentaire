@@ -54,6 +54,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    protected $appends =['is_active'];
 
     public function notifications()
     {
@@ -160,6 +161,9 @@ class User extends Authenticatable
     public function caisses()
     {
         return $this->hasMany(Caisse::class);
+    }
+    public function getIsActiveAttribute(){
+        return $this->statut == 'Actif';
     }
 
 

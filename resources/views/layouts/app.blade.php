@@ -19,6 +19,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.13.1/bootstrap-icons.min.css') }}">
 
+    {{-- favicon --}}
+    <link rel="shortcut icon" href="{{ asset('favicon.ico')}}" type="image/x-icon">
+
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/sweetalert2@11.css') }}">

@@ -9,7 +9,7 @@
         <div class="container-fluid py-4">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h3 mb-0 text-primary fw-bold">
-                    <i class="fas fa-chart-line me-2"></i>
+                    <i class="bi bi-chart-line me-2"></i>
                     Tableau de Bord Stock
                 </h1>
                 <div class="text-end">
@@ -29,7 +29,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="bg-primary bg-opacity-10 rounded-3 p-3">
-                                    <i class="fas fa-boxes text-primary fs-4"></i>
+                                    <i class="bi bi-boxes text-primary fs-4"></i>
                                 </div>
                             </div>
                             <div class="ms-3">
@@ -47,7 +47,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="bg-warning bg-opacity-10 rounded-3 p-3">
-                                    <i class="fas fa-exclamation-triangle text-warning fs-4"></i>
+                                    <i class="bi bi-exclamation-triangle text-warning fs-4"></i>
                                 </div>
                             </div>
                             <div class="ms-3">
@@ -65,7 +65,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="bg-danger bg-opacity-10 rounded-3 p-3">
-                                    <i class="fas fa-clock text-danger fs-4"></i>
+                                    <i class="bi bi-clock text-danger fs-4"></i>
                                 </div>
                             </div>
                             <div class="ms-3">
@@ -83,7 +83,7 @@
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <div class="bg-success bg-opacity-10 rounded-3 p-3">
-                                    <i class="fas fa-dollar-sign text-success fs-4"></i>
+                                    <i class="bi bi-cash text-success fs-4"></i>
                                 </div>
                             </div>
                             <div class="ms-3">
@@ -104,7 +104,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-primary bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-chart-bar text-primary"></i>
+                                <i class="bi bi-chart-bar text-primary"></i>
                             </div>
                             Évolution Stock (6 derniers mois)
                         </h5>
@@ -121,7 +121,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-info bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-chart-pie text-info"></i>
+                                <i class="bi bi-chart-pie text-info"></i>
                             </div>
                             Types de Mouvements (30 derniers jours)
                         </h5>
@@ -140,7 +140,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-success bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-trending-up text-success"></i>
+                                <i class="bi bi-trending-up text-success"></i>
                             </div>
                             Top 10 Produits les Plus Utilisés
                         </h5>
@@ -157,7 +157,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-warning bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-layer-group text-warning"></i>
+                                <i class="bi bi-layer-group text-warning"></i>
                             </div>
                             Valeur Stock par Catégorie
                         </h5>
@@ -177,7 +177,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-danger bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-bell text-danger"></i>
+                                <i class="bi bi-bell text-danger"></i>
                             </div>
                             Alertes Stock
                         </h5>
@@ -187,7 +187,7 @@
                             <div class="alert alert-warning border-start border-warning border-4 mb-3">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0">
-                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        <i class="bi bi-exclamation-triangle text-warning"></i>
                                     </div>
                                     <div class="ms-3">
                                         <h6 class="alert-heading">Stock Faible ({{ count($alertes['stock_faible']) }} produits)</h6>
@@ -219,7 +219,7 @@
                             <div class="alert alert-danger border-start border-danger border-4 mb-0">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0">
-                                        <i class="fas fa-clock text-danger"></i>
+                                        <i class="bi bi-clock text-danger"></i>
                                     </div>
                                     <div class="ms-3">
                                         <h6 class="alert-heading">Expiration Proche ({{ count($alertes['expiration_proche']) }} produits)</h6>
@@ -250,7 +250,7 @@
                             <div class="alert alert-danger border-start border-danger border-4 mt-3">
                                 <div class="d-flex">
                                     <div class="flex-shrink-0">
-                                        <i class="fas fa-exclamation-circle text-danger"></i>
+                                        <i class="bi bi-exclamation-circle text-danger"></i>
                                     </div>
                                     <div class="ms-3">
                                         <h6 class="alert-heading">Produits Expirés ({{ count($alertes['stock_expire']) }} produits)</h6>
@@ -288,7 +288,7 @@
                     <div class="card-header bg-transparent border-0 pb-0">
                         <h5 class="card-title d-flex align-items-center mb-0">
                             <div class="bg-info bg-opacity-10 rounded-2 p-2 me-3">
-                                <i class="fas fa-history text-info"></i>
+                                <i class="bi bi-history text-info"></i>
                             </div>
                             Mouvements Récents
                         </h5>
@@ -304,7 +304,7 @@
                                                     <strong class="text-dark">{{ Str::limit($mouvement->item_designation, 25) }}</strong>
                                                     <br>
                                                     <small class="text-muted">
-                                                        <i class="fas fa-clock me-1"></i>
+                                                        <i class="bi bi-clock me-1"></i>
                                                         {{ Carbon\Carbon::parse($mouvement->item_movement_date)->format('d/m/Y H:i') }}
                                                     </small>
                                                 </div>
