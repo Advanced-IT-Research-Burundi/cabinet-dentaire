@@ -105,7 +105,8 @@
                             </div>
                             <div>
                                 <p class="mb-0 fw-semibold">{{ $appointment->plannedTreatment->name }}</p>
-                                <p class="mb-0 text-primary">{{ number_format($appointment->plannedTreatment->cost, 2) }} FBU</p>
+                                <p class="mb-0 text-primary">
+                                    {{ number_format($appointment->plannedTreatment->base_price, 2) }} FBU</p>
                             </div>
                         </div>
                     </div>
