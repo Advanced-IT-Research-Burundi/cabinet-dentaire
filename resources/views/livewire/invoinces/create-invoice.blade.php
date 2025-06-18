@@ -222,18 +222,19 @@
                     <li class="list-group-item">
                         <i class="bi bi-person-badge me-2 text-success"></i>
                         <strong>Nom:</strong>
-                        {{ $patient['first_name'] }} {{ $patient['middle_name'] }} {{ $patient['last_name'] }}
+                        {{ $patient['full_name'] }}
                     </li>
                     <li class="list-group-item">
                         <i class="bi bi-calendar-date me-2 text-info"></i>
                         <strong>Date de naissance:</strong>
+
                         {{ \Carbon\Carbon::parse($patient['date_of_birth'])->format('d-m-Y') }}
                     </li>
                     <li class="list-group-item">
                         <i class="bi bi-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'person-standing' : 'person-standing-dress' }} me-2 text-warning"></i>
                         <strong>Genre:</strong>
                         <span class="badge bg-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'primary' : 'secondary' }}">
-                            {{ $patient['gender'] }}
+                            {{ $patient['gender'] ?? 'Société' }}
                         </span>
                     </li>
                     <li class="list-group-item">
