@@ -86,17 +86,19 @@
                                 <input min="0" type="number" wire:model="productsChoosed.{{ $index }}.price"
                                 class="form-control form-control-sm"
                                 step="0.01"
+                                oninput="this.value = Math.max(0, this.value)"
                                 >
                             </td>
                             <td>
-                                <input type="number" min="0" wire:model="productsChoosed.{{ $index }}.quantite"
-                                class="form-control form-control-sm
-                                @if ($product['quantite'] > $product['quantite_disponible'])
-                                is-invalid
-                                @endif
-
-                                "
-                                step="0.01"
+                                <input type="number"
+                                    min="0"
+                                    wire:model="productsChoosed.{{ $index }}.quantite"
+                                    class="form-control form-control-sm
+                                    @if ($product['quantite'] > $product['quantite_disponible'])
+                                        is-invalid
+                                    @endif"
+                                    step="0.01"
+                                    oninput="this.value = Math.max(0, this.value)"
                                 >
                             </td>
                             <td>
