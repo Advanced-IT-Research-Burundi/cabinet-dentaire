@@ -318,7 +318,7 @@ class AppointmentController extends Controller
             'date' => $nextAvailableSlot['date'],
             'start_time' => $nextAvailableSlot['start_time'],
             'end_time' => $nextAvailableSlot['end_time'],
-            'status' => 'En_attente',
+            'status' => 'Reporte',
         ]);
 
         return redirect()

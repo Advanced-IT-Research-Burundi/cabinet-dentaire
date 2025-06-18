@@ -51,7 +51,7 @@
                             <th>Code Produit</th>
                             <th>Quantité</th>
                             <th>Prix</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -70,7 +70,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $stock->price ? number_format($stock->price, 2) . ' Fbu' : '-' }}</td>
-                                <td>{{ $stock->status }}</td>
+                                {{-- <td>{{ $stock->status }}</td> --}}
                                 <td>
                                     <div class="btn-group">
                                         <a href="{{ route('stocks.show', $stock) }}" class="btn btn-sm btn-outline-primary">

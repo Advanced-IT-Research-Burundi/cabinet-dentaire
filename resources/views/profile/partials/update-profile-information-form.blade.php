@@ -8,8 +8,9 @@
                     <div class="card profile-card mb-4">
                         <div class="card-body text-center p-4">
                             <div class="mb-4 position-relative">
-                                <img src="{{ Storage::url($user?->photo_url) ?? 'https://via.placeholder.com/150' }}" alt="Photo de profil" class="rounded-circle profile-img mb-3">
-                                <button class="btn btn-sm btn-light position-absolute bottom-0 end-0" data-bs-toggle="modal" data-bs-target="#updatePhotoModal">
+                                {{-- @dump($user?->photo_url !== null) --}}
+                                <img src="{{ ($user?->photo_url !== null) ? Storage::url($user?->photo_url) : asset('img/avatar.jpg') }}" alt="Photo de profil" class="rounded-circle profile-img mb-3">
+                                <button class="btn btn-sm btn-light position-absolute bottom-0" data-bs-toggle="modal" data-bs-target="#updatePhotoModal">
                                     <i class="bi bi-camera-fill"></i>
                                 </button>
                             </div>
@@ -35,12 +36,12 @@
                                 </a> --}}
                             </div>
 
-                            <div class="mt-3">
+                            {{-- <div class="mt-3">
                                 <p class="mb-0 last-connection">
                                     <i class="bi bi-clock-history"></i> Dernière connexion:
                                     {{ $user->derniere_connexion ? date('d/m/Y H:i', strtotime($user->derniere_connexion)) : 'Jamais' }}
                                 </p>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -118,14 +119,14 @@
                                                 @enderror
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="first_name" class="form-label">Prénom</label>
+                                                <label for="first_name" class="form-label">Prénom <span style="color: red">*</span></label>
                                                 <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name) }}">
                                                 @error('first_name')
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                             <div class="col-md-4">
-                                                <label for="last_name" class="form-label">Nom</label>
+                                                <label for="last_name" class="form-label">Nom <span style="color: red">*</span></label>
                                                 <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name) }}">
                                                 @error('last_name')
                                                     <div class="text-danger mt-1">{{ $message }}</div>

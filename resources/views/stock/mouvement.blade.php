@@ -98,7 +98,10 @@
                             <label for="item_quantity" class="form-label">
                                 <i class="bi bi-123 me-2"></i>Quantité
                             </label>
-                            <input type="number" step="0.01" name="item_quantity" id="item_quantity" class="form-control" value="{{ old('item_quantity') }}" required>
+
+                            <input type="number" step="0.01" name="item_quantity" id="item_quantity" class="form-control" value="{{ old('item_quantity') }}"
+                            oninput="this.value = Math.max(0, this.value)"
+                            required>
                             @error('item_quantity')
                                 <div class="text-danger">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
@@ -110,7 +113,9 @@
                             <label for="item_purchase_or_sale_price" class="form-label">
                                 <i class="bi bi-cash-coin me-2"></i>Prix unitaire
                             </label>
-                            <input type="number" step="0.01" name="item_purchase_or_sale_price" id="item_purchase_or_sale_price" class="form-control" value="{{ old('item_purchase_or_sale_price') ?? $stock->price }}" required>
+                            <input type="number" step="0.01" name="item_purchase_or_sale_price" id="item_purchase_or_sale_price" class="form-control" value="{{ old('item_purchase_or_sale_price') ?? $stock->price }}"
+                            oninput="this.value = Math.max(0, this.value)"
+                            required>
                             @error('item_purchase_or_sale_price')
                                 <div class="text-danger">
                                     <i class="bi bi-exclamation-circle me-1"></i>{{ $message }}
