@@ -12,7 +12,7 @@
             <div class="select-container">
                 <div class="custom-select @error('appointment_id') is-invalid @enderror">
                     <div class="select-selected" id="appointment_selected">
-                        {{ isset($treatment) && $treatment->appointment ? $treatment->appointment->start_time->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
+                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment->appointment->start_time)->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
                     </div>
                     <div class="select-dropdown">
                         <div class="select-search">
