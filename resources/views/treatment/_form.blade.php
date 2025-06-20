@@ -30,7 +30,7 @@
                                      data-planned-treatment-name="{{ $appointment->plannedTreatment->name ?? '' }}"
                                      data-planned-treatment-price="{{ $appointment->plannedTreatment->base_price ?? '' }}"
                                      data-date="{{ $appointment->date->format('Y-m-d') }}">
-                                    {{ $appointment->date->format('d/m/Y H:i') }} - {{ $appointment->patient->full_name }}
+                                    {{ $appointment->date->format('d/m/Y') }} - {{ $appointment->patient->full_name }}
                                 </div>
                             @endforeach
                         </div>
