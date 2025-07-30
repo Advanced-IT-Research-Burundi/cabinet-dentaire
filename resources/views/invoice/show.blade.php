@@ -64,7 +64,7 @@
         }
 
         .company-info {
-            margin-top: 15px;
+            margin-top: -30px;
             font-size: 12px;
             line-height: 1.4;
         }
@@ -244,12 +244,15 @@
                 <div class="company-name">{{ $invoice->company['tp_name'] ?? 'BuDental Services' }}</div>
             </div>
             <div class="company-info">
-                NIF: <span>{{ $invoice->company['tp_TIN'] ?? '40001647371' }}</span><br>
-                RC: <span>{{ $invoice->company['tp_trade_number'] ?? '29723/21' }}</span><br>
-                Tél: <span>{{ $invoice->company['tp_phone_number'] ?? '+257 62 10 63 08 / +257 62 50 50 00' }}</span><br>
-                Email: <span>{{ $invoice->company['tp_email'] ?? 'budentalservices@gmail.com' }}</span><br>
+
+                NIF: <span>{{ $invoice->company['tp_TIN']  }}</span><br>
+                RC: <span>{{ $invoice->company['tp_trade_number']  }}</span><br>
+                Tél: <span>{{ $invoice->company['tp_phone_number']}}</span><br>
+                Email: <span>{{ $invoice->company['tp_email'] }}</span><br>
                 Adresse: <span>{{ $invoice->company['tp_address_avenue'] ?? 'N°12, Ave d\'Italie' }}, {{ $invoice->company['tp_address_quartier'] ?? 'Rohero' }}, {{ $invoice->company['tp_address_commune'] ?? 'Mukaza' }}</span><br>
-                <span>{{ $invoice->company['tp_address_privonce'] ?? 'BUJUMBURA-MAIRIE' }}</span>, Burundi
+                <span>{{ $invoice->company['tp_address_privonce'] ?? 'BUJUMBURA-MAIRIE' }}</span>, Burundi <br>
+                Type de Facture : <span>{{$invoice->invoice_type}}</span> <br>
+                Exonerer à la TVA : <span>OUI</span> <br>
             </div>
         </div>
 
@@ -259,23 +262,19 @@
                 <table style="width: 100%">
                     <tr>
                         <td>Nom</td>
-                        <td>{{ $invoice->client['first_name'] ?? '' }} {{ $invoice->client['middle_name'] ?? '' }} {{ $invoice->client['last_name'] ?? '' }}</td>
+                        <td>
+                            {{ $invoice->client['customer_name'] ?? '' }}
+                        </td>
                     </tr>
-                    <tr>
-                        <td>Nom de la société</td>
-                        <td>{{ $invoice->client['insurance_company'] ?? 'N/A' }}</td>
-                    </tr>
+
                     <tr>
                         <td>Addresse</td>
-                        <td>{{ $invoice->client['address'] ?? 'N/A' }}</td>
+                        <td>{{ $invoice->client['customer_address']  ?? '' }}</td>
                     </tr>
-                    <tr>
-                        <td>Email</td>
-                        <td>{{ $invoice->client['email'] ?? 'N/A' }}</td>
-                    </tr>
+
                     <tr>
                         <td>Téléphone</td>
-                        <td>{{ $invoice->client['phone'] ?? 'N/A' }}</td>
+                        <td>{{ $invoice->patient->phone ?? '-' }}</td>
                     </tr>
                 </table>
             </div>
@@ -288,7 +287,7 @@
                     </tr>
                     <tr>
                         <td>DATE</td>
-                        <td>{{ $invoice->issue_date->format('d/m/y') }}</td>
+                        <td>{{ $invoice->created_at->format('d/m/y H:m:s') }}</td>
                     </tr>
                     {{-- <tr>
                         <td>ÉCHÉANCE</td>
@@ -383,6 +382,8 @@
             <p>Merci pour votre collaboration !</p>
             <p>Si vous avez des questions concernant cette facture, veuillez contacter</p>
             <p>{{ $invoice->company['tp_phone_number'] ?? '+257 79364090' }}, {{ $invoice->company['tp_email'] ?? 'budentalservices@gmail.com' }}</p>
+
+            <p> ID : <b>{{$invoice->invoice_identifier}}</b></p>
         </div>
 
         <!-- Dental background pattern -->
