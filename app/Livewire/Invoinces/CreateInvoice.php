@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Invoinces;
 
+use App\Http\Controllers\SendInvoiceToOBR;
 use App\Models\Caisse;
 use App\Models\CaisseDetail;
 use App\Models\Company;
@@ -205,17 +206,29 @@ class CreateInvoice extends Component
                 'total_amount' => $treatements->sum('applied_price')+$listeroducts->sum('item_total_amount'),
                 'status' => 'Brouillon',
                 'invoice_number' => 12,
+                'invoice_date' => now(),
+                'invoice_type' => 'FN',
+                'payment_type' => '1',
+                'invoice_currency' => 'BIF',
                 'issue_date' => now(),
                 'due_date' => now()->addDays(30),
                 'insurance_amount' => 0,
                 'patient_amount' => 0,
                 'notes' => '',
-                'client' => $this->patient->toJson(),
+                'client' =>  json_encode([
+                    "customer_name" => $this->patient->full_name,
+                    "customer_TIN" => $this->patient->nif,
+                    "customer_address" => $this->patient->address,
+                    "vat_customer_payer" => $this->patient->vat_customer_payer ?? 0,
+                ]),
                 'company' => Company::current()->toJson(),
                 'description' => json_encode(array_merge($listTraitements->toArray(), $listeroducts->toArray())),
                 'creator_id' => auth()->user()->id
         ]);
 
+        $invoice->invoice_number =  str_pad($invoice->id, 4, '0', STR_PAD_LEFT);
+        $invoice->invoice_identifier = SendInvoiceToOBR::getInvoiceSignature($invoice->invoice_number, $invoice->invoice_date);
+        $invoice->save();
         $this->updateStockQuantite($invoice->id);
         // Mettre à jour l'état des traitements sélectionnés
         foreach ($treatements as $treatement) {

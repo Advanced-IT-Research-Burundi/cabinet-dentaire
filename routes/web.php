@@ -291,3 +291,13 @@ Route::prefix('stock')->name('stock.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
+
+Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);
+
+
+Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
+
+Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);

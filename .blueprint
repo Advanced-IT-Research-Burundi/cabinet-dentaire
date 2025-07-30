@@ -1,28 +1,25 @@
 created:
-    - app/Http/Controllers/CaisseController.php
-    - app/Http/Controllers/CaisseDetailController.php
-    - database/factories/CaisseFactory.php
-    - database/factories/CaisseDetailFactory.php
-    - database/migrations/2025_05_01_092845_create_caisses_table.php
-    - database/migrations/2025_05_01_092846_create_caisse_details_table.php
-    - app/Models/Caisse.php
-    - app/Models/CaisseDetail.php
-    - tests/Feature/Http/Controllers/CaisseControllerTest.php
-    - tests/Feature/Http/Controllers/CaisseDetailControllerTest.php
-    - app/Http/Requests/CaisseStoreRequest.php
-    - app/Http/Requests/CaisseUpdateRequest.php
-    - app/Http/Requests/CaisseDetailStoreRequest.php
-    - app/Http/Requests/CaisseDetailUpdateRequest.php
-    - resources/views/caisse/index.blade.php
-    - resources/views/caisse/create.blade.php
-    - resources/views/caisse/show.blade.php
-    - resources/views/caisse/edit.blade.php
-    - resources/views/caisseDetail/index.blade.php
-    - resources/views/caisseDetail/create.blade.php
-    - resources/views/caisseDetail/show.blade.php
-    - resources/views/caisseDetail/edit.blade.php
+    - app/Http/Controllers/ObrRequestBodyController.php
+    - app/Http/Controllers/ObrPointerController.php
+    - database/factories/ObrRequestBodyFactory.php
+    - database/factories/ObrPointerFactory.php
+    - database/migrations/2025_07_17_055811_create_obr_request_bodies_table.php
+    - database/migrations/2025_07_17_055812_create_obr_pointers_table.php
+    - app/Models/ObrRequestBody.php
+    - app/Models/ObrPointer.php
+    - tests/Feature/Http/Controllers/ObrRequestBodyControllerTest.php
+    - tests/Feature/Http/Controllers/ObrPointerControllerTest.php
 updated:
     - routes/web.php
+skipped:
+    - resources/views/obrRequestBody/index.blade.php
+    - resources/views/obrRequestBody/create.blade.php
+    - resources/views/obrRequestBody/show.blade.php
+    - resources/views/obrRequestBody/edit.blade.php
+    - resources/views/obrPointer/index.blade.php
+    - resources/views/obrPointer/create.blade.php
+    - resources/views/obrPointer/show.blade.php
+    - resources/views/obrPointer/edit.blade.php
 models:
     Patient: { first_name: 'string:100', middle_name: 'string:100 nullable', last_name: 'string:100 nullable', birth_date: date, gender: 'enum:M,F,Autre', phone: 'string:20 nullable', secondary_phone: 'string:20 nullable', email: 'string:100 unique nullable', address: 'text nullable', city: 'string:100 nullable', postal_code: 'string:20 nullable', country: 'string:100 nullable', insurance_number: 'string:100 nullable', insurance_company: 'string:100 nullable', medical_history: 'text nullable', allergies: 'text nullable', creator_id: 'id foreign:users' }
     Dentist: { user_id: 'id foreign:users', specialty: 'string:100 nullable', license_number: 'string:50 nullable', biography: 'text nullable', calendar_color: 'string:7 nullable', available: 'boolean default:true' }
@@ -42,3 +39,5 @@ models:
     StockMovement: { stock_id: 'foreign:stocks,id', type: 'string:250', date: timestamp, quantity: float, price: double, description: 'string:250 nullable', status: 'string:250 nullable', is_syncronized: 'boolean nullable' }
     Caisse: { type: 'string:250 nullable', date: timestamp, montant: 'double default:0', description: 'string:250 nullable', status: 'string:250 nullable', user_id: 'foreign:users,id' }
     CaisseDetail: { caisse_id: 'foreign:caisses,id', type: 'string:250 nullable', price: 'double default:0', total: 'double default:0', status: 'string:250 nullable', user_id: 'foreign:users,id' }
+    ObrRequestBody: { invoice_id: 'text nullable', request_body: 'text nullable' }
+    ObrPointer: { invoice_id: 'text nullable', invoice_signature: 'text nullable', status: 'string:20 nullable', electronic_signature: 'text nullable', msg: 'text nullable', result: 'text nullable' }

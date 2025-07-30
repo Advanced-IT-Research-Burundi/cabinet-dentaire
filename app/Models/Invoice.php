@@ -29,7 +29,8 @@ class Invoice extends Model
         'creator_id',
         'description',
         'company',
-        'client'
+        'client',
+        'obr_order_format'
     ];
 
     /**
@@ -55,9 +56,9 @@ class Invoice extends Model
         parent::boot();
 
         static::creating(function ($invoice) {
+            //$nextId = (static::max('id') ?? 0) + 1;
 
-            $nextId = (static::max('id') ?? 0) + 1;
-            $invoice->invoice_number = '#' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
         });
     }
 
@@ -82,5 +83,44 @@ class Invoice extends Model
     public function getDescriptionAttribute($value)
     {
         return json_decode($value, true);
+    }
+
+    public function getObrOrderFormatAttribute($value)
+    {
+
+        return [
+            "invoice_id" => $this->id,
+            "invoice_number" => $this->invoice_number,
+            "invoice_date" => $this->created_at->format('Y-m-d H:i:s'),
+            "invoice_type" => $this->invoice_type,
+            "tp_type" => $this->company['tp_type'],
+            "tp_name" => $this->company['tp_name'],
+            "tp_TIN" => $this->company['tp_TIN'],
+            "tp_trade_number" => $this->company['tp_trade_number'],
+            "tp_postal_number" => $this->company['tp_postal_number'],
+            "tp_phone_number" => $this->company['tp_phone_number'],
+            "tp_address_province" => $this->company['tp_address_privonce'] ?? "",
+            "tp_address_commune" => $this->company['tp_address_commune'] ?? "",
+            "tp_address_quartier" => $this->company['tp_address_quartier'] ?? "",
+            "tp_address_avenue" => $this->company['tp_address_avenue'] ?? "",
+            "tp_address_number" => $this->company['tp_address_number'] ?? "",
+            "vat_taxpayer" => $this->company['vat_taxpayer'] == 'OUI' ? '1' : '0',
+            "ct_taxpayer" => $this->company['ct_taxpayer'] == 'OUI' ? '1' : '0',
+            "tl_taxpayer" => $this->company['tl_taxpayer'] == 'OUI' ? '1' : '0',
+            "tp_fiscal_center" => $this->company['tp_fiscal_center'] ?? "",
+            "tp_activity_sector" => $this->company['tp_activity_sector'] ?? "",
+            "tp_legal_form" => $this->company['tp_legal_form'] ?? "",
+            "payment_type" => $this->payment_type,
+            "invoice_currency" => $this->invoice_currency,
+            "customer_name" => $this->client['customer_name'],
+            "customer_TIN" => $this->client['customer_TIN'],
+            "customer_address" => $this->client['customer_address'],
+            "vat_customer_payer" => $this->client['vat_customer_payer'] == 'OUI' ? '1' : '0',
+            "cancelled_invoice_ref" => $this->cancelled_invoice_ref,
+            "invoice_ref"   => $this->invoice_ref,
+            "cn_motif" => $this->cn_motif,
+            "invoice_identifier" => $this->invoice_identifier,
+            "invoice_items" => $this->description,
+        ];
     }
 }
