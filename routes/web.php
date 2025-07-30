@@ -83,6 +83,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('assurances', AssuranceController::class);
     Route::get('invoices/{id}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
     Route::get('stock/alert', [StockController::class, 'alert'])->name('invoice.alert');
+    Route::get("invoices_obr", [InvoiceController::class, 'invoices_obr' ])->name('invoices_obr');
+    Route::get("invoices.send-to-obr/{id}", [InvoiceController::class, 'sendToObr' ])->name('invoices.send-to-obr');
     // Routes pour les rendez-vous
     Route::get('/appointments/today', [
         AppointmentController::class,

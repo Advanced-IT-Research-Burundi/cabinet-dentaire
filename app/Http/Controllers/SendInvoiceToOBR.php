@@ -23,17 +23,33 @@ class SendInvoiceToOBR extends Controller
         $this->baseUrl = env('OBR_PRODUCTION', false) == true ? 'https://ebms.obr.gov.bi:8443/ebms_api/' : 'https://ebms.obr.gov.bi:9443/ebms_api/';
     }
 
-    public function addStockMovement($data){
+    public function addStockMovement($mouvement){
         $token = $this->getToken();
         // Item
         $data = array_merge(
+            $mouvement->toArray(),
             [
                 "system_or_device_id" => env('OBR_USERNAME'),
-            ],
-            $data
+            ]
         );
         $req = Http::withToken($token)->acceptJson()->post($this->baseUrl . 'AddStockMovement/', $data);
         // dd();
+        $response = json_decode($req->body());
+        if($response->success || $response->msg == "Le mouvement de stock a deja ete enregistre dans le systeme"){
+            $mouvement->is_send_to_obr = 1;
+            $mouvement->is_sent_at  = now();
+            $mouvement->save();
+        }
+
+        ObrPointer::create([
+            'order_id' =>   0,
+            'invoice_signature' => $mouvement->id,
+            'status' => $response->success ?? "",
+            'electronic_signature' => "",
+            'msg' =>  $response->msg ?? "",
+            'result' => "OBR_STOCK_MOUVEMENT",
+        ]);
+
         return $req->body();
     }
     public function checkTin(string $tp_TIN)
@@ -171,9 +187,4 @@ class SendInvoiceToOBR extends Controller
                 throw new \Exception($e->getMessage(), $e->getCode());
             }
         }
-
-
-
     }
-
-

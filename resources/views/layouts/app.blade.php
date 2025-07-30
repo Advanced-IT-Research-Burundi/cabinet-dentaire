@@ -96,10 +96,16 @@
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoices.index') }}">
                                     <i class="bi bi-list-columns"></i>Liste des factures
                                 </a></li>
-                                <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoices.create') }}">
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="{{ route('invoices.create') }}">
                                     <i class="bi bi-file-earmark-plus"></i>Nouvelle facture
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="{{ route('invoices_obr') }}">
+                                    <i class="bi bi-file"></i>Facture envoyé à OBR
+                                </a></li>
+
                                 <!-- <li><a class="dropdown-item modern-dropdown-item" href="{{ route('payments.index') }}">
                                     <i class="bi bi-cash-coin"></i>Paiements
                                 </a></li>

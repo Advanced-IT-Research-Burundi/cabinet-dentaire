@@ -11,6 +11,47 @@ use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
+
+    public function sendToObr($id){
+
+        return "Goood ";
+    }
+
+    public function invoices_obr(Request $request)
+    {
+        $query = Invoice::with('obrPointer', 'patient')->latest();
+
+        // Filtrer par numéro de facture
+        if ($request->filled('facture_no')) {
+            $query->where('id', $request->facture_no);
+        }
+
+        // Filtrer par patient (customer_name)
+        if ($request->filled('patient')) {
+            $query->whereHas('patient', function($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->patient . '%')
+                  ->orWhere('middle_name', 'like', '%' . $request->patient . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->patient . '%')
+
+                ;
+            });
+        }
+
+        // Filtrer par date
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Filtrer par status
+        if ($request->filled('status')) {
+            $query->where('is_sent_to_obr', $request->status);
+        }
+
+        // Exécuter la requête
+        $invoices = $query->paginate(15); // Pagination au lieu de get()
+
+        return view("invoice.obr_history", compact("invoices"));
+    }
     public function index(Request $request)
     {
         $query = Invoice::query();
@@ -33,7 +74,7 @@ class InvoiceController extends Controller
                 if (count($searchTerms) > 1) {
                     $q->orWhere(function($query) use ($searchTerms) {
                         foreach ($searchTerms as $term) {
-                            if (strlen($term) > 2) { 
+                            if (strlen($term) > 2) {
                                 $query->orWhere('first_name', 'like', '%' . $term . '%')
                                     ->orWhere('middle_name', 'like', '%' . $term . '%')
                                     ->orWhere('last_name', 'like', '%' . $term . '%');

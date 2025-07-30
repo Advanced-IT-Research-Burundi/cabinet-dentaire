@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\SendInvoiceToOBR;
 use App\Models\Invoice;
+use App\Models\MouvementStock;
+use App\Models\StockMovement;
 use Illuminate\Console\Command;
 
 class ObrTestCommand extends Command
@@ -29,11 +31,14 @@ class ObrTestCommand extends Command
     {
         $obr = new SendInvoiceToOBR();
 
+        $mouvememt = MouvementStock::latest()->first();
+        $resp =  $obr->addStockMovement($mouvememt);
+      //  dump($resp);
+
         $order = Invoice::latest()->first();
-        dump($order->obr_order_format);
-
         $resp = $obr->addInvoice($order->obr_order_format);
+        dd($resp);
 
-        dump($resp);
+
     }
 }

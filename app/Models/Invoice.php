@@ -85,6 +85,11 @@ class Invoice extends Model
         return json_decode($value, true);
     }
 
+
+    public function obrPointer(){
+        return $this->belongsTo(ObrPointer::class, 'id', 'invoice_id');
+    }
+
     public function getObrOrderFormatAttribute($value)
     {
 
