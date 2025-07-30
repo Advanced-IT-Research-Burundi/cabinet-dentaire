@@ -38,6 +38,7 @@ class Patient extends Model
         'medical_history',
         'allergies',
         'creator_id',
+        'vat_customer_payer',
 
     ];
 

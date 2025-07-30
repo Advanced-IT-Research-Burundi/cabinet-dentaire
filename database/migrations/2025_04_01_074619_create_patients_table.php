@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('patient_type')->default('physique');
             $table->string('nif')->nullable();
             $table->string('societe')->nullable();
+            $table->string('vat_customer_payer')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

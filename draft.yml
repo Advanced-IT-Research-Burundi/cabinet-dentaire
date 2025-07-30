@@ -1,24 +1,20 @@
 models:
-  Caisse:
-    type: string:250 nullable
-    date: timestamp
-    montant: double default:0
-    description: string:250 nullable
-    status: string:250 nullable
-    user_id: foreign:users,id
+  ObrRequestBody:
+    invoice_id: text nullable
+    request_body: text nullable
 
-  CaisseDetail:
-    caisse_id: foreign:caisses,id
-    type: string:250 nullable
-    price: double default:0
-    total: double default:0
-    status: string:250 nullable
-    user_id: foreign:users,id
+  ObrPointer:
+    invoice_id: text nullable
+    invoice_signature: text nullable
+    status: string:20 nullable
+    electronic_signature: text nullable
+    msg: text nullable
+    result: text nullable
 
 
 
 controllers:
-  Caisse:
+  ObrRequestBody:
     resource: web
-  CaisseDetail:
+  ObrPointer:
     resource: web
