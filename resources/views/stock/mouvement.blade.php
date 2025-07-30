@@ -63,7 +63,7 @@
                         @method('POST')
                         <input type="hidden" name="item_code" value="{{ $stock->id }}">
                         <input type="hidden" name="stock_id" value="{{ $stock->id }}">
-                        <input type="hidden" name="item_measurement_unit" value="{{ $stock->unit_measure ?: 'unit' }}">
+                        <input type="hidden" name="item_measurement_unit" value="{{ $stock->unite_mesure ?: '-' }}">
                         <input type="hidden" name="item_designation" value="{{ $stock->product_name }}">
 
                         <div class="mb-3">
@@ -207,8 +207,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">
-                                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                        <td colspan="7" class="py-4 text-center text-muted">
+                                            <i class="mb-2 bi bi-inbox display-4 d-block"></i>
                                             Aucun mouvement de stock enregistré
                                         </td>
                                     </tr>

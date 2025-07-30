@@ -50,7 +50,7 @@ class MouvementStockController extends Controller
             'stock_id' => 'required|exists:stocks,id',
         ]);
 
-
+       // dd( $validator);
         if ($validator->fails()) {
             return redirect()->back()
             ->withErrors($validator)

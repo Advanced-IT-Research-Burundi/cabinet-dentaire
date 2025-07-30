@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Entreprise;
+use App\Models\Invoice;
 use App\Models\ObrPointer;
 use App\Models\ObrRequestBody;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +14,7 @@ class SendInvoiceToOBR extends Controller
     //
     //private string $baseUrl = 'http://41.79.226.28:8345/ebms_api/';
     //private string $baseUrl = 'https://ebms.obr.gov.bi:8443/ebms_api/';
-   //private string $baseUrl = 'https://ebms.obr.gov.bi:9443/ebms_api/';
+    //private string $baseUrl = 'https://ebms.obr.gov.bi:9443/ebms_api/';
     private string $baseUrl ;
 
     public function __construct()
@@ -32,7 +33,7 @@ class SendInvoiceToOBR extends Controller
             $data
         );
         $req = Http::withToken($token)->acceptJson()->post($this->baseUrl . 'AddStockMovement/', $data);
-       // dd();
+        // dd();
         return $req->body();
     }
     public function checkTin(string $tp_TIN)
@@ -65,7 +66,7 @@ class SendInvoiceToOBR extends Controller
         ]);
         $req = Http::withToken($token)->acceptJson()->post($this->baseUrl . 'cancelInvoice/', [
             "invoice_identifier" => $invoice_signature,
-           "cn_motif" => $motif
+            "cn_motif" => $motif
         ]);
         $response = json_decode($req->body());
         ObrPointer::create([
@@ -83,24 +84,31 @@ class SendInvoiceToOBR extends Controller
     public function addInvoice($invoince)
     {
         $token = $this->getToken();
-       // https://ebms.obr.gov.bi:9443/ebms_api
-       $order =  ObrRequestBody::create([
+        // https://ebms.obr.gov.bi:9443/ebms_api
+        ObrRequestBody::create([
             'invoice_id' => $invoince['invoice_id'],
             'request_body' => json_encode($invoince),
         ]);
-
         //dd($order);
         $req = Http::withToken($token)->acceptJson()->post($this->baseUrl . 'addInvoice_confirm/', $invoince);
         $response = json_decode($req->body());
 
-        return $response;
+        if($response->success || $response->msg  == "Une facture avec le même numéro existe déjà."){
+            // Modififier la facture
+            $order = Invoice::find($invoince['invoice_id']);
+            $order->is_sent_to_obr = 1;
+            $order->is_sent_at = now();
+            $order->save();
+        }
+
+
         ObrPointer::create([
             'invoice_id' =>   $invoince['invoice_id'] ,
             'invoice_signature' => $invoince['invoice_identifier'],
             'status' => $response->success ?? "",
-            'electronic_signature' => $invoince['invoice_identifier'],
+            'electronic_signature' => $response->electronic_signature ?? "",
             'msg' =>  $response->msg ?? "",
-            'result' => "X",
+            'result' => json_encode($response->result),
         ]);
         return $response;
     }
@@ -114,7 +122,7 @@ class SendInvoiceToOBR extends Controller
         $date_facturation = date_format($d, 'YmdHis');
 
         $invoice_signature = $company->tp_TIN . "/" . env('OBR_USERNAME')
-            . "/" . $date_facturation . "/" . $invoice_number;
+        . "/" . $date_facturation . "/" . $invoice_number;
 
         return $invoice_signature;
 
@@ -157,15 +165,15 @@ class SendInvoiceToOBR extends Controller
                     'username' => env('OBR_USERNAME'),
                     'password' => env('OBR_PASSWORD') ,
                     'url' => $this->baseUrl
-                ]
-            ];
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), $e->getCode());
+                    ]
+                ];
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage(), $e->getCode());
+            }
         }
+
+
+
     }
-
-
-
-}
 
 

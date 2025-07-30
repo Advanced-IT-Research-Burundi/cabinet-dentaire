@@ -1,67 +1,131 @@
--- Orthodontie
-INSERT INTO `stocks`(
-  `product_name`, `description`, `available_quantity`, `unit_measure`,
-  `minimum_quantity`, `purchase_price`, `price`, `supplier`, `category_id`,
-  `created_at`, `updated_at`
-) VALUES
-('Ligature ties (elastics)', 'Élastiques orthodontiques', 200, 'boîte', 50, 8.00, 15.00, 'Gurber', 1, NOW(), NOW()),
-('Interdental Brush 8p', 'Brossettes interdentaires 8p', 150, 'pack', 30, 4.50, 9.00, 'Ortho Supplier', 1, NOW(), NOW()),
-('Interdental brush 1p', 'Brossette interdentaire individuelle', 300, 'pièce', 100, 0.80, 1.50, 'Ortho Supplier', 1, NOW(), NOW()),
-('Brackets Metalic (Gurber)', 'Brackets métalliques', 500, 'pack', 100, 20.00, 40.00, 'Gurber', 1, NOW(), NOW()),
-('Brackets Ceramic (Gurber)', 'Brackets céramiques', 300, 'pack', 50, 30.00, 60.00, 'Gurber', 1, NOW(), NOW()),
-('Ortho Rubber band (Gurber)', 'Élastiques orthodontiques', 400, 'boîte', 100, 12.00, 25.00, 'Gurber', 1, NOW(), NOW()),
-('Archwire NiTi', 'Arc orthodontique NiTi', 100, 'unité', 30, 25.00, 50.00, 'Ortho Supplier', 1, NOW(), NOW()),
-('Ortho toothbrush', 'Brosse à dents orthodontique', 200, 'unité', 50, 3.00, 6.00, 'Oral-B', 1, NOW(), NOW()),
-('Ligature wire', 'Fil de ligature', 150, 'rouleau', 40, 15.00, 30.00, 'Ortho Supplier', 1, NOW(), NOW()),
-('Wire cutter/bracket remover', 'Pince à brackets', 50, 'unité', 10, 35.00, 70.00, 'Dental Instruments', 1, NOW(), NOW());
+-- Script d'insertion directe pour la table stocks
+-- Produits GURBER MANUFACTURER
+INSERT INTO stocks (product_name, marque, unite_mesure, price, price_ttc, price_max, price_min, price_tvac, taux_tva, quantite_alert, location, code_product, status, user_id, category_id, created_at, updated_at) VALUES
+('Ligature ties (elastics)', 'GURBER MANUFACTURER', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUR001', 'En_rupture', 1, 1, NOW(), NOW()),
+('Interdental Brush 8p', 'GURBER MANUFACTURER', 'pack', 14000, 16520, 18200, 11200, 16520, 18.00, 5, 'Dépôt principal', 'GUR002', 'En_rupture', 1, 1, NOW(), NOW()),
+('Interdental brush 1p', 'GURBER MANUFACTURER', 'pcs', 14000, 16520, 18200, 11200, 16520, 18.00, 5, 'Dépôt principal', 'GUR003', 'En_rupture', 1, 1, NOW(), NOW()),
+('Interspace brush', 'GURBER MANUFACTURER', 'pcs', 7000, 8260, 9100, 5600, 8260, 18.00, 5, 'Dépôt principal', 'GUR004', 'En_rupture', 1, 1, NOW(), NOW()),
+('Brackets Metalic (Gurber)', 'GURBER MANUFACTURER', 'pcs', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'GUR005', 'En_rupture', 1, 1, NOW(), NOW()),
+('Brackets Ceramic (Gurber)', 'GURBER MANUFACTURER', 'pcs', 120000, 141600, 156000, 96000, 141600, 18.00, 5, 'Dépôt principal', 'GUR006', 'En_rupture', 1, 1, NOW(), NOW()),
+('Ortho Rubber band(Gurber)', 'GURBER MANUFACTURER', 'pcs', 3000, 3540, 3900, 2400, 3540, 18.00, 5, 'Dépôt principal', 'GUR007', 'En_rupture', 1, 1, NOW(), NOW()),
+('Archwire NiTi', 'GURBER MANUFACTURER', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUR008', 'En_rupture', 1, 1, NOW(), NOW()),
+('Composite treamer bur', 'GURBER MANUFACTURER', 'pcs', 7000, 8260, 9100, 5600, 8260, 18.00, 5, 'Dépôt principal', 'GUR009', 'En_rupture', 1, 1, NOW(), NOW()),
+('Travel toothbrush', 'GURBER MANUFACTURER', 'pcs', 7000, 8260, 9100, 5600, 8260, 18.00, 5, 'Dépôt principal', 'GUR010', 'En_rupture', 1, 1, NOW(), NOW()),
+('Tongue cleaner', 'GURBER MANUFACTURER', 'pcs', 7000, 8260, 9100, 5600, 8260, 18.00, 5, 'Dépôt principal', 'GUR011', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Floss box', 'GURBER MANUFACTURER', 'box', 6000, 7080, 7800, 4800, 7080, 18.00, 5, 'Dépôt principal', 'GUR012', 'En_rupture', 1, 1, NOW(), NOW()),
+('Buccal Tube 1st Molar convertible', 'GURBER MANUFACTURER', 'pcs', 12000, 14160, 15600, 9600, 14160, 18.00, 5, 'Dépôt principal', 'GUR013', 'En_rupture', 1, 1, NOW(), NOW()),
+('Buccal tube 1st Molar non-convertible set', 'GURBER MANUFACTURER', 'set', 12000, 14160, 15600, 9600, 14160, 18.00, 5, 'Dépôt principal', 'GUR014', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Floss stick', 'GURBER MANUFACTURER', 'pcs', 10000, 11800, 13000, 8000, 11800, 18.00, 5, 'Dépôt principal', 'GUR015', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental mirror', 'GURBER MANUFACTURER', 'pcs', 6000, 7080, 7800, 4800, 7080, 18.00, 5, 'Dépôt principal', 'GUR016', 'En_rupture', 1, 1, NOW(), NOW()),
+('K-Files for hand', 'GURBER MANUFACTURER', 'set', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUR017', 'En_rupture', 1, 1, NOW(), NOW()),
+('Barbed Broaches', 'GURBER MANUFACTURER', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUR018', 'En_rupture', 1, 1, NOW(), NOW()),
+('Orthodontics wax', 'GURBER MANUFACTURER', 'pcs', 6000, 7080, 7800, 4800, 7080, 18.00, 5, 'Dépôt principal', 'GUR019', 'En_rupture', 1, 1, NOW(), NOW()),
+('Retainer/ Prostheses box', 'GURBER MANUFACTURER', 'pcs', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUR020', 'En_rupture', 1, 1, NOW(), NOW()),
+('Retainer wire 10p', 'GURBER MANUFACTURER', 'pack', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUR021', 'En_rupture', 1, 1, NOW(), NOW()),
+('Ortho clean kit', 'GURBER MANUFACTURER', 'kit', 14000, 16520, 18200, 11200, 16520, 18.00, 5, 'Dépôt principal', 'GUR022', 'En_rupture', 1, 1, NOW(), NOW()),
+('Ortho bond Standard', 'GURBER MANUFACTURER', 'ml', 200000, 236000, 260000, 160000, 236000, 18.00, 5, 'Dépôt principal', 'GUR023', 'En_rupture', 1, 1, NOW(), NOW()),
+('Orthobond Green Glue', 'GURBER MANUFACTURER', 'ml', 300000, 354000, 390000, 240000, 354000, 18.00, 5, 'Dépôt principal', 'GUR024', 'En_rupture', 1, 1, NOW(), NOW()),
+('Orthobond Blue Glue', 'GURBER MANUFACTURER', 'ml', 150000, 177000, 195000, 120000, 177000, 18.00, 5, 'Dépôt principal', 'GUR025', 'En_rupture', 1, 1, NOW(), NOW()),
+('Ligature wire', 'GURBER MANUFACTURER', 'pcs', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'GUR026', 'En_rupture', 1, 1, NOW(), NOW()),
+('Pin and Ligature cutter', 'GURBER MANUFACTURER', 'pcs', 300000, 354000, 390000, 240000, 354000, 18.00, 5, 'Dépôt principal', 'GUR027', 'En_rupture', 1, 1, NOW(), NOW());
 
--- Produits Dengo India
-INSERT INTO `stocks`(
-  `product_name`, `description`, `available_quantity`, `unit_measure`,
-  `minimum_quantity`, `purchase_price`, `price`, `supplier`, `category_id`,
-  `created_at`, `updated_at`
-) VALUES
-('Dengotemp Temp Filling 40 gm', 'Ciment temporaire', 80, 'tube', 20, 10.00, 20.00, 'Dengo India', 2, NOW(), NOW()),
-('Dengocem 1 Lutting cement 15gm/10ml', 'Ciment de scellement', 60, 'kit', 15, 15.00, 30.00, 'Dengo India', 2, NOW(), NOW()),
-('ZPCO Zinc Polycarboxylate cement 15ml', 'Ciment polycarboxylate', 45, 'flacon', 10, 12.00, 25.00, 'Dengo India', 2, NOW(), NOW()),
-('Dentogyl Dry socket paste 12gm', 'Pâte pour alvéolite', 70, 'tube', 15, 8.00, 16.00, 'Dengo India', 2, NOW(), NOW()),
-('Dengocal Calcium Hydroxyde paste 3gm', 'Pâte à l\'hydroxyde de calcium', 90, 'tube', 25, 7.00, 14.00, 'Dengo India', 2, NOW(), NOW()),
-('Dengoglass light cure GIC 4*2gm', 'Ciment verre ionomère', 40, 'kit', 10, 35.00, 70.00, 'Dengo India', 2, NOW(), NOW()),
-('Hemostat gel hemostatic agent 15ml', 'Gel hémostatique', 55, 'tube', 15, 18.00, 36.00, 'Dengo India', 2, NOW(), NOW());
+-- Produits DENGO INDIA
+INSERT INTO stocks (product_name, marque, unite_mesure, price, price_ttc, price_max, price_min, price_tvac, taux_tva, quantite_alert, location, code_product, status, user_id, category_id, created_at, updated_at) VALUES
+('Dengotemp Temp Filling 40 gm', 'DENGO INDIA', 'gm', 40000, 47200, 52000, 32000, 47200, 18.00, 5, 'Dépôt principal', 'DEN028', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengocem 1 Lutting cement 15gm/10ml', 'DENGO INDIA', 'ml', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN029', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengocem 2 Restorative Cement', 'DENGO INDIA', 'ml', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN030', 'En_rupture', 1, 1, NOW(), NOW()),
+('ZPCO Zinc Polycarboxylate cement 15ml', 'DENGO INDIA', 'ml', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN031', 'En_rupture', 1, 1, NOW(), NOW()),
+('ZPC Zinc Phosphate cement 15ml', 'DENGO INDIA', 'ml', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN032', 'En_rupture', 1, 1, NOW(), NOW()),
+('Debond Se Sefl etch 7th gen bond 5ml', 'DENGO INDIA', 'ml', 54000, 63720, 70200, 43200, 63720, 18.00, 5, 'Dépôt principal', 'DEN033', 'En_rupture', 1, 1, NOW(), NOW()),
+('Debond Universal bon 5ml', 'DENGO INDIA', 'ml', 85000, 100300, 110500, 68000, 100300, 18.00, 5, 'Dépôt principal', 'DEN034', 'En_rupture', 1, 1, NOW(), NOW()),
+('ORTHO MDP bond 5ml', 'DENGO INDIA', 'ml', 68000, 80240, 88400, 54400, 80240, 18.00, 5, 'Dépôt principal', 'DEN035', 'En_rupture', 1, 1, NOW(), NOW()),
+('Eazy Orthobond kit', 'DENGO INDIA', 'kit', 120000, 141600, 156000, 96000, 141600, 18.00, 5, 'Dépôt principal', 'DEN036', 'En_rupture', 1, 1, NOW(), NOW()),
+('Applicator tip box', 'DENGO INDIA', 'box', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'DEN037', 'En_rupture', 1, 1, NOW(), NOW()),
+('Lunax', 'DENGO INDIA', 'pcs', 35000, 41300, 45500, 28000, 41300, 18.00, 5, 'Dépôt principal', 'DEN038', 'En_rupture', 1, 1, NOW(), NOW()),
+('Primato Hp High Speed', 'DENGO INDIA', 'pcs', 250000, 295000, 325000, 200000, 295000, 18.00, 5, 'Dépôt principal', 'DEN039', 'En_rupture', 1, 1, NOW(), NOW()),
+('Lignospan Septodont Anesthesia', 'DENGO INDIA', 'ml', 85000, 100300, 110500, 68000, 100300, 18.00, 5, 'Dépôt principal', 'DEN040', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dentogyl Dry socket paste 12gm', 'DENGO INDIA', 'gm', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN041', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengoetch Etchant economomic 3gm', 'DENGO INDIA', 'gm', 40000, 47200, 52000, 32000, 47200, 18.00, 5, 'Dépôt principal', 'DEN042', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengocal Calcium Hydroxyde paste 3gm', 'DENGO INDIA', 'gm', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'DEN043', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengocal Calcium Hydroxyde + Iodoform paste 3gm', 'DENGO INDIA', 'gm', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'DEN044', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengen Cheate it 17 EDTA sol 15ml', 'DENGO INDIA', 'ml', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'DEN045', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengoglass light cure GIC 4*2gm', 'DENGO INDIA', 'gm', 76000, 89680, 98800, 60800, 89680, 18.00, 5, 'Dépôt principal', 'DEN046', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengoflow light cure composite 2*2', 'DENGO INDIA', 'pcs', 76000, 89680, 98800, 60800, 89680, 18.00, 5, 'Dépôt principal', 'DEN047', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengen Supreme 7 Syr egm kit 7gen bond', 'DENGO INDIA', 'kit', 295000, 348100, 383500, 236000, 348100, 18.00, 5, 'Dépôt principal', 'DEN048', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengen Supreme 4 Syr kit 5gen bond', 'DENGO INDIA', 'kit', 250000, 295000, 325000, 200000, 295000, 18.00, 5, 'Dépôt principal', 'DEN049', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengen cal bio Lc light cure MTA 2gm', 'DENGO INDIA', 'gm', 140000, 165200, 182000, 112000, 165200, 18.00, 5, 'Dépôt principal', 'DEN050', 'En_rupture', 1, 1, NOW(), NOW()),
+('Pexsil Calcium based RC sealer 15mg', 'DENGO INDIA', 'mg', 90000, 106200, 117000, 72000, 106200, 18.00, 5, 'Dépôt principal', 'DEN051', 'En_rupture', 1, 1, NOW(), NOW()),
+('Soothenol Eugenol liquid 15ml', 'DENGO INDIA', 'ml', 18000, 21240, 23400, 14400, 21240, 18.00, 5, 'Dépôt principal', 'DEN052', 'En_rupture', 1, 1, NOW(), NOW()),
+('Soothenol Eugenol liquid 110 ml', 'DENGO INDIA', 'ml', 80000, 94400, 104000, 64000, 94400, 18.00, 5, 'Dépôt principal', 'DEN053', 'En_rupture', 1, 1, NOW(), NOW()),
+('Hemostat gel hemostatic agent 15ml', 'DENGO INDIA', 'ml', 32000, 37760, 41600, 25600, 37760, 18.00, 5, 'Dépôt principal', 'DEN054', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengofoam gealtin sponge 80*50*10mm', 'DENGO INDIA', 'pcs', 40000, 47200, 52000, 32000, 47200, 18.00, 5, 'Dépôt principal', 'DEN055', 'En_rupture', 1, 1, NOW(), NOW()),
+('Iodoform powder 15gm', 'DENGO INDIA', 'gm', 47300, 55814, 61490, 37840, 55814, 18.00, 5, 'Dépôt principal', 'DEN056', 'En_rupture', 1, 1, NOW(), NOW()),
+('Holly Hyposodium hypoclorite solution', 'DENGO INDIA', 'ml', 40000, 47200, 52000, 32000, 47200, 18.00, 5, 'Dépôt principal', 'DEN057', 'En_rupture', 1, 1, NOW(), NOW()),
+('Holly Hexidine 100ml', 'DENGO INDIA', 'ml', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'DEN058', 'En_rupture', 1, 1, NOW(), NOW()),
+('Zinc Oxyde Eugenol Cement', 'DENGO INDIA', 'ml', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'DEN059', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dencresol /Formocrasol', 'DENGO INDIA', 'ml', 130000, 153400, 169000, 104000, 153400, 18.00, 5, 'Dépôt principal', 'DEN060', 'En_rupture', 1, 1, NOW(), NOW()),
+('Zinc Oxyde powder 110mg', 'DENGO INDIA', 'mg', 35000, 41300, 45500, 28000, 41300, 18.00, 5, 'Dépôt principal', 'DEN061', 'En_rupture', 1, 1, NOW(), NOW());
 
--- Produits Guccident Foshan (Instruments et consommables)
-INSERT INTO `stocks`(
-  `product_name`, `description`, `available_quantity`, `unit_measure`,
-  `minimum_quantity`, `purchase_price`, `price`, `supplier`, `category_id`,
-  `created_at`, `updated_at`
-) VALUES
-('Algenate Impression', 'Pâte à empreinte alginate', 30, 'boîte', 10, 25.00, 50.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('Dental Bur (Carbide) 1 pc', 'Fraise carbure', 500, 'pièce', 150, 3.00, 6.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('Gutta Percha', 'Gutta percha', 200, 'boîte', 50, 12.00, 25.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('Dental Mixing bowl', 'Bol à mélanger', 40, 'unité', 10, 5.00, 10.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('High Speed handpiece', 'Contre-angle', 15, 'unité', 3, 150.00, 300.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('Curing Light LED', 'Lampe polymérisation LED', 10, 'unité', 2, 120.00, 250.00, 'Guccident Foshan', 3, NOW(), NOW()),
-('Amalgam Capsule', 'Capsule pour amalgame', 200, 'boîte', 50, 20.00, 40.00, 'Guccident Foshan', 3, NOW(), NOW());
-
--- Brosses à dents
-INSERT INTO `stocks`(
-  `product_name`, `description`, `available_quantity`, `unit_measure`,
-  `minimum_quantity`, `purchase_price`, `price`, `supplier`, `category_id`,
-  `created_at`, `updated_at`
-) VALUES
-('Water Flosser', 'Hydropulseur', 25, 'unité', 5, 60.00, 120.00, 'Oral-B', 4, NOW(), NOW()),
-('Electric tooth brush', 'Brosse à dents électrique', 30, 'unité', 10, 45.00, 90.00, 'Philips', 4, NOW(), NOW()),
-('U shaped baby brush', 'Brosse bébé forme U', 50, 'unité', 15, 4.00, 8.00, 'Kids Dental', 4, NOW(), NOW()),
-('Thumb Silicone Baby brush', 'Brosse doigt silicone bébé', 60, 'unité', 20, 3.50, 7.00, 'Kids Dental', 4, NOW(), NOW());
-
--- Dentifrices
-INSERT INTO `stocks`(
-  `product_name`, `description`, `available_quantity`, `unit_measure`,
-  `minimum_quantity`, `purchase_price`, `price`, `supplier`, `category_id`,
-  `created_at`, `updated_at`
-) VALUES
-('COLGATE TOTAL 7-12 YEARS MILD MINT', 'Dentifrice enfants 7-12 ans', 100, 'tube', 30, 2.50, 5.00, 'Colgate', 5, NOW(), NOW()),
-('SENSODYNE COMPLETE PROTECTION', 'Dentifrice dents sensibles', 80, 'tube', 25, 3.50, 7.00, 'Sensodyne', 5, NOW(), NOW()),
-('ORAL B 3D WHITE THERAPY WHITENING', 'Dentifrice blancheur', 70, 'tube', 20, 4.00, 8.00, 'Oral-B', 5, NOW(), NOW()),
-('COLGATE CHARCOAL ADVANCED WHITENING', 'Dentifrice charbon actif', 60, 'tube', 15, 3.80, 7.50, 'Colgate', 5, NOW(), NOW()),
-('AQUAFRESH MILK TEETH BABY 0-2YRS', 'Dentifrice bébé 0-2 ans', 90, 'tube', 25, 3.00, 6.00, 'Aquafresh', 5, NOW(), NOW());
+-- Produits GUCCIDENT FOSHAN (première partie)
+INSERT INTO stocks (product_name, marque, unite_mesure, price, price_ttc, price_max, price_min, price_tvac, taux_tva, quantite_alert, location, code_product, status, user_id, category_id, created_at, updated_at) VALUES
+('Algenate Impression', 'GUCCIDENT FOSHAN', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUC062', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Bur (Carbide)', 'GUCCIDENT FOSHAN', 'pcs', 8000, 9440, 10400, 6400, 9440, 18.00, 5, 'Dépôt principal', 'GUC063', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental bur (Diamond)', 'GUCCIDENT FOSHAN', 'pcs', 6500, 7670, 8450, 5200, 7670, 18.00, 5, 'Dépôt principal', 'GUC064', 'En_rupture', 1, 1, NOW(), NOW()),
+('Composite treamer bur', 'GUCCIDENT FOSHAN', 'pcs', 21000, 24780, 27300, 16800, 24780, 18.00, 5, 'Dépôt principal', 'GUC065', 'En_rupture', 1, 1, NOW(), NOW()),
+('Brackets (Gucci)', 'GUCCIDENT FOSHAN', 'pcs', 50000, 59000, 65000, 40000, 59000, 18.00, 5, 'Dépôt principal', 'GUC066', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Polishing Paste CYK', 'GUCCIDENT FOSHAN', 'ml', 19000, 22420, 24700, 15200, 22420, 18.00, 5, 'Dépôt principal', 'GUC067', 'En_rupture', 1, 1, NOW(), NOW()),
+('Disposible Dental Spatula (plastic)', 'GUCCIDENT FOSHAN', 'pcs', 9000, 10620, 11700, 7200, 10620, 18.00, 5, 'Dépôt principal', 'GUC068', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Mixing bowl', 'GUCCIDENT FOSHAN', 'pcs', 10000, 11800, 13000, 8000, 11800, 18.00, 5, 'Dépôt principal', 'GUC069', 'En_rupture', 1, 1, NOW(), NOW()),
+('Disposible Micro Applicators', 'GUCCIDENT FOSHAN', 'pcs', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'GUC070', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Disposible Prohy Brush 100p box', 'GUCCIDENT FOSHAN', 'box', 55000, 64900, 71500, 44000, 64900, 18.00, 5, 'Dépôt principal', 'GUC071', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Bur Placement box', 'GUCCIDENT FOSHAN', 'box', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUC072', 'En_rupture', 1, 1, NOW(), NOW()),
+('Saliva Ejector disposible 100p box', 'GUCCIDENT FOSHAN', 'box', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'GUC073', 'En_rupture', 1, 1, NOW(), NOW()),
+('Autoclavable Injection Syrige', 'GUCCIDENT FOSHAN', 'pcs', 60000, 70800, 78000, 48000, 70800, 18.00, 5, 'Dépôt principal', 'GUC074', 'En_rupture', 1, 1, NOW(), NOW()),
+('30 Holes Bur file endo disinfection box', 'GUCCIDENT FOSHAN', 'box', 35000, 41300, 45500, 28000, 41300, 18.00, 5, 'Dépôt principal', 'GUC075', 'En_rupture', 1, 1, NOW(), NOW()),
+('120 Holes Bur file endo disinfection box', 'GUCCIDENT FOSHAN', 'box', 100000, 118000, 130000, 80000, 118000, 18.00, 5, 'Dépôt principal', 'GUC076', 'En_rupture', 1, 1, NOW(), NOW()),
+('Tweezers pointed tips needle holder', 'GUCCIDENT FOSHAN', 'pcs', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUC077', 'En_rupture', 1, 1, NOW(), NOW()),
+('Gutta Percha', 'GUCCIDENT FOSHAN', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUC078', 'En_rupture', 1, 1, NOW(), NOW()),
+('Antifog mirror tip', 'GUCCIDENT FOSHAN', 'pcs', 17000, 20060, 22100, 13600, 20060, 18.00, 5, 'Dépôt principal', 'GUC079', 'En_rupture', 1, 1, NOW(), NOW()),
+('Probe explorer', 'GUCCIDENT FOSHAN', 'pcs', 17000, 20060, 22100, 13600, 20060, 18.00, 5, 'Dépôt principal', 'GUC080', 'En_rupture', 1, 1, NOW(), NOW()),
+('Denture/ Retainer box', 'GUCCIDENT FOSHAN', 'pcs', 17000, 20060, 22100, 13600, 20060, 18.00, 5, 'Dépôt principal', 'GUC081', 'En_rupture', 1, 1, NOW(), NOW()),
+('Impression Trays', 'GUCCIDENT FOSHAN', 'pcs', 28000, 33040, 36400, 22400, 33040, 18.00, 5, 'Dépôt principal', 'GUC082', 'En_rupture', 1, 1, NOW(), NOW()),
+('Forcep kit Adult', 'GUCCIDENT FOSHAN', 'kit', 450000, 531000, 585000, 360000, 531000, 18.00, 5, 'Dépôt principal', 'GUC083', 'En_rupture', 1, 1, NOW(), NOW()),
+('Forcep kit kids', 'GUCCIDENT FOSHAN', 'kit', 250000, 295000, 325000, 200000, 295000, 18.00, 5, 'Dépôt principal', 'GUC084', 'En_rupture', 1, 1, NOW(), NOW()),
+('Amalgamator', 'GUCCIDENT FOSHAN', 'pcs', 440000, 519200, 572000, 352000, 519200, 18.00, 5, 'Dépôt principal', 'GUC085', 'En_rupture', 1, 1, NOW(), NOW()),
+('Scaler/DETARTREUR', 'GUCCIDENT FOSHAN', 'pcs', 800000, 944000, 1040000, 640000, 944000, 18.00, 5, 'Dépôt principal', 'GUC086', 'En_rupture', 1, 1, NOW(), NOW()),
+('Surgical curve scissors', 'GUCCIDENT FOSHAN', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUC087', 'En_rupture', 1, 1, NOW(), NOW()),
+('Hemostatic forcep scissors', 'GUCCIDENT FOSHAN', 'pcs', 33000, 38940, 42900, 26400, 38940, 18.00, 5, 'Dépôt principal', 'GUC088', 'En_rupture', 1, 1, NOW(), NOW()),
+('Buccal Roth tubes 4pcs/pack', 'GUCCIDENT FOSHAN', 'pack', 66000, 77880, 85800, 52800, 77880, 18.00, 5, 'Dépôt principal', 'GUC089', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Clinic Gift', 'GUCCIDENT FOSHAN', 'pcs', 12000, 14160, 15600, 9600, 14160, 18.00, 5, 'Dépôt principal', 'GUC090', 'En_rupture', 1, 1, NOW(), NOW()),
+('Sharpening Stone', 'GUCCIDENT FOSHAN', 'pcs', 80000, 94400, 104000, 64000, 94400, 18.00, 5, 'Dépôt principal', 'GUC091', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Needle 100pcs/bx', 'GUCCIDENT FOSHAN', 'box', 45000, 53100, 58500, 36000, 53100, 18.00, 5, 'Dépôt principal', 'GUC092', 'En_rupture', 1, 1, NOW(), NOW()),
+('Fixodent (prothese)', 'GUCCIDENT FOSHAN', 'pcs', 70000, 82600, 91000, 56000, 82600, 18.00, 5, 'Dépôt principal', 'GUC093', 'En_rupture', 1, 1, NOW(), NOW()),
+('High Speed handpiece', 'GUCCIDENT FOSHAN', 'pcs', 1500000, 1770000, 1950000, 1200000, 1770000, 18.00, 5, 'Dépôt principal', 'GUC094', 'En_rupture', 1, 1, NOW(), NOW()),
+('Amalgam Carrier', 'GUCCIDENT FOSHAN', 'pcs', 44000, 51920, 57200, 35200, 51920, 18.00, 5, 'Dépôt principal', 'GUC095', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental Surgical gown', 'GUCCIDENT FOSHAN', 'pcs', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUC096', 'En_rupture', 1, 1, NOW(), NOW()),
+('Disposible facemask', 'GUCCIDENT FOSHAN', 'pcs', 26000, 30680, 33800, 20800, 30680, 18.00, 5, 'Dépôt principal', 'GUC097', 'En_rupture', 1, 1, NOW(), NOW()),
+('Head covers cap hat', 'GUCCIDENT FOSHAN', 'pcs', 26000, 30680, 33800, 20800, 30680, 18.00, 5, 'Dépôt principal', 'GUC098', 'En_rupture', 1, 1, NOW(), NOW()),
+('Measuring block', 'GUCCIDENT FOSHAN', 'pcs', 14000, 16520, 18200, 11200, 16520, 18.00, 5, 'Dépôt principal', 'GUC099', 'En_rupture', 1, 1, NOW(), NOW()),
+('Disinfection bag roll', 'GUCCIDENT FOSHAN', 'roll', 84000, 99120, 109200, 67200, 99120, 18.00, 5, 'Dépôt principal', 'GUC100', 'En_rupture', 1, 1, NOW(), NOW()),
+('Denta injector syringe', 'GUCCIDENT FOSHAN', 'pcs', 9000, 10620, 11700, 7200, 10620, 18.00, 5, 'Dépôt principal', 'GUC101', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental bip', 'GUCCIDENT FOSHAN', 'pcs', 20000, 23600, 26000, 16000, 23600, 18.00, 5, 'Dépôt principal', 'GUC102', 'En_rupture', 1, 1, NOW(), NOW()),
+('Xray sensor protection sleeve', 'GUCCIDENT FOSHAN', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUC103', 'En_rupture', 1, 1, NOW(), NOW()),
+('Xray protective clothing', 'GUCCIDENT FOSHAN', 'pcs', 295000, 348100, 383500, 236000, 348100, 18.00, 5, 'Dépôt principal', 'GUC104', 'En_rupture', 1, 1, NOW(), NOW()),
+('Die Stone 1kg', 'GUCCIDENT FOSHAN', 'kg', 20000, 23600, 26000, 16000, 23600, 18.00, 5, 'Dépôt principal', 'GUC105', 'En_rupture', 1, 1, NOW(), NOW()),
+('Amalgam Capsule 100p', 'GUCCIDENT FOSHAN', 'pack', 200000, 236000, 260000, 160000, 236000, 18.00, 5, 'Dépôt principal', 'GUC106', 'En_rupture', 1, 1, NOW(), NOW()),
+('Toothpaste Chewable Mouthwash', 'GUCCIDENT FOSHAN', 'pcs', 28000, 33040, 36400, 22400, 33040, 18.00, 5, 'Dépôt principal', 'GUC107', 'En_rupture', 1, 1, NOW(), NOW()),
+('Composite DX Light cure kit', 'GUCCIDENT FOSHAN', 'kit', 300000, 354000, 390000, 240000, 354000, 18.00, 5, 'Dépôt principal', 'GUC108', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dycal Dentsly Sirona', 'GUCCIDENT FOSHAN', 'pcs', 150000, 177000, 195000, 120000, 177000, 18.00, 5, 'Dépôt principal', 'GUC109', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dental needle tip curve', 'GUCCIDENT FOSHAN', 'pcs', 20000, 23600, 26000, 16000, 23600, 18.00, 5, 'Dépôt principal', 'GUC110', 'En_rupture', 1, 1, NOW(), NOW()),
+('Paper points', 'GUCCIDENT FOSHAN', 'pcs', 20000, 23600, 26000, 16000, 23600, 18.00, 5, 'Dépôt principal', 'GUC111', 'En_rupture', 1, 1, NOW(), NOW()),
+('FUJI Ionomer Lutting Cement', 'GUCCIDENT FOSHAN', 'ml', 548000, 646640, 712400, 438400, 646640, 18.00, 5, 'Dépôt principal', 'GUC112', 'En_rupture', 1, 1, NOW(), NOW()),
+('Cotton Roll', 'GUCCIDENT FOSHAN', 'roll', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUC113', 'En_rupture', 1, 1, NOW(), NOW()),
+('Articulating paper occlussal', 'GUCCIDENT FOSHAN', 'pcs', 25000, 29500, 32500, 20000, 29500, 18.00, 5, 'Dépôt principal', 'GUC114', 'En_rupture', 1, 1, NOW(), NOW()),
+('Polishing Diamond', 'GUCCIDENT FOSHAN', 'pcs', 15000, 17700, 19500, 12000, 17700, 18.00, 5, 'Dépôt principal', 'GUC115', 'En_rupture', 1, 1, NOW(), NOW()),
+('Ultrasonic scaler tip/ Insert de detartrage', 'GUCCIDENT FOSHAN', 'pcs', 30000, 35400, 39000, 24000, 35400, 18.00, 5, 'Dépôt principal', 'GUC116', 'En_rupture', 1, 1, NOW(), NOW()),
+('Curing Light LED', 'GUCCIDENT FOSHAN', 'pcs', 500000, 590000, 650000, 400000, 590000, 18.00, 5, 'Dépôt principal', 'GUC117', 'En_rupture', 1, 1, NOW(), NOW()),
+('Sensodyne', 'GUCCIDENT FOSHAN', 'pcs', 48000, 56640, 62400, 38400, 56640, 18.00, 5, 'Dépôt principal', 'GUC118', 'En_rupture', 1, 1, NOW(), NOW()),
+('Colgate 0-2', 'GUCCIDENT FOSHAN', 'pcs', 18000, 21240, 23400, 14400, 21240, 18.00, 5, 'Dépôt principal', 'GUC119', 'En_rupture', 1, 1, NOW(), NOW()),
+('Colgate/Aquafresh 3-5', 'GUCCIDENT FOSHAN', 'pcs', 18000, 21240, 23400, 14400, 21240, 18.00, 5, 'Dépôt principal', 'GUC120', 'En_rupture', 1, 1, NOW(), NOW()),
+('Scaler tip key', 'GUCCIDENT FOSHAN', 'pcs', 40000, 47200, 52000, 32000, 47200, 18.00, 5, 'Dépôt principal', 'GUC121', 'En_rupture', 1, 1, NOW(), NOW()),
+('Dengocal Light (paste) liner', 'GUCCIDENT FOSHAN', 'ml', 60000, 70800, 78000, 48000, 70800, 18.00, 5, 'Dépôt principal', 'GUC122', 'En_rupture', 1, 1, NOW(), NOW());

@@ -30,9 +30,10 @@ class ObrTestCommand extends Command
         $obr = new SendInvoiceToOBR();
 
         $order = Invoice::latest()->first();
+        dump($order->obr_order_format);
 
         $resp = $obr->addInvoice($order->obr_order_format);
 
-        var_dump($resp);
+        dump($resp);
     }
 }
