@@ -88,16 +88,16 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary">
-                                                {{ $appointment->patient->id }}
+                                                {{ $appointment?->patient?->id }}
                                                 </span>
-                                                {{ $appointment->patient->first_name }}
-                                                {{ $appointment->patient->last_name }}
+                                                {{ $appointment?->patient?->first_name }}
+                                                {{ $appointment?->patient?->last_name }}
                                             </td>
                                             <td>
-                                                Dr. {{ $appointment->dentist->user->first_name }}
-                                                {{ $appointment->dentist->user->last_name}}
+                                                Dr. {{ $appointment?->dentist?->user?->first_name }}
+                                                {{ $appointment?->dentist?->user?->last_name}}
                                             </td>
-                                            <td>{{ $appointment->plannedTreatment->name }}</td>
+                                            <td>{{ $appointment?->plannedTreatment?->name }}</td>
                                             <td>
                                             @php
                                                 $statusClasses = [
@@ -115,8 +115,8 @@
                                                     'Reporte' => 'Reporté'
                                                 ];
                                             @endphp
-                                            <span class="badge {{ $statusClasses[$appointment->status] }}">
-                                                {{ $statusLabels[$appointment->status] }}
+                                            <span class="badge {{ $statusClasses[$appointment?->status] }}">
+                                                {{ $statusLabels[$appointment?->status] }}
                                             </span>
                                         </td>
 

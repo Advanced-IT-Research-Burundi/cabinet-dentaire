@@ -46,7 +46,11 @@ class AppointmentController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Appointment::with(['patient', 'dentist', 'plannedTreatment']);
+        $query = Appointment::with(['patient', 'dentist', 'plannedTreatment'])
+        ->whereHas('patient')
+        ->whereHas('dentist')
+        ->whereHas('plannedTreatment')
+        ;
 
         // Recherche par patient
         if ($request->filled('patient')) {
@@ -177,12 +181,12 @@ class AppointmentController extends Controller
         try {
 
 
-            // if ($validated['date'] <= now()->format('Y-m-d') && $validated['start_time'] < now()->format('H:i')) {
-            //     return redirect()
-            //         ->back()
-            //         ->withInput()
-            //         ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
-            // }
+            if ($validated['date'] == now()->format('Y-m-d') && $validated['start_time'] < now()->format('H:i')) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
+            }
             // Vérifier les conflits de rendez-vous pour le dentiste
             $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
                 ->where('date', $validated['date'])
