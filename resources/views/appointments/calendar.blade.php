@@ -6,9 +6,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="card shadow-sm">
+            <div class="shadow-sm card">
                 <div class="card-body">
-                    <div style="display:none" class="row mb-3">
+                    <div style="display:none" class="mb-3 row">
                         <div class="col-md-6">
                             <div class="btn-group" role="group">
                                 <button id="view-all" class="btn btn-outline-secondary active">Tous</button>
@@ -39,19 +39,19 @@
 <!-- Modal pour afficher les détails d'un rendez-vous -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white position-relative py-3">
+        <div class="border-0 shadow modal-content">
+            <div class="py-3 text-white modal-header bg-primary position-relative">
                 <div class="d-flex align-items-center">
                     <div class="appointment-status-indicator me-2" id="statusIndicator"></div>
-                    <h5 class="modal-title fw-bold m-0" id="appointmentTitle">Détails du rendez-vous</h5>
+                    <h5 class="m-0 modal-title fw-bold" id="appointmentTitle">Détails du rendez-vous</h5>
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-0">
-                <div class="appointment-header p-3">
+            <div class="p-0 modal-body">
+                <div class="p-3 appointment-header">
                     <div class="row align-items-center">
                         <div class="col-8">
-                            <h4 id="patientName" class="fw-bold mb-1">Nom du patient</h4>
+                            <h4 id="patientName" class="mb-1 fw-bold">Nom du patient</h4>
                             <div class="d-flex align-items-center text-muted">
                                 <i class="fas fa-user-md me-2"></i>
                                 <span id="dentistName">Dr. Dentiste</span>
@@ -61,8 +61,8 @@
                     </div>
                 </div>
 
-                <div class="appointment-details p-3 border-top border-bottom">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="p-3 appointment-details border-top border-bottom">
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="calendar-icon me-3 text-primary">
                                 <i class="fas fa-calendar-alt fa-lg"></i>
@@ -93,17 +93,17 @@
                     </div>
                 </div>
                 <div class="text-center">
-                      <p id="appointmentBadge" class="badge rounded-pill px-3 py-2">Consultation</p>
+                      <p id="appointmentBadge" class="px-3 py-2 badge rounded-pill">Consultation</p>
                 </div>
-                <div class="appointment-notes p-3">
-                    <h6 class="text-uppercase text-muted small fw-bold mb-2">Notes</h6>
-                    <div id="appointmentNotes" class="bg-light p-3 rounded">
+                <div class="p-3 appointment-notes">
+                    <h6 class="mb-2 text-uppercase text-muted small fw-bold">Notes</h6>
+                    <div id="appointmentNotes" class="p-3 rounded bg-light">
                         <p class="mb-0">Aucune note disponible</p>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-0 d-flex justify-content-center">
-                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Fermer</button>
+            <div class="border-0 modal-footer d-flex justify-content-center">
+                <button type="button" class="px-4 btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
         timeZone: 'local',
         slotMinTime: '07:00:00',
         // slotMaxTime: '24:00:00',
-        slotMaxTime: '19:00:00',
+        slotMaxTime: '24:00:00',
         slotDuration: '00:15:00',
         slotLabelInterval: '01:00:00',
         allDaySlot: false,
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
         businessHours: {
             daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
             startTime: '07:00',
-            endTime: '18:00'
+            endTime: '24:00'
         },
         eventTimeFormat: {
             hour: '2-digit',
