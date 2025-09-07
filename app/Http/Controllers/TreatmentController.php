@@ -125,9 +125,12 @@ class TreatmentController extends Controller
         $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
         $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
         $appointments = Appointment::with('patient')
+                        ->whereDoesntHave('treatment')
                         ->where('date', '>=', now())
                         ->orderBy('date', 'asc')
                         ->get();
+
+      
 
         return view('treatment.create', compact(
             'patients',
@@ -147,6 +150,7 @@ class TreatmentController extends Controller
     public function store(TreatmentStoreRequest $request): RedirectResponse
     {
         Treatment::create($request->validated());
+
         return redirect()->route('treatments.index')
             ->with('success', 'Treatment created successfully.');
     }

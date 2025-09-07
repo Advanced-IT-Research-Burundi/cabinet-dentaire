@@ -57,6 +57,11 @@ class Appointment extends Model
         return $this->belongsTo(Dentist::class);
     }
 
+    public function treatment(): BelongsTo
+    {
+        return $this->belongsTo(Treatment::class, 'id', 'appointment_id');
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class);
