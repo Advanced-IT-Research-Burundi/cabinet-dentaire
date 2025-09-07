@@ -124,7 +124,10 @@ class TreatmentController extends Controller
         $patients = Patient::orderBy('last_name')->take(LOAD_DATA)->get();
         $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
         $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
-        $appointments = Appointment::with('patient')->get();
+        $appointments = Appointment::with('patient')
+                        ->where('date', '>=', now())
+                        ->orderBy('date', 'asc')
+                        ->get();
 
         return view('treatment.create', compact(
             'patients',
