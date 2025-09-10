@@ -40,7 +40,6 @@ class Appointment extends Model
         'patient_id' => 'integer',
         'dentist_id' => 'integer',
         'date' => 'date',
-        'start_time' => 'date',
         'reminder_sent' => 'boolean',
         'created_at' => 'datetime',
         'creator_id' => 'integer',

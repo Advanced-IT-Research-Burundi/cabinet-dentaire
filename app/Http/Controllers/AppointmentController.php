@@ -78,8 +78,8 @@ class AppointmentController extends Controller
             });
         }
 
-        $appointments = $query->orderBy('date', 'desc')
-            ->orderBy('start_time', 'desc')
+        $appointments = $query
+            ->latest()
             ->paginate(10)
             ->withQueryString();
 
@@ -209,6 +209,8 @@ class AppointmentController extends Controller
 
             $validated['creator_id'] = auth()->id();
             $validated['reminder_sent'] = false;
+
+            //dd($validated);
 
             Appointment::create($validated);
 

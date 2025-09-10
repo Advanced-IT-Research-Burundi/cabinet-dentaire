@@ -440,11 +440,11 @@
                     <table class="bank-table">
                         <tr>
                             <td>COMPTE #</td>
-                            <td>40021689501234</td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>NOM DE LA BANQUE</td>
-                            <td>COGEBANQUE</td>
+                            <td></td>
                         </tr>
                     </table>
                 </div>

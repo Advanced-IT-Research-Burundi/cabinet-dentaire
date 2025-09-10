@@ -69,12 +69,13 @@
                             <table class="table align-middle table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Date</th>
+                                        <th>Date de Rendez-vous</th>
                                         <th>Heure</th>
                                         <th>Patient</th>
                                         <th>Dentiste</th>
                                         <th>Traitement</th>
                                         <th>Statut</th>
+                                        <th>Date d'enregistrement</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -119,6 +120,7 @@
                                                 {{ $statusLabels[$appointment?->status] }}
                                             </span>
                                         </td>
+                                        <td>{{ \Carbon\Carbon::parse($appointment->created_at)->format('d/m/Y H:i') }}</td>
 
                                         <td>
                                             <div class="btn-group">
