@@ -26,6 +26,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\TreatmentStoreRequest;
 use App\Http\Requests\TreatmentUpdateRequest;
 use App\Models\Dentist;
+use Carbon\Carbon;
 
 /**
  * TreatmentController Class
@@ -126,11 +127,11 @@ class TreatmentController extends Controller
         $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
         $appointments = Appointment::with('patient')
                         ->whereDoesntHave('treatment')
-                        ->where('date', '>=', now())
+                        ->where('date', '>=', Carbon::now()->subDay())
                         ->orderBy('date', 'asc')
                         ->get();
 
-      
+
 
         return view('treatment.create', compact(
             'patients',
