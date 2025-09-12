@@ -50,7 +50,13 @@
                             <dt class="col-sm-5 text-muted">
                                 <i class="bi bi-clipboard2-pulse me-1"></i>Type
                             </dt>
-                            <dd class="col-sm-7 fw-medium">{{ $treatment->treatmentType->name }}</dd>
+                             <dd valign="middle">
+                                @forelse ( $treatment->treatmentTypes as $traitement)
+                                    <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                @empty
+                                    {{ $treatment?->treatmentType?->name ?? 'N/A' }}</dd>
+                                @endforelse
+                             </dd>
 
                             <dt class="col-sm-5 text-muted">
                                 <i class="bi bi-calendar-check me-1"></i>Rendez-vous

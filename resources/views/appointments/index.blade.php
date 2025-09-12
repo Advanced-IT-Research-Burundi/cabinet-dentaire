@@ -97,7 +97,14 @@
                                                 Dr. {{ $appointment->dentist->user->first_name }}
                                                 {{ $appointment->dentist->user->last_name}}
                                             </td>
-                                            <td>{{ $appointment->plannedTreatment->name }}</td>
+                                            <td>
+                                                @forelse ( $appointment?->plannedTreatments as $traitement)
+                                                    <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                                @empty
+                                                    {{ $appointment?->plannedTreatment?->name ?? 'N/A' }}</td>
+                                                @endforelse
+
+                                            <td>
                                             <td>
                                             @php
                                                 $statusClasses = [

@@ -38,3 +38,9 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script src="{{ asset('js/multiselect.js') }}"></script>
+@endpush
+@push('styles')
+<link href="{{ asset('css/multiselect.css') }}" rel="stylesheet">
+@endpush

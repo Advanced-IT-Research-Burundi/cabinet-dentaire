@@ -104,10 +104,29 @@
                                 <i class="bi bi-hospital"></i>
                             </div>
                             <div>
-                                <p class="mb-0 fw-semibold">{{ $appointment->plannedTreatment->name }}</p>
-                                <p class="mb-0 text-primary">
-                                    {{ number_format($appointment->plannedTreatment->base_price, 2) }} FBU</p>
-                            </div>
+                            <p class="mb-0 fw-semibold">
+                                @if($appointment?->plannedTreatments && $appointment->plannedTreatments->count())
+                                    <ul class="mb-0">
+                                        @foreach ($appointment->plannedTreatments as $traitement)
+                                            <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                        @endforeach
+                                    </ul>
+                                @elseif($appointment?->plannedTreatment)
+                                    {{ $appointment->plannedTreatment?->name ?? 'N/A' }}
+                                @else
+                                    N/A
+                                @endif
+                            </p>
+
+                            <p class="mb-0 text-primary">
+                                {{ number_format(
+                                    $appointment?->plannedTreatment?->base_price ??
+                                    $appointment?->plannedTreatments?->sum('base_price') ?? 0,
+                                    2
+                                ) }} FBU
+                            </p>
+                        </div>
+
                         </div>
                     </div>
 

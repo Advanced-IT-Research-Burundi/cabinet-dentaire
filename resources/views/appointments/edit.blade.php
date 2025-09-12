@@ -37,7 +37,15 @@
                         <strong>Dentiste:</strong> Dr. {{ $appointment->dentist->user->first_name }} {{ $appointment->dentist->user->last_name }}
                     </div>
                     <div class="mb-3">
-                        <strong>Traitement:</strong> {{ $appointment->plannedTreatment->name }}
+                        <strong>Traitement:</strong>
+                        <td>
+                            @forelse ( $appointment?->plannedTreatments as $traitement)
+                                <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                            @empty
+                                {{ $appointment?->plannedTreatment?->name ?? 'N/A' }}</td>
+                            @endforelse
+
+                        <td>
                     </div>
                     <div class="mb-3">
                         <strong>Date créée:</strong> {{ $appointment->created_at->format('d/m/Y H:i') }}

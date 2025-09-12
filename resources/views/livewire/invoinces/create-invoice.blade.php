@@ -54,7 +54,13 @@
                         </td>
                         <td>{{ $treatement->id }}</td>
                         <td>{{ $treatement->dentist->name }}</td>
-                        <td>{{ $treatement->treatmentType->name }}</td>
+                         <td>
+                            @forelse ( $treatement->treatmentTypes as $traitement)
+                                <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                            @empty
+                                {{ $treatement?->treatmentType?->name ?? 'N/A' }}</td>
+                            @endforelse
+                        </td>
                         <td>{{ $treatement->applied_price }}</td>
                         <td>{{ $treatement->created_at }}</td>
                         <td>{{ $treatement->status }}</td>

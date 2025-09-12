@@ -20,6 +20,7 @@ use App\Models\Appointment;
 use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\TreatmentType;
+use App\Models\AppointmentTreatmentType;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -162,6 +163,7 @@ class AppointmentController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // dd($request->all());
         $validated = $request->validate([
                 'patient_id' => 'required|exists:patients,id',
                 'dentist_id' => 'required|exists:dentists,id',
@@ -171,7 +173,7 @@ class AppointmentController extends Controller
                 'reason' => 'nullable|string|max:1000',
                 'notes' => 'nullable|string|max:1000',
                 'status' => 'required|in:Confirme,Annule,Termine,En_attente,Reporte',
-                'planned_treatment_id' => 'required|exists:treatment_types,id',
+                // 'planned_treatment_id' => 'required',
             ]);
 
         try {
@@ -183,6 +185,8 @@ class AppointmentController extends Controller
                     ->withInput()
                     ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
             }
+
+            \DB::beginTransaction();
             // Vérifier les conflits de rendez-vous pour le dentiste
             $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
                 ->where('date', $validated['date'])
@@ -206,14 +210,33 @@ class AppointmentController extends Controller
             $validated['creator_id'] = auth()->id();
             $validated['reminder_sent'] = false;
 
-            // dd($validated);
-            Appointment::create($validated);
+            $request->validate([
+                'planned_treatment_id' => 'required|string',
+            ]);
+
+            $treatmentIds = !empty($request->planned_treatment_id)
+                ? explode(',', $request->planned_treatment_id)
+                : [];
+
+            $appointment = Appointment::create($validated);
+
+            foreach ($treatmentIds as $id ) {
+                AppointmentTreatmentType::create([
+                    'appointment_id'=> $appointment->id,
+                    'treatment_type_id'=> $id
+                ]);
+
+            }
+
+
+             \DB::commit();
 
             return redirect()
                 ->route('appointments.index')
                 ->with('success', 'Le rendez-vous a été créé avec succès.');
 
         } catch (\Throwable $th) {
+            \DB::rollBack();
             return redirect()
                 ->back()
                 ->withInput()
@@ -239,12 +262,15 @@ class AppointmentController extends Controller
             'date' => 'required|date',
             'start_time' => 'required',
             'end_time' => 'required|after:start_time',
-            'planned_treatment_id' => 'required|exists:treatment_types,id',
+            // 'planned_treatment_id' => 'required|exists:treatment_types,id',
             'reason' => 'nullable|string',
             'notes' => 'nullable|string',
             'status' => 'required|in:En_attente,Confirme,Annule,Reporte',
         ]);
 
+        try {
+
+            \DB::beginTransaction();
         // Vérifier les conflits de rendez-vous pour le dentiste
             $conflict = Appointment::where('dentist_id', $validated['dentist_id'])
                 ->where('date', $validated['date'])
@@ -264,10 +290,38 @@ class AppointmentController extends Controller
                     ->withInput()
                     ->with('error', 'Un autre rendez-vous existe déjà dans ce créneau horaire pour ce dentiste.');
             }
+        $request->validate([
+            'planned_treatment_id' => 'required|string',
+        ]);
+
+        $treatmentIds = !empty($request->planned_treatment_id)
+            ? explode(',', $request->planned_treatment_id)
+            : [];
+
         $appointment->update($validated);
 
+        foreach ($treatmentIds as $id ) {
+                AppointmentTreatmentType::where('appointment_id',$appointment->id)->delete();
+                AppointmentTreatmentType::create([
+                    'appointment_id'=> $appointment->id,
+                    'treatment_type_id'=> $id
+                ]);
+
+        }
+
+
+      \DB::commit();
         return redirect()->route('appointments.show', $appointment)
             ->with('success', 'Rendez-vous mis à jour avec succès.');
+
+        } catch (\Throwable $th) {
+            \DB::rollBack();
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la modification du rendez-vous. Vérifiez les données saisies et veuillez réessayer.');
+            }
+
     }
 
     /**

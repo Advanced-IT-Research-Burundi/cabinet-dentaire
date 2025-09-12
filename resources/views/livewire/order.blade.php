@@ -68,7 +68,7 @@
                                                         <td colspan="4" class="text-center">Aucun patient trouvé pour <b>"{{ $search_patient }}"</b></td>
                                                     </tr>
                                                 @endif
-                                                
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -81,7 +81,7 @@
                                     <h5>Traitements </h5>
                                     <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#treatmentModal" id="add-treatment-row">Ajouter un Traitement</button>
                                 </div>
-                                
+
                                 <table class="table table-bordered mt-3">
                                     <thead>
                                         <tr>
@@ -94,7 +94,7 @@
                                         @if (count($selectedTreatments) > 0)
                                             @foreach($selectedTreatments as $index => $treatment)
                                                 <tr>
-                                                    <td valign="middle">                                                            
+                                                    <td valign="middle">
                                                         {{ $treatment['description'] }}
                                                     </td>
                                                     <td valign="middle">
@@ -108,9 +108,9 @@
                                         @else
                                             <tr>
                                             <td colspan="3" class="text-center">Pas de treatment ajouté!</td>
-                                            </tr> 
+                                            </tr>
                                         @endif
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -140,7 +140,14 @@
                                                         @foreach ($treatments as $index => $treatment)
                                                             <tr>
                                                                 <td valign="middle">{{ $treatment->created_at->format('d-m-Y') }}</td>
-                                                                <td valign="middle">{{ $treatment->treatmentType->name }}</td>
+                                                                <td valign="middle">
+                                                                    @forelse ( $treatment->treatmentTypes as $traitement)
+                                                                        <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                                                    @empty
+                                                                        {{ $treatment?->treatmentType?->name ?? 'N/A' }}</td>
+                                                                    @endforelse
+
+                                                                </td>
                                                                 <td valign="middle">{{ $treatment->description }}</td>
                                                                 <td valign="middle">{{ $treatment->applied_price }}</td>
                                                                 <td>
@@ -155,7 +162,7 @@
                                                             <td colspan="5" class="text-center">Aucun treatment trouvé pour <b>"{{ $selectedPatient->first_name }} {{ $selectedPatient->last_name }}"</b></td>
                                                         </tr>
                                                     @endif
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -168,7 +175,7 @@
                                     <h5>Produits </h5>
                                     <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal" id="add-treatment-row">Ajouter un Produit</button>
                                 </div>
-                                
+
                                 <table class="table table-bordered mt-3">
                                     <thead>
                                         <tr>
@@ -183,7 +190,7 @@
                                         @if (count($selectedProducts) > 0)
                                             @foreach($selectedProducts as $index => $product)
                                                 <tr>
-                                                    <td valign="middle">                                                            
+                                                    <td valign="middle">
                                                         {{ $product['product_name'] }}
                                                     </td>
 
@@ -204,9 +211,9 @@
                                         @else
                                             <tr>
                                             <td colspan="5" class="text-center">Pas de produit ajouté!</td>
-                                            </tr> 
+                                            </tr>
                                         @endif
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
@@ -251,7 +258,7 @@
                                                             <td colspan="5" class="text-center">Aucun produit trouvé pour <b>"{{ $searchProduct }}"</b></td>
                                                         </tr>
                                                     @endif
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -287,7 +294,7 @@
                         </table>
                     </div>
                     <div class="mt-4">
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="amount" class="form-label">Montant Total</label>

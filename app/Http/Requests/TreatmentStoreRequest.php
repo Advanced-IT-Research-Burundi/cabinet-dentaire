@@ -2,9 +2,9 @@
 
 /**
  * Treatment Store Request
- * 
+ *
  * Validates treatment creation requests.
- * 
+ *
  * @category Requests
  * @package  CabinetDentaire
  * @author   Advanced IT Research Team <contact@advanced-it-research.bi>
@@ -19,7 +19,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * TreatmentStoreRequest Class
- * 
+ *
  * @category Requests
  * @package  CabinetDentaire
  * @author   Advanced IT Research Team <contact@advanced-it-research.bi>
@@ -56,11 +56,11 @@ class TreatmentStoreRequest extends FormRequest
                 'integer',
                 'exists:users,id'
             ],
-            'treatment_type_id' => [
-                'required',
-                'integer',
-                'exists:treatment_types,id'
-            ],
+            // 'treatment_type_id' => [
+            //     'required',
+            //     'integer',
+            //     'exists:treatment_types,id'
+            // ],
             'appointment_id' => [
                 'required',
                 'integer',

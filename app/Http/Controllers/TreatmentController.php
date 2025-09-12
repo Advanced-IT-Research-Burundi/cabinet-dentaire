@@ -20,6 +20,7 @@ use App\Models\Patient;
 use App\Models\Treatment;
 use App\Models\Appointment;
 use App\Models\TreatmentType;
+use App\Models\TreatementTreatmentType;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -124,7 +125,7 @@ class TreatmentController extends Controller
         $patients = Patient::orderBy('last_name')->take(LOAD_DATA)->get();
         $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
         $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
-        $appointments = Appointment::with('patient')->get();
+        $appointments = Appointment::with(['patient', 'dentist.user', 'plannedTreatments'])->get();
 
         return view('treatment.create', compact(
             'patients',
@@ -143,9 +144,46 @@ class TreatmentController extends Controller
      */
     public function store(TreatmentStoreRequest $request): RedirectResponse
     {
-        Treatment::create($request->validated());
-        return redirect()->route('treatments.index')
+        $data = $request->validate([
+            'patient_id' => 'required|integer|exists:patients,id',
+            'dentist_id' =>'required|integer|exists:users,id',
+            'appointment_id' => 'required|integer|exists:appointments,id',
+            'date' => 'required|date',
+            'description' => 'nullable|string',
+            'medical_notes' => 'nullable|string',
+            'applied_price' => 'nullable|numeric',
+            'status' => 'required|in:Planifie,En_cours,Termine,Annule'
+        ]);
+        try {
+            //code...
+            \DB::beginTransaction();
+
+            $request->validate([
+                    'treatment_type_id' => 'required|string',
+                ]);
+
+                $treatmentIds = !empty($request->treatment_type_id)
+                    ? explode(',', $request->treatment_type_id)
+                    : [];
+
+
+                $treatment = Treatment::create($data);
+                foreach ($treatmentIds as $id ) {
+                    TreatementTreatmentType::create([
+                        'treatment_id'=> $treatment->id,
+                        'treatment_type_id'=> $id
+                    ]);
+
+                }
+            \DB::commit();
+            return redirect()->route('treatments.index')
             ->with('success', 'Treatment created successfully.');
+        } catch (\Throwable $th) {
+            \DB::rollBack();
+            dd($th);
+            return back()->withErrors(['error' => 'An error occurred while creating the treatment. Please try again.']);
+            //throw $th;
+        }
     }
 
     /**

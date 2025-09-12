@@ -483,7 +483,13 @@
                                         {{ $appointment->dentist->user->last_name }}
                                     </td>
                                     @endcannot
-                                    <td>{{ $appointment->plannedTreatment->name ?? 'N/A' }}</td>
+                                    <td>
+                                        @forelse ( $appointment?->plannedTreatments as $traitement)
+                                            <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                        @empty
+                                            {{ $appointment?->plannedTreatment?->name ?? 'N/A' }}</td>
+                                        @endforelse
+
                                     <td>
                                         @php
                                             $statusClasses = [
@@ -649,7 +655,16 @@
                             </div>
                             <div class="text-end">
                                 <div class="fw-bold">{{ $appointment->patient->full_name }}</div>
-                                <small class="text-muted">{{ $appointment->plannedTreatment->name ?? 'Consultation' }}</small>
+                                <small class="text-muted">
+                                    <td>
+                                        @forelse ( $appointment?->plannedTreatments as $traitement)
+                                            <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                        @empty
+                                            {{ $appointment?->plannedTreatment?->name ?? 'N/A' }}</td>
+                                        @endforelse
+
+                                    <td>
+                                                                            </small>
                             </div>
                         </div>
                         @endforeach

@@ -185,8 +185,18 @@ class CreateInvoice extends Component
             });
 
             $listTraitements  = $treatements->map(function ($treatement) {
+                $treatements_items = "";
+                if ($treatement?->treatmentType?->name) {
+                    $treatements_items = $treatement?->treatmentType?->name;
+                }else {
+                    foreach ($treatement->treatmentTypes as $value) {
+                        $treatements_items = $treatements_items.", ".$value->name;
+                    }
+                    $treatements_items = substr($treatements_items,1);
+                }
+                // dd($treatements_items);
                 return [
-                    "item_designation" => $treatement->treatmentType->name,
+                    "item_designation" => $treatements_items,
                     "item_quantity" =>1,
                     "item_price" => $treatement->applied_price,
                     "item_ct" => 0,

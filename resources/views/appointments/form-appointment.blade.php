@@ -111,25 +111,38 @@
              <div class="col-md-12">
                 <div class="form-group mb-3">
                     <label for="treatment_type_select" class="form-label fw-bold">Type de traitement <span class="text-danger">*</span></label>
-                    <div class="select-container">
-                        <div class="custom-select @error('planned_treatment_id') is-invalid @enderror">
-                            <div class="select-selected" id="treatment_type_selected">
-                                {{ isset($treatment) && $treatment->treatmentType ? $treatment->treatmentType->name : 'Sélectionnez un type' }}
+                    <div class="multi-select-wrapper">
+                        <div class="multi-select-display border rounded p-2 d-flex flex-wrap gap-1 align-items-center @error('planned_treatment_id') is-invalid @enderror" id="multiSelectDisplay">
+                            @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)
+                                {{-- Afficher les types déjà sélectionnés lors de la modification --}}
+                                @foreach($treatment->treatmentTypes as $selectedType)
+                                    <span class="selected-item-tag badge rounded-pill px-2 py-1 bg-primary text-white">
+                                        {{ $selectedType->name }}
+                                        <span class="tag-close-btn ms-1" data-value="{{ $selectedType->id }}">×</span>
+                                    </span>
+                                @endforeach
+                            @else
+                                <span class="placeholder-message text-muted fst-italic">Sélectionnez un ou plusieurs types</span>
+                            @endif
+                        </div>
+                        <div class="multi-select-menu" id="multiSelectMenu">
+                            <div class="p-2 border-bottom">
+                                <input type="text" class="form-control form-control-sm" placeholder="Rechercher un type..." id="treatmentSearchInput">
                             </div>
-                            <div class="select-dropdown">
-                                <div class="select-search">
-                                    <input type="text" class="form-control" placeholder="Rechercher un type..." id="treatment_type_search">
-                                </div>
-                                <div class="select-options" id="treatment_type_options">
-                                    @foreach($treatmentTypes as $type)
-                                        <div class="select-option" data-value="{{ $type->id }}" data-price="{{ $type->base_price }}">
-                                            {{ $type->name }}
-                                        </div>
-                                    @endforeach
-                                </div>
+                            <div class="menu-options-container" id="menuOptionsContainer">
+                                @foreach($treatmentTypes as $type)
+                                    <div class="menu-option-item p-2 border-bottom d-flex align-items-center gap-2
+                                        @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) option-selected @endif"
+                                        data-value="{{ $type->id }}" data-price="{{ $type->base_price }}">
+                                        <input type="checkbox" class="option-check-input form-check-input"
+                                            @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) checked @endif>
+                                        <span>{{ $type->name }}</span>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
-                        <input type="hidden" name="planned_treatment_id" id="planned_treatment_id" value="{{ old('planned_treatment_id', isset($treatment) ? $treatment->planned_treatment_id : '') }}">
+                        <input type="hidden" name="planned_treatment_id" id="selectedTreatmentTypes"
+                            value="{{ old('planned_treatment_id', isset($treatment) && $treatment->treatmentTypes ? $treatment->treatmentTypes->pluck('id')->implode(',') : '') }}">
                         @error('planned_treatment_id')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
@@ -183,6 +196,7 @@
 </div>
 
 @push('scripts')
+<script src="{{ asset('js/multiselect.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-calculate end time based on start time (add 30 minutes by default)
@@ -200,4 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+@endpush
+@push('styles')
+<link href="{{ asset('css/multiselect.css') }}" rel="stylesheet">
 @endpush
