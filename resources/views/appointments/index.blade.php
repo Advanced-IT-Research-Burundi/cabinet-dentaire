@@ -69,13 +69,12 @@
                             <table class="table align-middle table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Date de Rendez-vous</th>
+                                        <th>Date</th>
                                         <th>Heure</th>
                                         <th>Patient</th>
                                         <th>Dentiste</th>
                                         <th>Traitement</th>
                                         <th>Statut</th>
-                                        <th>Date d'enregistrement</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -89,16 +88,23 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary">
-                                                {{ $appointment?->patient?->id }}
+                                                {{ $appointment->patient->id }}
                                                 </span>
                                                 {{ $appointment->patient->full_name }}
                                                 {{-- {{ $appointment->patient->last_name }} --}}
                                             </td>
                                             <td>
-                                                Dr. {{ $appointment?->dentist?->user?->first_name }}
-                                                {{ $appointment?->dentist?->user?->last_name}}
+                                                Dr. {{ $appointment->dentist->user->first_name }}
+                                                {{ $appointment->dentist->user->last_name}}
                                             </td>
-                                            <td>{{ $appointment->plannedTreatment->name }}</td>
+                                            <td>
+                                                @forelse ( $appointment?->plannedTreatments as $traitement)
+                                                    <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                                @empty
+                                                    {{ $appointment?->plannedTreatment?->name ?? 'N/A' }}</td>
+                                                @endforelse
+
+                                            <td>
                                             <td>
                                             @php
                                                 $statusClasses = [
@@ -116,11 +122,10 @@
                                                     'Reporte' => 'Reporté'
                                                 ];
                                             @endphp
-                                            <span class="badge {{ $statusClasses[$appointment?->status] }}">
-                                                {{ $statusLabels[$appointment?->status] }}
+                                            <span class="badge {{ $statusClasses[$appointment->status] }}">
+                                                {{ $statusLabels[$appointment->status] }}
                                             </span>
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($appointment->created_at)->format('d/m/Y H:i') }}</td>
 
                                         <td>
                                             <div class="btn-group">
