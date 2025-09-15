@@ -47,11 +47,7 @@ class AppointmentController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Appointment::with(['patient', 'dentist', 'plannedTreatment'])
-        ->whereHas('patient')
-        ->whereHas('dentist')
-        ->whereHas('plannedTreatment')
-        ;
+        $query = Appointment::with(['patient', 'dentist', 'plannedTreatment']);
 
         // Recherche par patient
         if ($request->filled('patient')) {
@@ -79,8 +75,8 @@ class AppointmentController extends Controller
             });
         }
 
-        $appointments = $query
-            ->latest()
+        $appointments = $query->orderBy('date', 'desc')
+            ->orderBy('start_time', 'desc')
             ->paginate(10)
             ->withQueryString();
 
@@ -183,7 +179,7 @@ class AppointmentController extends Controller
         try {
 
 
-            if ($validated['date'] == now()->format('Y-m-d') && $validated['start_time'] < now()->format('H:i')) {
+            if ($validated['start_time'] < now()->format('H:i')) {
                 return redirect()
                     ->back()
                     ->withInput()
@@ -214,11 +210,27 @@ class AppointmentController extends Controller
             $validated['creator_id'] = auth()->id();
             $validated['reminder_sent'] = false;
 
-            //dd($validated);
+            $request->validate([
+                'planned_treatment_id' => 'required|string',
+            ]);
 
-            $app= Appointment::create($validated);
+            $treatmentIds = !empty($request->planned_treatment_id)
+                ? explode(',', $request->planned_treatment_id)
+                : [];
 
-            // dd($app);
+            $appointment = Appointment::create($validated);
+
+            foreach ($treatmentIds as $id ) {
+                AppointmentTreatmentType::create([
+                    'appointment_id'=> $appointment->id,
+                    'treatment_type_id'=> $id
+                ]);
+
+            }
+
+
+             \DB::commit();
+
             return redirect()
                 ->route('appointments.index')
                 ->with('success', 'Le rendez-vous a été créé avec succès.');
@@ -228,7 +240,7 @@ class AppointmentController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Une erreur est survenue lors de la création du rendez-vous. Vérifiez les données saisies et veuillez réessayer.'.$th);
+                ->with('error', 'Une erreur est survenue lors de la création du rendez-vous. Vérifiez les données saisies et veuillez réessayer.');
         }
     }
 
