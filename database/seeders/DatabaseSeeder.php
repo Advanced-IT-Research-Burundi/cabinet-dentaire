@@ -29,19 +29,19 @@ class DatabaseSeeder extends Seeder
             'phone' => '+257 62 10 63 08',
             'secondary_phone' => '+257 62 50 50 00',
             'role' => 'Admin',
-            'email' => 'budentalservices@gmail.com',
-            'password' => \Hash::make('12345678'),
+            'email' => 'nijeanlionel@gmail.com',
+            'password' => \Hash::make('password'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         // Insert a default caisse de l'entreprise
         \DB::table('caisses')->insert([
             'id' => 1,
-            'name' => 'Caisse de l\'Entreprise',
+            'name' => 'Caisse Principale',
             'type' => 'Caisse',
             'date' => now(),
             'montant' => 0,
-            'description' => 'Caisse initiale de l\'entreprise',
+            'description' => 'Caisse initiale ',
             'status' => 'active',
             'user_id' => 1,
             'created_at' => now(),

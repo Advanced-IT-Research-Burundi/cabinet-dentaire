@@ -71,6 +71,7 @@ return [
 
     'timezone' => 'Africa/Bujumbura',
 
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

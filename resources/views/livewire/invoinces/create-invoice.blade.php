@@ -54,7 +54,13 @@
                         </td>
                         <td>{{ $treatement->id }}</td>
                         <td>{{ $treatement->dentist->name }}</td>
-                        <td>{{ $treatement->treatmentType->name }}</td>
+                         <td>
+                            @forelse ( $treatement->treatmentTypes as $traitement)
+                                <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                            @empty
+                                {{ $treatement?->treatmentType?->name ?? 'N/A' }}</td>
+                            @endforelse
+                        </td>
                         <td>{{ $treatement->applied_price }}</td>
                         <td>{{ $treatement->created_at }}</td>
                         <td>{{ $treatement->status }}</td>
@@ -83,20 +89,22 @@
                             <td>{{ $product['product_name'] }}</td>
                             <td>{{ $product['quantite_disponible'] }}</td>
                             <td>
-                                <input type="number" wire:model="productsChoosed.{{ $index }}.price"
+                                <input min="0" type="number" wire:model="productsChoosed.{{ $index }}.price"
                                 class="form-control form-control-sm"
                                 step="0.01"
+                                oninput="this.value = Math.max(0, this.value)"
                                 >
                             </td>
                             <td>
-                                <input type="number" wire:model="productsChoosed.{{ $index }}.quantite"
-                                class="form-control form-control-sm
-                                @if ($product['quantite'] > $product['quantite_disponible'])
-                                is-invalid
-                                @endif
-
-                                "
-                                step="0.01"
+                                <input type="number"
+                                    min="0"
+                                    wire:model="productsChoosed.{{ $index }}.quantite"
+                                    class="form-control form-control-sm
+                                    @if ($product['quantite'] > $product['quantite_disponible'])
+                                        is-invalid
+                                    @endif"
+                                    step="0.01"
+                                    oninput="this.value = Math.max(0, this.value)"
                                 >
                             </td>
                             <td>
@@ -186,7 +194,7 @@
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->quantite }}</td>
                         <td>
-                            <button wire:click="addProduct({{ $product->id }})" class="btn-sm">
+                            <button wire:click="addProduct({{ $product->id }})" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-plus"></i>
                             </button>
                         </td>
@@ -220,18 +228,19 @@
                     <li class="list-group-item">
                         <i class="bi bi-person-badge me-2 text-success"></i>
                         <strong>Nom:</strong>
-                        {{ $patient['first_name'] }} {{ $patient['middle_name'] }} {{ $patient['last_name'] }}
+                        {{ $patient['full_name'] }}
                     </li>
                     <li class="list-group-item">
                         <i class="bi bi-calendar-date me-2 text-info"></i>
                         <strong>Date de naissance:</strong>
-                        {{ $patient['birth_date'] }}
+
+                        {{ \Carbon\Carbon::parse($patient['date_of_birth'])->format('d-m-Y') }}
                     </li>
                     <li class="list-group-item">
                         <i class="bi bi-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'person-standing' : 'person-standing-dress' }} me-2 text-warning"></i>
                         <strong>Genre:</strong>
                         <span class="badge bg-{{ $patient['gender'] === 'M' || $patient['gender'] === 'Masculin' ? 'primary' : 'secondary' }}">
-                            {{ $patient['gender'] }}
+                            {{ $patient['gender'] ?? 'Société' }}
                         </span>
                     </li>
                     <li class="list-group-item">

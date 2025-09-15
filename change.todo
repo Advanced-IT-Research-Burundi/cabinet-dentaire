@@ -1,0 +1,5 @@
+#planned_treatment_id nullable appointemnt
+#treatment_type_id nullable treatement
+#applied_price double treatement
+
+# les migrations

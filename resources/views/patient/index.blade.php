@@ -27,7 +27,6 @@
                         <option value="">Tous les genres</option>
                         <option value="M" {{ request('gender') == 'M' ? 'selected' : '' }}>Homme</option>
                         <option value="F" {{ request('gender') == 'F' ? 'selected' : '' }}>Femme</option>
-                        <option value="Autre" {{ request('gender') == 'Autre' ? 'selected' : '' }}>Autre</option>
                     </select>
                 </div>
                 <div class="col-md-2">

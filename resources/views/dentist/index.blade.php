@@ -33,27 +33,31 @@
                     <!-- Recherche par nom/email -->
                     <div class="col-md-4">
                         <div class="input-group">
-                            <span class="input-group-text" id="search-addon"><i class="bi bi-search"></i></span>
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
                             <input type="text" class="form-control" placeholder="Rechercher par nom ou email"
                                 aria-label="Recherche" name="search" value="{{ request('search') }}">
                         </div>
                     </div>
 
                     <!-- Filtre par spécialité -->
-                    <div class="col-md-3">
-                        <select class="form-select" name="specialty" onchange="this.form.submit()">
+                    {{-- <div class="col-md-3">
+                        <select class="form-select" name="specialty">
                             <option value="">Toutes les spécialités</option>
                             @foreach($specialties as $specialty)
-                                <option value="{{ $specialty }}" {{ request('specialty') == $specialty ? 'selected' : '' }}>
-                                    {{ $specialty }}
-                                </option>
+                                @if(strlen($specialty) <= 50 && !str_contains($specialty, 'error'))
+                                    <option value="{{ $specialty }}" {{ request('specialty') == $specialty ? 'selected' : '' }}>
+                                        {{ Str::limit($specialty, 40) }}
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
 
                     <!-- Filtre par statut -->
                     <div class="col-md-2">
-                        <select class="form-select" name="status" onchange="this.form.submit()">
+                        <select class="form-select" name="status"
+                        {{-- onchange="this.form.submit()" --}}
+                        >
                             <option value="">Tous les statuts</option>
                             <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Disponible</option>
                             <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Non disponible</option>

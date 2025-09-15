@@ -19,6 +19,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons-1.13.1/bootstrap-icons.min.css') }}">
 
+    {{-- favicon --}}
+    <link rel="shortcut icon" href="{{ asset('favicon.ico')}}" type="image/x-icon">
+
     <!-- Custom CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/sweetalert2@11.css') }}">
@@ -44,13 +47,12 @@
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <!-- Menu Gauche -->
                     <ul class="mb-2 navbar-nav me-auto mb-lg-0">
-                        @can('is-admin')
+
                         <li class="nav-item">
                             <a class="nav-link modern-nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                 <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
                             </a>
                         </li>
-                        @endcan
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('patients*') ? 'active' : '' }}" href="#" id="patientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -174,54 +176,7 @@
                     <ul class="navbar-nav align-items-center">
                         <!-- Notifications -->
                         @include('stock.notification')
-                        {{-- <li class="nav-item dropdown me-3">
-                            <a class="nav-link notification-bell" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-bell-fill fs-5"></i>
-                                @if(auth()->user()->notifications->where('read_at', null)->count() > 0)
-                                    <span class="notification-badge">
-                                        {{ auth()->user()->notifications->where('read_at', null)->count() }}
-                                    </span>
-                                @endif
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown">
-                                <li><div class="notification-header">
-                                    <i class="bi bi-bell me-2"></i>Notifications
-                                    @if(auth()->user()->notifications->where('read_at', null)->count() > 0)
-                                        <span class="float-end">{{ auth()->user()->notifications->where('read_at', null)->count() }} nouvelles</span>
-                                    @endif
-                                </div></li>
 
-                                @if(auth()->user()->notifications->count() > 0)
-                                    @foreach(auth()->user()->notifications->take(5) as $notification)
-                                        <li class="notification-item {{ $notification->read_at ? '' : 'unread' }}">
-                                            <div class="d-flex align-items-start">
-                                                <i class="mt-1 bi bi-info-circle me-3 text-primary"></i>
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-semibold">{{ $notification->data['message'] ?? 'Nouvelle notification' }}</div>
-                                                    <div class="mt-1 text-muted small">
-                                                        <i class="bi bi-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                    <li><hr class="m-0 dropdown-divider"></li>
-                                    <li class="p-2 text-center">
-                                        <a class="btn btn-outline-primary btn-sm me-2" href="{{ route('notifications.index') }}">
-                                            Voir toutes
-                                        </a>
-                                        <a href="#" class="btn btn-primary btn-sm" onclick="markAllAsRead()">
-                                            Marquer comme lues
-                                        </a>
-                                    </li>
-                                @else
-                                    <li class="text-center notification-item">
-                                        <i class="mb-2 bi bi-bell-slash text-muted fs-1 d-block"></i>
-                                        <div class="text-muted">Aucune notification</div>
-                                    </li>
-                                @endif
-                            </ul>
-                        </li> --}}
 
                         <!-- User Profile -->
                         <li class="nav-item dropdown">
@@ -238,11 +193,12 @@
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('profile.edit') }}">
                                     <i class="bi bi-person"></i>Mon Profil
                                 </a></li>
+                                @if(Auth::user()->role === 'Admin')
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('admin.dashboard') }}">
                                     <i class="bi bi-gear"></i>Administration
                                 </a></li>
 
-                                @if(Auth::user()->role === 'Admin')
+
                                     <li><hr class="dropdown-divider"></li>
                                     <li><div class="px-3 py-2 text-muted small fw-semibold">ADMINISTRATION</div></li>
                                     <li><a class="dropdown-item modern-dropdown-item" href="{{ route('parametres') }}">

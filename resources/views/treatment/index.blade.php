@@ -150,7 +150,14 @@
                                     {{ $treatment->patient->full_name }}
                                 </td>
                                 <td>{{ $treatment->dentist->name }}</td>
-                                <td>{{ $treatment->treatmentType->name }}</td>
+                                 <td>
+                                    @forelse ( $treatment->treatmentTypes as $traitement)
+                                        <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                                    @empty
+                                        {{ $treatment?->treatmentType?->name ?? 'N/A' }}</td>
+                                    @endforelse
+
+                                </td>
                                 <td>{{ \Carbon\Carbon::parse($treatment->date)->format('d/m/Y') }}</td>
                                 <td>{{ number_format($treatment->applied_price, 2) }} FBU</td>
                                 <td>

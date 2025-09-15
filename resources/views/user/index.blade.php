@@ -79,9 +79,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ $user->name }}
-                                        {{ $user->first_name }}
-                                         {{ $user->last_name }}
+                                        {{ $user->full_name ?? '--' }}
                                     </td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone ?: '-' }}</td>

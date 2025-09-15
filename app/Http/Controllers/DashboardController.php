@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\Stock;
+use App\Models\CaisseDetail;
+use App\Models\Order;
 use App\Models\Invoice;
 use App\Models\Treatment;
 use Carbon\Carbon;
@@ -16,21 +19,76 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
         $firstDayOfMonth = Carbon::now()->startOfMonth();
+        $user = auth()->user();
 
-        return view('dashboard', [
-            'rdvToday' => Appointment::whereDate('date', $today)->count(),
-            'newPatients' => Patient::where('created_at', '>=', $firstDayOfMonth)->count(),
-            'totalusers' => User::count(),
-            'revenue' => Invoice::where('created_at', '>=', $firstDayOfMonth)->sum('total_amount'),
-            'appointments' => Appointment::with(['patient', 'dentist.user'])
-                                      ->whereDate('date', $today)
-                                      ->orderBy('start_time')
-                                      ->get(),
-            'todayAppointments' => Appointment::with(['patient', 'dentist.user'])
-                                           ->whereDate('date', $today)
-                                           ->orderBy('start_time')
-                                           ->get(),
-        ]);
+        $data = [
+            // Données communes
+            'todayAppointments' => Appointment::with(['patient', 'dentist.user', 'plannedTreatment'])
+                                        ->whereDate('date', $today)
+                                        ->when($user->role === 'Dentiste', function ($query) use ($user) {
+                                            return $query->whereHas('dentist', function ($q) use ($user) {
+                                                $q->where('user_id', $user->id);
+                                            });
+                                        })
+                                        ->orderBy('start_time')
+                                        ->limit(10)
+                                        ->get(),
+        ];
+
+        // Données spécifiques par rôle
+        if ($user->role === 'Admin') {
+            $data = array_merge($data, [
+                'rdvToday' => Appointment::whereDate('date', $today)->count(),
+                'newPatients' => Patient::where('created_at', '>=', $firstDayOfMonth)->count(),
+                'totalUsers' => User::count(),
+                'revenue' => Order::where('created_at', '>=', $firstDayOfMonth)->sum('amount'),
+                'totalStocks' => Stock::count(),
+                'lowStocks' => Stock::where('status', 'Faible_stock')->count(),
+                'totalInvoices' => Invoice::where('created_at', '>=', $firstDayOfMonth)->count(),
+                'pendingPayments' => Invoice::whereIn('status', ['Emise', 'Partiellement_payee'])->sum('patient_amount'),
+            ]);
+        }
+
+        if ($user->role === 'Dentiste') {
+            $dentist = $user->dentist;
+            $data = array_merge($data, [
+                'myAppointmentsToday' => Appointment::whereHas('dentist', function ($q) use ($user) {
+                    $q->where('dentist_id', $user->id);
+                })->whereDate('date', $today)->count(),
+                'myPatientsTotal' => Treatment::whereHas('dentist', function ($q) use ($user) {
+                    $q->where('dentist_id', $user->id);
+                })->distinct('patient_id')->count('patient_id'),
+                'myTreatmentsMonth' => Treatment::whereHas('dentist', function ($q) use ($user) {
+                    $q->where('dentist_id', $user->id);
+                })->where('created_at', '>=', $firstDayOfMonth)->count(),
+                'myRevenueMonth' => Treatment::whereHas('dentist', function ($q) use ($user) {
+                    $q->where('dentist_id', $user->id);
+                })->where('created_at', '>=', $firstDayOfMonth)->sum('applied_price'),
+            ]);
+        }
+
+        if ($user->role === 'Pharmacist') {
+            $data = array_merge($data, [
+                'totalStocks' => Stock::count(),
+                'lowStocks' => Stock::where('status', 'Faible_stock')->count(),
+                'expiredStocks' => Stock::where('status', 'Expire')->count(),
+                'ordersToday' => Order::whereDate('created_at', $today)->count(),
+                'salesMonth' => CaisseDetail::where('created_at', '>=', $firstDayOfMonth)
+                                ->where('user_id', $user->id)
+                                ->sum('total'),
+            ]);
+        }
+
+        if ($user->role === 'Secretaire') {
+            $data = array_merge($data, [
+                'appointmentsToday' => Appointment::whereDate('date', $today)->count(),
+                'pendingAppointments' => Appointment::where('status', 'En_attente')->count(),
+                'patientsTotal' => Patient::count(),
+                'invoicesUnpaid' => Invoice::whereIn('status', ['Emise', 'Partiellement_payee'])->count(),
+            ]);
+        }
+
+        return view('dashboard', $data);
     }
 
     public function revenue()

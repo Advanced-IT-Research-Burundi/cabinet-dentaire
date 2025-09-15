@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('invoice_number', 50)->unique();
             $table->date('issue_date');
             $table->date('due_date');
-            $table->decimal('total_amount', 10, 2);
-            $table->decimal('insurance_amount', 10, 2);
-            $table->decimal('patient_amount', 10, 2);
+            $table->double('total_amount');
+            $table->double('insurance_amount');
+            $table->double('patient_amount');
             $table->enum('status', ["Brouillon","Emise","Partiellement_payee","Payee","Annulee","En_retard"]);
             $table->text('notes')->nullable();
             $table->text('description')->nullable();

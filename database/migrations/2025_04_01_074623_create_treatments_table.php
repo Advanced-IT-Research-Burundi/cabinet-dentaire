@@ -17,12 +17,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_id')->constrained();
             $table->foreignId('dentist_id')->constrained();
-            $table->foreignId('treatment_type_id')->constrained();
+            $table->foreignId('treatment_type_id')->nullables()->constrained();
             $table->foreignId('appointment_id')->constrained();
             $table->date('date');
             $table->text('description')->nullable();
             $table->text('medical_notes')->nullable();
-            $table->decimal('applied_price', 10, 2)->nullable();
+            $table->double('applied_price')->nullable();
             $table->enum('status', ["Planifie","En_cours","Termine","Annule"]);
             $table->string('payment_status')->nullable();
             $table->foreignId('invoice_id')->nullable();

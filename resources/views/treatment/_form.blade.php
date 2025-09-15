@@ -12,7 +12,7 @@
             <div class="select-container">
                 <div class="custom-select @error('appointment_id') is-invalid @enderror">
                     <div class="select-selected" id="appointment_selected">
-                        {{ isset($treatment) && $treatment->appointment ? $treatment->appointment->start_time->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
+                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment->appointment->start_time)->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
                     </div>
                     <div class="select-dropdown">
                         <div class="select-search">
@@ -26,14 +26,9 @@
                                      data-patient-name="{{ $appointment->patient->full_name }}"
                                      data-dentist-id="{{ $appointment->dentist_id }}"
                                      data-dentist-name="{{ $appointment->dentist->user->full_name }}"
-                                     data-planned-treatment-id="{{ $appointment->planned_treatment_id ?? '' }}"
-                                     data-planned-treatment-name="{{ $appointment->plannedTreatment->name ?? '' }}"
-                                     data-planned-treatment-price="{{ $appointment->plannedTreatment->base_price ?? '' }}"
-                                     data-date="{{ $appointment->date->format('Y-m-d') }}">
-                                    {{ $appointment->date->format('d/m/Y') }}
-                                    {{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}
-                                    #
-                                    {{ $appointment->patient->full_name }}
+                                     data-date="{{ $appointment->date->format('Y-m-d') }}"
+                                     data-planned-treatments="{{ $appointment->plannedTreatments->count() > 0 ? $appointment->plannedTreatments->map(function($pt) { return ['id' => $pt->id, 'name' => $pt->name, 'price' => $pt->base_price]; })->toJson() : ($appointment->plannedTreatment ? json_encode([['id' => $appointment->plannedTreatment->id, 'name' => $appointment->plannedTreatment->name, 'price' => $appointment->plannedTreatment->base_price]]) : '[]') }}">
+                                    {{ $appointment->date->format('d/m/Y') }} - {{ $appointment->patient->full_name }}
                                 </div>
                             @endforeach
                         </div>
@@ -59,18 +54,6 @@
                     <div class="select-selected bg-gray" id="patient_selected" >
                         {{ isset($treatment) && $treatment->patient ? $treatment->patient->full_name : 'Sélectionnez un patient' }}
                     </div>
-                    {{-- <div class="select-dropdown">
-                        <div class="select-search">
-                            <input type="text" class="form-control" placeholder="Rechercher un patient..." id="patient_search">
-                        </div>
-                        <div class="select-options" id="patient_options">
-                            @foreach($patients as $patient)
-                                <div class="select-option" data-value="{{ $patient->id }}" data-display="{{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}">
-                                    {{ $patient->id }} - {{ isset($treatment) ? $patient->full_name : $patient->first_name . ' ' . $patient->last_name }}
-                                </div>
-                            @endforeach
-                        </div>
-                    </div> --}}
                 </div>
                 <input type="hidden" name="patient_id" id="patient_id" value="{{ old('patient_id', isset($treatment) ? $treatment->patient_id : '') }}">
                 @error('patient_id')
@@ -123,25 +106,38 @@
             <label for="treatment_type_select" class="form-label fw-bold">
                 <i class="bi bi-clipboard2-pulse-fill me-2"></i>Type de traitement <span class="text-danger">*</span>
             </label>
-            <div class="select-container">
-                <div class="custom-select @error('treatment_type_id') is-invalid @enderror">
-                    <div class="select-selected" id="treatment_type_selected">
-                        {{ isset($treatment) && $treatment->treatmentType ? $treatment->treatmentType->name : 'Sélectionnez un type' }}
+            <div class="multi-select-wrapper">
+                <div class="multi-select-display border rounded p-2 d-flex flex-wrap gap-1 align-items-center @error('treatment_type_id') is-invalid @enderror" id="multiSelectDisplay">
+                    @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)
+                        {{-- Afficher les types déjà sélectionnés lors de la modification --}}
+                        @foreach($treatment->treatmentTypes as $selectedType)
+                            <span class="selected-item-tag badge rounded-pill px-2 py-1 bg-primary text-white">
+                                {{ $selectedType->name }}
+                                <span class="tag-close-btn ms-1" data-value="{{ $selectedType->id }}">×</span>
+                            </span>
+                        @endforeach
+                    @else
+                        <span class="placeholder-message text-muted fst-italic">Sélectionnez un ou plusieurs types</span>
+                    @endif
+                </div>
+                <div class="multi-select-menu" id="multiSelectMenu">
+                    <div class="p-2 border-bottom">
+                        <input type="text" class="form-control form-control-sm" placeholder="Rechercher un type..." id="treatmentSearchInput">
                     </div>
-                    <div class="select-dropdown">
-                        <div class="select-search">
-                            <input type="text" class="form-control" placeholder="Rechercher un type..." id="treatment_type_search">
-                        </div>
-                        <div class="select-options" id="treatment_type_options">
-                            @foreach($treatmentTypes as $type)
-                                <div class="select-option" data-value="{{ $type->id }}" data-price="{{ $type->base_price }}">
-                                    {{ $type->name }}
-                                </div>
-                            @endforeach
-                        </div>
+                    <div class="menu-options-container" id="menuOptionsContainer">
+                        @foreach($treatmentTypes as $type)
+                            <div class="menu-option-item p-2 border-bottom d-flex align-items-center gap-2
+                                @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) option-selected @endif"
+                                data-value="{{ $type->id }}" data-price="{{ $type->base_price }}" data-name="{{ $type->name }}">
+                                <input type="checkbox" class="option-check-input form-check-input"
+                                    @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) checked @endif>
+                                <span>{{ $type->name }} - {{ number_format($type->base_price, 0, ',', ' ') }} FBU</span>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-                <input type="hidden" name="treatment_type_id" id="treatment_type_id" value="{{ old('treatment_type_id', isset($treatment) ? $treatment->treatment_type_id : '') }}">
+                <input type="hidden" name="treatment_type_id" id="selectedTreatmentTypes"
+                    value="{{ old('treatment_type_id', isset($treatment) && $treatment->treatmentTypes ? $treatment->treatmentTypes->pluck('id')->implode(',') : '') }}">
                 @error('treatment_type_id')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -226,6 +222,110 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    let selectedTreatments = new Map(); // Pour stocker les traitements sélectionnés avec leurs prix
+
+    // Initialiser les traitements déjà sélectionnés (en cas de modification)
+    @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)
+        @foreach($treatment->treatmentTypes as $selectedType)
+            selectedTreatments.set('{{ $selectedType->id }}', {
+                id: '{{ $selectedType->id }}',
+                name: '{{ $selectedType->name }}',
+                price: {{ $selectedType->base_price }}
+            });
+        @endforeach
+        updateTotalCalculated();
+    @endif
+
+    // Fonction pour mettre à jour le total calculé directement dans le prix appliqué
+    function updateTotalCalculated() {
+        let total = 0;
+        selectedTreatments.forEach(treatment => {
+            total += parseFloat(treatment.price) || 0;
+        });
+
+        // Mettre à jour directement le prix appliqué avec le total calculé
+        const appliedPriceInput = document.getElementById('applied_price');
+        appliedPriceInput.value = total;
+    }
+
+    // Fonction pour mettre à jour l'affichage du multi-select
+    function updateMultiSelectDisplay() {
+        const display = document.getElementById('multiSelectDisplay');
+        const placeholder = display.querySelector('.placeholder-message');
+
+        // Supprimer le placeholder s'il existe
+        if (placeholder) {
+            placeholder.remove();
+        }
+
+        // Supprimer tous les tags existants
+        const existingTags = display.querySelectorAll('.selected-item-tag');
+        existingTags.forEach(tag => tag.remove());
+
+        // Ajouter les nouveaux tags
+        selectedTreatments.forEach(treatment => {
+            const tag = document.createElement('span');
+            tag.className = 'selected-item-tag badge rounded-pill px-2 py-1 bg-primary text-white';
+            tag.innerHTML = `${treatment.name} <span class="tag-close-btn ms-1" data-value="${treatment.id}">×</span>`;
+            display.appendChild(tag);
+        });
+
+        // Ajouter le placeholder si aucun élément sélectionné
+        if (selectedTreatments.size === 0) {
+            const placeholderSpan = document.createElement('span');
+            placeholderSpan.className = 'placeholder-message text-muted fst-italic';
+            placeholderSpan.textContent = 'Sélectionnez un ou plusieurs types';
+            display.appendChild(placeholderSpan);
+        }
+
+        // Mettre à jour l'input hidden
+        const selectedIds = Array.from(selectedTreatments.keys()).join(',');
+        document.getElementById('selectedTreatmentTypes').value = selectedIds;
+
+        // Calculer et mettre le total dans le prix appliqué
+        updateTotalCalculated();
+    }
+
+    // Fonction pour pré-remplir les types de traitement à partir du rendez-vous
+    function fillTreatmentTypesFromAppointment(plannedTreatments) {
+        try {
+            const treatments = JSON.parse(plannedTreatments);
+            if (treatments && treatments.length > 0) {
+                // Vider la sélection actuelle
+                selectedTreatments.clear();
+
+                // Décocher toutes les options
+                document.querySelectorAll('#menuOptionsContainer .option-check-input').forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.closest('.menu-option-item').classList.remove('option-selected');
+                });
+
+                // Ajouter les nouveaux traitements
+                treatments.forEach(treatment => {
+                    selectedTreatments.set(treatment.id.toString(), {
+                        id: treatment.id.toString(),
+                        name: treatment.name,
+                        price: parseFloat(treatment.price) || 0
+                    });
+
+                    // Cocher l'option correspondante
+                    const option = document.querySelector(`#menuOptionsContainer .menu-option-item[data-value="${treatment.id}"]`);
+                    if (option) {
+                        const checkbox = option.querySelector('.option-check-input');
+                        if (checkbox) {
+                            checkbox.checked = true;
+                            option.classList.add('option-selected');
+                        }
+                    }
+                });
+
+                updateMultiSelectDisplay();
+            }
+        } catch (e) {
+            console.log('Erreur lors du parsing des traitements planifiés:', e);
+        }
+    }
+
     // Fonction pour auto-compléter les champs lors de la sélection d'un rendez-vous
     const appointmentOptions = document.querySelectorAll('#appointment_options .select-option');
 
@@ -235,10 +335,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const patientName = this.dataset.patientName;
             const dentistId = this.dataset.dentistId;
             const dentistName = this.dataset.dentistName;
-            const plannedTreatmentId = this.dataset.plannedTreatmentId;
-            const plannedTreatmentName = this.dataset.plannedTreatmentName;
-            const plannedTreatmentPrice = this.dataset.plannedTreatmentPrice;
             const appointmentDate = this.dataset.date;
+            const plannedTreatments = this.dataset.plannedTreatments;
 
             // Compléter le patient
             if (patientId) {
@@ -252,22 +350,87 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('dentist_selected').textContent = `${dentistId} - ${dentistName}`;
             }
 
-            // Compléter le type de traitement si planifié
-            if (plannedTreatmentId) {
-                document.getElementById('treatment_type_id').value = plannedTreatmentId;
-                document.getElementById('treatment_type_selected').textContent = plannedTreatmentName;
-
-                // Compléter le prix appliqué avec le prix de base du traitement planifié
-                if (plannedTreatmentPrice) {
-                    document.getElementById('applied_price').value = plannedTreatmentPrice;
-                }
-            }
-
             // Compléter la date du traitement avec la date du rendez-vous
             if (appointmentDate) {
                 document.getElementById('date').value = appointmentDate;
             }
+
+            // Pré-remplir les types de traitement à partir du rendez-vous
+            if (plannedTreatments && plannedTreatments !== '[]') {
+                fillTreatmentTypesFromAppointment(plannedTreatments);
+            }
         });
     });
+
+    // Gestion du multi-select pour les types de traitement - uniquement sur les checkboxes
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('option-check-input')) {
+            const option = e.target.closest('.menu-option-item');
+            const treatmentId = option.dataset.value;
+            const treatmentName = option.dataset.name;
+            const treatmentPrice = parseFloat(option.dataset.price) || 0;
+
+            if (e.target.checked) {
+                option.classList.add('option-selected');
+                selectedTreatments.set(treatmentId, {
+                    id: treatmentId,
+                    name: treatmentName,
+                    price: treatmentPrice
+                });
+            } else {
+                option.classList.remove('option-selected');
+                selectedTreatments.delete(treatmentId);
+            }
+
+            updateMultiSelectDisplay();
+        }
+    });
+
+    // Gestion des événements de clic
+    document.addEventListener('click', function(e) {
+        // Gestion de la suppression des tags
+        if (e.target.classList.contains('tag-close-btn')) {
+            const treatmentId = e.target.dataset.value;
+            selectedTreatments.delete(treatmentId);
+
+            // Décocher l'option correspondante
+            const option = document.querySelector(`#menuOptionsContainer .menu-option-item[data-value="${treatmentId}"]`);
+            if (option) {
+                const checkbox = option.querySelector('.option-check-input');
+                if (checkbox) {
+                    checkbox.checked = false;
+                    option.classList.remove('option-selected');
+                }
+            }
+
+            updateMultiSelectDisplay();
+        }
+
+        // Gestion de l'affichage/masquage du menu
+        if (e.target.closest('#multiSelectDisplay')) {
+            const menu = document.getElementById('multiSelectMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        } else if (!e.target.closest('#multiSelectMenu')) {
+            document.getElementById('multiSelectMenu').style.display = 'none';
+        }
+    });
+
+    // Recherche dans les types de traitement
+    document.getElementById('treatmentSearchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const options = document.querySelectorAll('#menuOptionsContainer .menu-option-item');
+
+        options.forEach(option => {
+            const text = option.textContent.toLowerCase();
+            option.style.display = text.includes(searchTerm) ? 'block' : 'none';
+        });
+    });
+
+    // Calculer et mettre le total initial dans le prix appliqué si des traitements sont déjà sélectionnés
+    updateTotalCalculated();
 });
 </script>
+
+@push('styles')
+<link href="{{ asset('css/multiselect.css') }}" rel="stylesheet">
+@endpush

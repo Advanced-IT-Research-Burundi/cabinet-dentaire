@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->boolean('reminder_sent')->default(false);
             $table->foreignId('creator_id')->constrained('users');
-            $table->foreignId('planned_treatment_id')->constrained('treatment_types');
+            $table->foreignId('planned_treatment_id')->nullable()->constrained('treatment_types');
             $table->timestamps();
             $table->softDeletes();
         });

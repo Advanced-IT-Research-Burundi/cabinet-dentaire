@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
@@ -16,19 +17,7 @@ class Appointment extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'patient_id',
-        'dentist_id',
-        'date',
-        'start_time',
-        'end_time',
-        'reason',
-        'status',
-        'notes',
-        'reminder_sent',
-        'creator_id',
-        'planned_treatment_id',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
@@ -69,5 +58,9 @@ class Appointment extends Model
     public function plannedTreatment(): BelongsTo
     {
         return $this->belongsTo(TreatmentType::class);
+    }
+    public function plannedTreatments(): BelongsToMany
+    {
+        return $this->belongsToMany(TreatmentType::class,'appointment_treatment_types','appointment_id','treatment_type_id');
     }
 }

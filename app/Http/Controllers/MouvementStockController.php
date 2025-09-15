@@ -80,6 +80,13 @@ class MouvementStockController extends Controller
             }
             else {
                 // Exit movement types decrease stock
+                if ($stock->quantite < $request->item_quantity) {
+                    DB::rollBack();
+                    return redirect()->back()
+                    ->withErrors('Insufficient stock quantity for this movement.');
+                }
+
+                // Decrease stock quantity for exit movements
                 $stock->quantite -= $request->item_quantity;
             }
            $stock->price = $request->item_purchase_or_sale_price;

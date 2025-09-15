@@ -91,14 +91,14 @@
                                                 <span class="badge bg-primary">
                                                 {{ $appointment?->patient?->id }}
                                                 </span>
-                                                {{ $appointment?->patient?->first_name }}
-                                                {{ $appointment?->patient?->last_name }}
+                                                {{ $appointment->patient->full_name }}
+                                                {{-- {{ $appointment->patient->last_name }} --}}
                                             </td>
                                             <td>
                                                 Dr. {{ $appointment?->dentist?->user?->first_name }}
                                                 {{ $appointment?->dentist?->user?->last_name}}
                                             </td>
-                                            <td>{{ $appointment?->plannedTreatment?->name }}</td>
+                                            <td>{{ $appointment->plannedTreatment->name }}</td>
                                             <td>
                                             @php
                                                 $statusClasses = [
