@@ -180,6 +180,7 @@ class AppointmentController extends Controller
 
 
             if ($validated['start_time'] < now()->format('H:i')) {
+                
                 return redirect()
                     ->back()
                     ->withInput()
@@ -201,6 +202,7 @@ class AppointmentController extends Controller
                 ->exists();
 
             if ($conflict) {
+                \DB::rollBack();
                 return redirect()
                     ->back()
                     ->withInput()
