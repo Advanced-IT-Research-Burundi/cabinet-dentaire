@@ -161,10 +161,11 @@
                             </td>
                             <td>
                                 <input type="number"
-                                    min="1"
+                                    min="0"
                                     wire:model="typetreatmentsChoosed.{{ $index }}.quantite"
                                     class="form-control form-control-sm"
                                     step="1"
+                                    disabled
                                     oninput="this.value = Math.max(1, this.value)"
                                 >
                             </td>
