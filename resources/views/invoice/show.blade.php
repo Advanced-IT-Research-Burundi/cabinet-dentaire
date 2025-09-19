@@ -349,6 +349,12 @@
                 padding: 0;
             }
         }
+
+        .print-show{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
     </style>
 </head>
 <body>
