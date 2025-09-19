@@ -95,9 +95,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('appointments', AppointmentController::class);
     Route::get('stocks/{id}/movement', [StockController::class, 'movement'])->name('stocks.movement');
-
-
-
     // Dashboard related routes
     Route::get(
         'dashboard/revenue',

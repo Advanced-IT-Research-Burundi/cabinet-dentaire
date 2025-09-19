@@ -212,13 +212,13 @@
     <div class="col-md-4">
         @if ($patient)
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="text-white card-header bg-primary">
                 <h6 class="mb-0">
                     <i class="bi bi-person-fill me-2"></i>
                     Informations sur le patient
                 </h6>
             </div>
-            <div class="card-body p-0">
+            <div class="p-0 card-body">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <i class="bi bi-hash me-2 text-primary"></i>
@@ -283,24 +283,24 @@
         </div>
         @else
         <div class="card">
-            <div class="card-body text-center ">
-                <i class="bi bi-person-x display-4 text-muted mb-2"></i>
+            <div class="text-center card-body">
+                <i class="mb-2 bi bi-person-x display-4 text-muted"></i>
                 <h6 class="text-muted">Aucun patient sélectionné</h6>
-                <p class="text-muted small mb-0">Veuillez rechercher et sélectionner un patient</p>
+                <p class="mb-0 text-muted small">Veuillez rechercher et sélectionner un patient</p>
             </div>
         </div>
         @endif
         <div class="card">
-            <div class="card-header bg-info text-white">
+            <div class="text-white card-header bg-info">
                 <h6 class="mb-0">
                     <i class="bi bi-receipt me-2"></i>
                     Historique des factures
                 </h6>
             </div>
-            <div class="card-body p-0">
+            <div class="p-0 card-body">
                 @if ($patient?->invoices?->count() > 0)
                     <div class="table-responsive">
-                        <table class="table table-hover table-sm mb-0">
+                        <table class="table mb-0 table-hover table-sm">
                             <thead class="table-light">
                                 <tr>
                                     <th class="text-center">
@@ -371,7 +371,7 @@
                     </div>
 
                     @if ($patient->invoices->count() > 10)
-                    <div class="card-footer text-center">
+                    <div class="text-center card-footer">
                         <a href="{{ route('invoices.index', ['patient_id' => $patient['id']]) }}"
                         class="btn btn-outline-info btn-sm">
                             <i class="bi bi-eye me-1"></i>
@@ -380,10 +380,10 @@
                     </div>
                     @endif
                 @else
-                    <div class="card-body text-center py-4">
-                        <i class="bi bi-receipt-cutoff display-4 text-muted mb-2"></i>
+                    <div class="py-4 text-center card-body">
+                        <i class="mb-2 bi bi-receipt-cutoff display-4 text-muted"></i>
                         <h6 class="text-muted">Aucune facture</h6>
-                        <p class="text-muted small mb-3">Ce patient n'a pas encore de factures enregistrées</p>
+                        <p class="mb-3 text-muted small">Ce patient n'a pas encore de factures enregistrées</p>
 
                     </div>
                 @endif
