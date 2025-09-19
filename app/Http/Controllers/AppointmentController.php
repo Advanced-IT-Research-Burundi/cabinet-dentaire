@@ -179,13 +179,13 @@ class AppointmentController extends Controller
         try {
 
 
-            if ($validated['start_time'] < now()->format('H:i')) {
-                
-                return redirect()
-                    ->back()
-                    ->withInput()
-                    ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
-            }
+            // if ($validated['start_time'] < now()->format('H:i')) {
+
+            //     return redirect()
+            //         ->back()
+            //         ->withInput()
+            //         ->with('error', "L'heure de début doit être supérieure ou égale à l'heure actuelle pour aujourd'hui.");
+            // }
 
             \DB::beginTransaction();
             // Vérifier les conflits de rendez-vous pour le dentiste
@@ -238,6 +238,7 @@ class AppointmentController extends Controller
                 ->with('success', 'Le rendez-vous a été créé avec succès.');
 
         } catch (\Throwable $th) {
+            dd($th);
             \DB::rollBack();
             return redirect()
                 ->back()
