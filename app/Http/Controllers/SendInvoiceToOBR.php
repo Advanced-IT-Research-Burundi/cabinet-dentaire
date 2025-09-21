@@ -116,8 +116,6 @@ class SendInvoiceToOBR extends Controller
             $order->is_sent_at = now();
             $order->save();
         }
-
-
         ObrPointer::create([
             'invoice_id' =>   $invoince['invoice_id'] ,
             'invoice_signature' => $invoince['invoice_identifier'],

@@ -2,10 +2,10 @@
 
 @section('content')
 
-<div class="container mt-4">
+<div class="mt-2 container-full">
 
     {{-- Formulaire de recherche --}}
-    <div class="mb-3 card">
+    <div class="mb-1 card">
         <div class="card-body">
             <form action="{{ route('invoices_obr') }}" method="GET" class="row g-2">
                 <div class="col-md-3">
@@ -35,7 +35,7 @@
     </div>
 
     {{-- Table des factures --}}
-    <div class="card">
+    <div class="">
         <div class="card-header">
             <h5 class="mb-0">Liste des Factures</h5>
         </div>
@@ -67,7 +67,16 @@
                                     <span class="badge bg-danger">Non envoyée</span>
                                 @endif
                             </td>
-                            <td>{{ $order->obrPointer->result ?? '-' }}</td>
+                            <td>
+                                @if(isset($order->obrPointer->result) && $order->obrPointer->result != null)
+                                @php
+                                    $result = json_decode($order->obrPointer->result);
+                                @endphp
+                                    <span> N° : {{ $result->invoice_number ?? "" }}</span>
+                                    <span> | {{ $result->invoice_registered_date ?? "" }}</span>
+                                    <span> | {{ $result->invoice_registered_number ?? "" }}</span>
+                                @endif
+                            </td>
                             <td>
                                 <a href="">
                                     Afficher

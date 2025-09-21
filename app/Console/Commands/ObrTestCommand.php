@@ -31,13 +31,20 @@ class ObrTestCommand extends Command
     {
         $obr = new SendInvoiceToOBR();
 
-        $mouvememt = MouvementStock::latest()->first();
-        $resp =  $obr->addStockMovement($mouvememt);
+       /*  $mouvememt = MouvementStock::wherelatest()->first();
+        $resp =  $obr->addStockMovement($mouvememt); */
       //  dump($resp);
 
-        $order = Invoice::latest()->first();
-        $resp = $obr->addInvoice($order->obr_order_format);
-        dd($resp);
+        $orders = Invoice::latest()
+                            ->take(1)
+                            ->get();
+
+
+        foreach ($orders as $order) {
+
+           $resp = $obr->addInvoice($order->obr_order_format);
+            dump($resp);
+        }
 
 
     }
