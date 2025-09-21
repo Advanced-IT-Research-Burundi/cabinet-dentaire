@@ -35,9 +35,7 @@ class ObrTestCommand extends Command
         $resp =  $obr->addStockMovement($mouvememt); */
       //  dump($resp);
 
-        $orders = Invoice::latest()
-                            ->take(1)
-                            ->get();
+        $orders = Invoice::where('is_sent_to_obr', false)->get();
 
 
         foreach ($orders as $order) {
