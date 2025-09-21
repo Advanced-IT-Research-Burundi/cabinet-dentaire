@@ -34,6 +34,10 @@ class UpdateInvoice extends Command
         foreach ($orders as $order) {
             $company = Company::find(1);
             $order->company = json_encode($company);
+
+            $item = explode('/', $order->invoice_identifier);
+            $item[0] = $company->tp_TIN;
+            $order->invoice_identifier = implode('/', $item);
             $order->save();
             $this->progressBar->advance();
         }
