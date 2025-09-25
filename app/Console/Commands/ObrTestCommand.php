@@ -27,17 +27,22 @@ class ObrTestCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle( $invoice_id = null)
     {
+        if($invoice_id){
+            $invoice = Invoice::find($invoice_id);
+            $obr = new SendInvoiceToOBR();
+            $resp = $obr->addInvoice($invoice->obr_order_format);
+            dump($resp);
+            return;
+        }
         $obr = new SendInvoiceToOBR();
 
        /*  $mouvememt = MouvementStock::wherelatest()->first();
         $resp =  $obr->addStockMovement($mouvememt); */
       //  dump($resp);
 
-        $orders = Invoice::where('is_sent_to_obr', false)
-                ->whereDoesntHave('obrPointer')
-                ->get();
+        $orders = Invoice::where('is_sent_to_obr', false)->get();
 
 
         foreach ($orders as $order) {

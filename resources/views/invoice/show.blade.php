@@ -515,7 +515,7 @@
             </div>
             <div class="thermal-row">
                 <span>Date:</span>
-                <span>{{ $invoice->issue_date }}</span>
+                <span>{{ $invoice->created_at }}</span>
             </div>
         </div>
 

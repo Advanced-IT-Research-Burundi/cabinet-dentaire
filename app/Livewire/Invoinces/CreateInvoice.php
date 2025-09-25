@@ -320,7 +320,7 @@ class CreateInvoice extends Component
             ]);
 
             $invoice->invoice_number =  str_pad($invoice->id, 4, '0', STR_PAD_LEFT);
-            $invoice->invoice_identifier = SendInvoiceToOBR::getInvoiceSignature($invoice->invoice_number, $invoice->invoice_date);
+            $invoice->invoice_identifier = SendInvoiceToOBR::getInvoiceSignature($invoice->invoice_number, $invoice->created_at);
             $invoice->save();
 
             $this->updateStockQuantite($invoice->id);
