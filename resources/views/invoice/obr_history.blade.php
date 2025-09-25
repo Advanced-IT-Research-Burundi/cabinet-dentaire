@@ -78,7 +78,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="">
+                                <a href="{{ route('invoices.show', $order->id) }}">
                                     Afficher
                                 </a>
                             </td>
@@ -90,6 +90,8 @@
                     @endforelse
                 </tbody>
             </table>
+
+            {{ $invoices->links() }}
         </div>
     </div>
 

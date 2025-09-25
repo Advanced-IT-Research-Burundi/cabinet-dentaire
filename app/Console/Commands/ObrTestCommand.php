@@ -35,7 +35,9 @@ class ObrTestCommand extends Command
         $resp =  $obr->addStockMovement($mouvememt); */
       //  dump($resp);
 
-        $orders = Invoice::where('is_sent_to_obr', false)->get();
+        $orders = Invoice::where('is_sent_to_obr', false)
+                ->whereDoesntHave('obrPointer')
+                ->get();
 
 
         foreach ($orders as $order) {
