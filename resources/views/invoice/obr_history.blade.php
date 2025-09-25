@@ -68,13 +68,18 @@
                                 @endif
                             </td>
                             <td>
-                                @if(isset($order->obrPointer->result) && $order->obrPointer->result != null)
+                                @if(isset($order->obrPointer->result) )
                                 @php
                                     $result = json_decode($order->obrPointer->result);
                                 @endphp
                                     <span> N° : {{ $result->invoice_number ?? "" }}</span>
                                     <span> | {{ $result->invoice_registered_date ?? "" }}</span>
                                     <span> | {{ $result->invoice_registered_number ?? "" }}</span>
+                                    <span class="badge bg-secondary">
+                                        <small>{{$order->obrPointer->msg}}</small>
+                                    </span>
+                                @else
+
                                 @endif
                             </td>
                             <td>

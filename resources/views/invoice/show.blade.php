@@ -413,7 +413,7 @@
                         </tr>
                         <tr>
                             <td>DATE</td>
-                            <td>{{ $invoice->issue_date }}</td>
+                            <td>{{ $invoice->created_at }}</td>
                         </tr>
                     </table>
                 </div>
