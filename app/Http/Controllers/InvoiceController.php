@@ -46,7 +46,6 @@ class InvoiceController extends Controller
         if ($request->filled('status')) {
             $query->where('is_sent_to_obr', $request->status);
         }
-
         // Exécuter la requête
         $invoices = $query->paginate(15); // Pagination au lieu de get()
 
