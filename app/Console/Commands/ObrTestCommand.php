@@ -43,12 +43,26 @@ class ObrTestCommand extends Command
       //  dump($resp);
 
         $orders = Invoice::where('is_sent_to_obr', false)->get();
-
-
         foreach ($orders as $order) {
 
            $resp = $obr->addInvoice($order->obr_order_format);
             dump($resp);
+        }
+
+        // update invoice status
+
+        $ordersCanceleds = Invoice::where('is_canceled', 1)
+                ->whereNull('canced_to_obr_at')
+                  ->get();
+
+        foreach ($ordersCanceleds as $order) {
+           $resp = $obr->cancelInvoice($order->invoice_identifier, $order->cn_motif);
+           dump($resp);
+           if($resp->success){
+            $order->update([
+                'canced_to_obr_at' => now(),
+            ]);
+           }
         }
 
 

@@ -61,7 +61,9 @@
                             <td>{{ $order->created_at->format('d/m/Y') }}</td>
                             <td>{{ number_format($order->total_amount, 2, ',', ' ') }}</td>
                             <td>
-                                @if($order->is_sent_to_obr)
+                                @if($order->is_canceled)
+                                    <span class="badge bg-danger">Annulée</span>
+                                @elseif($order->is_sent_to_obr)
                                     <span class="badge bg-success">Envoyée OBR</span>
                                 @else
                                     <span class="badge bg-danger">Non envoyée</span>
@@ -79,12 +81,24 @@
                                         <small>{{$order->obrPointer->msg}}</small>
                                     </span>
                                 @else
-
+                                    <span class="badge bg-secondary">
+                                        <small>{{$order->obrPointer->msg}}</small>
+                                    </span>
+                                @endif
+                                @if($order->is_canceled)
+                                 <br>
+                                    <span class="badge bg-danger">
+                                        <small>{{$order->is_canceled_reason}}</small>
+                                    </span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="d-flex gap-2">
                                 <a href="{{ route('invoices.show', $order->id) }}">
                                     Afficher
+                                </a>
+                                <a href="javascript:void(0);" onclick="cancelInvoice({{ $order->id }})">
+                                    Annuler
+                                    <i class="fas fa-times"></i>
                                 </a>
                             </td>
                         </tr>
@@ -103,3 +117,19 @@
 </div>
 
 @stop
+
+@section('scripts')
+<script>
+    function cancelInvoice(orderId) {
+        // Prompt for the reason
+        var reason = prompt("Please provide a reason for cancellation:");
+
+        if (reason) {
+            // If a reason is provided, proceed to the cancellation route
+            window.location.href = "{{ route('invoices.cancel-to-obr', ':orderId') }}".replace(':orderId', orderId) + '?reason=' + encodeURIComponent(reason);
+        } else {
+            alert('Cancellation reason is required.');
+        }
+    }
+</script>
+@endsection

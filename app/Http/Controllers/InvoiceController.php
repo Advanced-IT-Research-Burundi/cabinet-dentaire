@@ -12,10 +12,27 @@ use Illuminate\View\View;
 class InvoiceController extends Controller
 {
 
-    public function sendToObr($id){
+    public function cancelToObr($id ){
 
-        return "Goood ";
+        $reson = request("reason");
+
+        if(!$reson || $reson == ""){
+            return back()->with("error", "Veuillez fournir une raison d'annulation.");
+
+        }
+
+        $invoice = Invoice::find($id);
+
+        $invoice->is_canceled = true;
+        $invoice->is_canceled_at = now();
+        $invoice->is_canceled_by = auth()->user()->id;
+        $invoice->is_canceled_reason = $reson;
+        $invoice->save();
+
+        return back()->with("success", "Facture annulée avec succès.");
     }
+
+
 
     public function invoices_obr(Request $request)
     {
