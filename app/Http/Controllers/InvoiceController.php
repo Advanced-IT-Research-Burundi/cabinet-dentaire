@@ -36,7 +36,8 @@ class InvoiceController extends Controller
 
     public function invoices_obr(Request $request)
     {
-        $query = Invoice::with('obrPointer', 'patient')->latest();
+        $query = Invoice::with('obrPointer', 'patient', 'creator')
+        ->latest();
 
         // Filtrer par numéro de facture
         if ($request->filled('facture_no')) {

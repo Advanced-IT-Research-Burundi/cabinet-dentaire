@@ -46,6 +46,7 @@
                         <th>#</th>
                         <th>FACTURE No</th>
                         <th>PATIENT</th>
+                        <th>Create Par</th>
                         <th>DATE</th>
                         <th>MONTANT</th>
                         <th>STATUS</th>
@@ -58,6 +59,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->client['customer_name'] ?: '-' }}</td>
+                            <td>{{ $order->creator->name }}</td>
                             <td>{{ $order->created_at->format('d/m/Y') }}</td>
                             <td>{{ number_format($order->total_amount, 2, ',', ' ') }}</td>
                             <td>
@@ -82,7 +84,7 @@
                                     </span>
                                 @else
                                     <span class="badge bg-secondary">
-                                        <small>{{$order->obrPointer->msg}}</small>
+                                        <small>{{$order?->obrPointer?->msg}}</small>
                                     </span>
                                 @endif
                                 @if($order->is_canceled)
