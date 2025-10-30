@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         eventDidMount: function(info) {
             // Ajouter des infobulles aux événements
             var tooltip = new bootstrap.Tooltip(info.el, {
-                title: `${info.event.title} - ${info.event.extendedProps.treatment}`,
+                title: `${info.event.title} - ${info.event.extendedProps.treatments_text}`,
                 placement: 'top',
                 trigger: 'hover',
                 container: 'body'
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('{{ route("appointments.events") }}')
         .then(response => response.json())
         .then(data => {
-            console.log(data); // Afficher les données récupérées pour le débogage
+            console.log("Data received:", data); // Afficher les données récupérées pour le débogage
 
             var events = data.map(function(event) {
                 return {
@@ -303,7 +303,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     borderColor: event.borderColor,
                     extendedProps: {
                         patient: event.title,
-                        treatment: event.treatment || '',
+                        treatments: event.treatments || [],
+                        treatments_text: event.treatments_text || '',
                         dentist: event.extendedProps.description || '',
                         notes: event.notes || '',
                         created_by: event.extendedProps.created_by || '',
@@ -408,8 +409,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Badge de traitement avec couleur appropriée
         var badge = document.getElementById('appointmentBadge');
-        var treatment = event.extendedProps.treatment || 'Non spécifié';
-        badge.textContent = treatment;
+        var treatments = event.extendedProps.treatments || [];
+        var treatmentText = treatments.length > 0 ? treatments.join(', ') : 'Aucun traitement spécifié';
+        badge.textContent = treatmentText;
         badge.className = 'badge rounded-pill px-3 py-2';
 
         // Utiliser la couleur du dentiste ou une couleur par défaut selon le traitement
@@ -423,7 +425,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'Implant': '#795548'
         };
 
-        var color = treatmentColors[treatment] || '#607D8B';
+        var firstTreatment = treatments[0] || 'Autre';
+        var color = treatmentColors[firstTreatment] || '#607D8B';
         badge.style.backgroundColor = color;
 
         // Date formatée

@@ -95,34 +95,36 @@ class AppointmentController extends Controller
 
     public function events()
     {
-        $appointments = Appointment::with(['patient', 'dentist', 'plannedTreatment'])
+        $appointments = Appointment::with(['patient', 'dentist.user', 'plannedTreatments'])
             ->whereHas('patient')
             ->whereHas('dentist')
-            ->whereHas('plannedTreatment')
+            ->whereHas('plannedTreatments')
             ->get();
 
         $events = $appointments->map(function ($appointment) {
+            $treatmentsArray = $appointment->plannedTreatments->pluck('name')->toArray();
+            $treatmentsText = implode(', ', $treatmentsArray);
             return [
                 'id' => $appointment->id,
                 'title' => $appointment->patient->first_name . ' ' . $appointment->patient->last_name,
                 'start' => $appointment->date->format('Y-m-d') . 'T' . $appointment->start_time,
                 'end' => $appointment->date->format('Y-m-d') . 'T' . $appointment->end_time,
-                'treatment' => $appointment->plannedTreatment->name,
+                'treatments' => $treatmentsArray,
+                'treatmentsText' => $treatmentsText,
+
                 'notes' => $appointment->notes,
                 'backgroundColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
                 'borderColor' => $appointment->dentist->calendar_color ?? '#2C3E50',
                 'extendedProps' => [
-                    'description' => $appointment->dentist?->user?->first_name . ' ' . $appointment->dentist?->user?->last_name,
-                    'created_by' => $appointment->creator?->name
-
-                ]
+                    'description' => optional($appointment->dentist->user)->first_name . ' ' . optional($appointment->dentist->user)->last_name,
+                    'created_by' => $appointment->creator?->name,
+                ],
             ];
         });
 
         return $events;
-
-
     }
+
 
     /**
      * Affiche le formulaire de création d'un rendez-vous
