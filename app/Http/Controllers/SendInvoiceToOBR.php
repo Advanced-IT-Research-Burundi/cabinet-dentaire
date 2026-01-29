@@ -30,6 +30,8 @@ class SendInvoiceToOBR extends Controller
             $mouvement->toArray(),
             [
                 "system_or_device_id" => env('OBR_USERNAME'),
+                "item_cost_price" => $mouvement->item_purchase_or_sale_price,
+                "item_sale_price" => $mouvement->item_purchase_or_sale_price,
             ]
         );
         $req = Http::withToken($token)->acceptJson()->post($this->baseUrl . 'AddStockMovement/', $data);

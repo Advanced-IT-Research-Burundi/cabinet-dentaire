@@ -112,4 +112,14 @@ class MouvementStock extends Model
     {
         return $this->item_quantity * $this->item_purchase_or_sale_price;
     }
+
+    public function getItemCostPriceAttribute()
+    {
+        return $this->item_purchase_or_sale_price;
+    }
+
+    public function getItemSalePriceAttribute()
+    {
+        return $this->item_purchase_or_sale_price;
+    }
 }

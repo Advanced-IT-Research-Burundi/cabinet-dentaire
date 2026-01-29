@@ -38,9 +38,11 @@ class ObrTestCommand extends Command
         }
         $obr = new SendInvoiceToOBR();
 
-       /*  $mouvememt = MouvementStock::wherelatest()->first();
-        $resp =  $obr->addStockMovement($mouvememt); */
-      //  dump($resp);
+        $mouvememts = MouvementStock::whereNull('is_send_to_obr')->get();
+        foreach ($mouvememts as $mouvement) {
+            $resp =  $obr->addStockMovement($mouvement);
+            dump($resp);
+        }
 
         $orders = Invoice::where('is_sent_to_obr', false)->get();
         foreach ($orders as $order) {
