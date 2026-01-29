@@ -166,6 +166,7 @@
                                     <th><i class="bi bi-cash me-1"></i>Prix unitaire</th>
                                     <th><i class="bi bi-calculator me-1"></i>Total</th>
                                     <th><i class="bi bi-chat-left-text me-1"></i>Description</th>
+                                    <th><i class="bi bi-tools me-1"></i>Sync to OBR</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -206,6 +207,19 @@
                                                 <span class="text-muted">
                                                     <i class="bi bi-dash-circle me-1"></i>
                                                     Aucune description
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($mouvement->is_sync_to_obr)
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    Sync to OBR
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle me-1"></i>
+                                                    Not Sync to OBR
                                                 </span>
                                             @endif
                                         </td>
