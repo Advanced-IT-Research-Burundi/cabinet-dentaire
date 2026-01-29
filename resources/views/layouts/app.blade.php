@@ -167,6 +167,11 @@
                                         <i class="bi bi-file-earmark-text"></i>Rapports de stocks
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item modern-dropdown-item" href="{{ route('stock.syncronisation') }}">
+                                        <i class="bi bi-file-earmark-text"></i>Syncronisation des stocks avec OBR
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endcanany

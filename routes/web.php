@@ -257,6 +257,7 @@ Route::prefix('stock')->name('stock.')->group(function () {
     Route::get('/utilisateur', [StockController::class, 'utilisateur'])->name('utilisateur');
     // Route pour le rapport
     Route::get('/stocks-rapport', [StockController::class, 'rapport'])->name('rapport');
+    Route::get('/stocks-syncronisation', [StockController::class, 'syncronisation'])->name('syncronisation');
 
     // Routes d'export
     Route::get('/stocks/export/excel', [StockController::class, 'exportExcel'])->name('export-excel');

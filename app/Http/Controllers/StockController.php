@@ -15,10 +15,25 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 
 class StockController extends Controller
 {
 
+    public function syncronisation(Request $request)
+    {
+        $search = $request->input('search');
+
+        $mouvements = MouvementStock::when($search, function ($query, $search) {
+            $query->where('item_code', 'like', "%{$search}%")
+                ->orWhere('item_designation', 'like', "%{$search}%")
+                ->orWhere('item_movement_invoice_ref', 'like', "%{$search}%");
+        })
+            ->latest()
+            ->paginate(15);
+
+        return view('stock.syncronisation', compact('mouvements'));
+    }
 
 
     // Display a listing of the stocks
