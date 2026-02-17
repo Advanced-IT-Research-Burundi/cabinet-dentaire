@@ -36,6 +36,7 @@ use App\Http\Controllers\MovementStockController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ParametrageController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -236,6 +237,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);
 
 });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/monthly', [ReportController::class, 'monthly'])->name('monthly');
+        Route::get('/monthly/export/excel', [ReportController::class, 'exportMonthlyExcel'])->name('monthly.export.excel');
+        Route::get('/monthly/export/pdf', [ReportController::class, 'exportMonthlyPdf'])->name('monthly.export.pdf');
+    });
 
 Route::resource('stock_movements', StockMovementController::class);
 
