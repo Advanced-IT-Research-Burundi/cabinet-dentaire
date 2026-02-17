@@ -87,9 +87,16 @@ class TreatmentController extends Controller
         $sortOrder = $request->input('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
-        // If is dentist
-        if (auth()->user()->isDentiste()) {
-            $query->where('dentist_id', auth()->user()->dentist_id);
+        // Filter for non-admins
+        if (!auth()->user()->isAdmin()) {
+            $query->where(function($q) {
+                // If user is a dentist, show treatments where they are the dentist
+                if (auth()->user()->isDentiste()) {
+                     $q->where('dentist_id', auth()->user()->dentist?->id);
+                }
+                // OR show treatments created by the user
+                $q->orWhere('user_id', auth()->user()->id);
+            });
         }
 
         // Pagination
