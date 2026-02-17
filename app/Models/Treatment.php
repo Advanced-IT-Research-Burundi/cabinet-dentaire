@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Treatment Model Class
@@ -50,7 +51,8 @@ class Treatment extends Model
         'applied_price',
         'status',
         'payment_status',
-        'invoice_id'
+        'invoice_id',
+        'user_id'
     ];
 
     protected $casts = [
@@ -64,6 +66,22 @@ class Treatment extends Model
         'treatmentType',
         'appointment'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($treatment) {
+            // user_id is not in the fillable array
+            if (!Schema::hasColumn('treatments', 'user_id')) {
+                Schema::table('treatments', function ($table) {
+                    $table->foreignId('user_id')->constrained();
+                });
+            }
+
+            $treatment->user_id = auth()->user()->id;
+        });
+    }
 
     /**
      * Get the patient that owns the treatment.
@@ -82,7 +100,7 @@ class Treatment extends Model
      */
     public function dentist(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'dentist_id');
+        return $this->belongsTo(Dentist::class, 'dentist_id');
     }
 
     /**
@@ -108,6 +126,12 @@ class Treatment extends Model
     public function appointment(): BelongsTo
     {
         return $this->belongsTo(Appointment::class);
+    }
+
+    // add user column if it doesn't exist
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
 

@@ -51,9 +51,10 @@ class TreatmentController extends Controller
     {
         $query = Treatment::query()->with([
             'patient',
-            'dentist',
+            'dentist.user',
             'treatmentType',
-            'appointment'
+            'appointment',
+            'user'
         ]);
 
         // Filtres
@@ -82,7 +83,7 @@ class TreatmentController extends Controller
         }
 
         // Tri
-        $sortBy = $request->input('sort_by', 'date');
+        $sortBy = $request->input('sort_by', 'created_at');
         $sortOrder = $request->input('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
@@ -175,7 +176,19 @@ class TreatmentController extends Controller
                     : [];
 
 
-                $treatment = Treatment::create($data);
+                $treatment = Treatment::create([
+                    'patient_id' => $request->patient_id,
+                    'dentist_id' => $request->dentist_id,
+                    'appointment_id' => $request->appointment_id,
+                    'date' => $request->date,
+                    'description' => $request->description,
+                    'medical_notes' => $request->medical_notes,
+                    'applied_price' => $request->applied_price,
+                    'status' => $request->status,
+                    'user_id' => auth()->user()->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
                 foreach ($treatmentIds as $id ) {
                     TreatementTreatmentType::create([
                         'treatment_id'=> $treatment->id,
