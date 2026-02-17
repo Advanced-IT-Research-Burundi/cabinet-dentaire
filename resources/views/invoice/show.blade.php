@@ -359,7 +359,7 @@
 </head>
 <body>
     <div class="print-show">
-        <a href="{{ route('invoices.index') }}" class="btn btn-primary print-button">← Retour à la liste des factures</a>
+        <a href="{{ route('invoices.index') }}" class="btn btn-primary print-button">Retour</a>
         <button class="print-button" onclick="printNormal()">🖨️ Imprimer Normal</button>
         <button class="print-button thermal-print-button" onclick="printThermal()">🧾 Imprimer Thermique</button>
     </div>

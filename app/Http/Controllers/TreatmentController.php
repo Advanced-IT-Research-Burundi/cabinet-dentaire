@@ -127,14 +127,11 @@ class TreatmentController extends Controller
         $patients = Patient::orderBy('last_name')->take(LOAD_DATA)->get();
         $dentists = Dentist::orderBy('id')->take(LOAD_DATA)->get();
         $treatmentTypes = TreatmentType::orderBy('name')->take(LOAD_DATA)->get();
-        $appointments = Appointment::with('patient')
+        $appointments = Appointment::with(['patient', 'dentist.user', 'plannedTreatments'])
                         ->whereDoesntHave('treatment')
-                        ->where('date', '>=', Carbon::now()->subDay())
+                        ->where('date', '>=', Carbon::now()->subDays(30))
                         ->orderBy('date', 'asc')
                         ->get();
-
-
-        $appointments = Appointment::with(['patient', 'dentist.user', 'plannedTreatments'])->get();
 
         return view('treatment.create', compact(
             'patients',

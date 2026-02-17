@@ -12,7 +12,7 @@
             <div class="select-container">
                 <div class="custom-select @error('appointment_id') is-invalid @enderror">
                     <div class="select-selected" id="appointment_selected">
-                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment->appointment->start_time)->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
+                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment->appointment->start_time)->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->id . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
                     </div>
                     <div class="select-dropdown">
                         <div class="select-search">
@@ -28,7 +28,7 @@
                                      data-dentist-name="{{ $appointment->dentist->user->full_name }}"
                                      data-date="{{ $appointment->date->format('Y-m-d') }}"
                                      data-planned-treatments="{{ $appointment->plannedTreatments->count() > 0 ? $appointment->plannedTreatments->map(function($pt) { return ['id' => $pt->id, 'name' => $pt->name, 'price' => $pt->base_price]; })->toJson() : ($appointment->plannedTreatment ? json_encode([['id' => $appointment->plannedTreatment->id, 'name' => $appointment->plannedTreatment->name, 'price' => $appointment->plannedTreatment->base_price]]) : '[]') }}">
-                                    {{ $appointment->date->format('d/m/Y') }} - {{ $appointment->patient->full_name }}
+                                    {{ $appointment->date->format('d/m/Y') }} - {{ $appointment->patient->id }} - {{ $appointment->patient->full_name }}
                                 </div>
                             @endforeach
                         </div>
@@ -52,7 +52,7 @@
             <div class="select-container">
                 <div class="custom-select @error('patient_id') is-invalid @enderror">
                     <div class="select-selected bg-gray" id="patient_selected" >
-                        {{ isset($treatment) && $treatment->patient ? $treatment->patient->full_name : 'Sélectionnez un patient' }}
+                        {{ isset($treatment) && $treatment->patient ? $treatment->patient->id . ' - ' . $treatment->patient->full_name : 'Sélectionnez un patient' }}
                     </div>
                 </div>
                 <input type="hidden" name="patient_id" id="patient_id" value="{{ old('patient_id', isset($treatment) ? $treatment->patient_id : '') }}">
