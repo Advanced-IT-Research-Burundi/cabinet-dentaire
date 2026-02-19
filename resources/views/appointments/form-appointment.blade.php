@@ -110,7 +110,7 @@
 
              <div class="col-md-12">
                 <div class="form-group mb-3">
-                    <label for="treatment_type_select" class="form-label fw-bold">Type de traitement <span class="text-danger">*</span></label>
+                    <label for="treatment_type_select" class="form-label fw-bold">Type de traitement</label>
                     <div class="multi-select-wrapper">
                         <div class="multi-select-display border rounded p-2 d-flex flex-wrap gap-1 align-items-center @error('planned_treatment_id') is-invalid @enderror" id="multiSelectDisplay">
                             @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)

@@ -214,10 +214,6 @@ class AppointmentController extends Controller
             $validated['creator_id'] = auth()->id();
             $validated['reminder_sent'] = false;
 
-            $request->validate([
-                'planned_treatment_id' => 'required|string',
-            ]);
-
             $treatmentIds = !empty($request->planned_treatment_id)
                 ? explode(',', $request->planned_treatment_id)
                 : [];
@@ -295,23 +291,18 @@ class AppointmentController extends Controller
                     ->withInput()
                     ->with('error', 'Un autre rendez-vous existe déjà dans ce créneau horaire pour ce dentiste.');
             }
-        $request->validate([
-            'planned_treatment_id' => 'required|string',
-        ]);
-
         $treatmentIds = !empty($request->planned_treatment_id)
             ? explode(',', $request->planned_treatment_id)
             : [];
 
         $appointment->update($validated);
 
-        foreach ($treatmentIds as $id ) {
-                AppointmentTreatmentType::where('appointment_id',$appointment->id)->delete();
-                AppointmentTreatmentType::create([
-                    'appointment_id'=> $appointment->id,
-                    'treatment_type_id'=> $id
-                ]);
-
+        AppointmentTreatmentType::where('appointment_id', $appointment->id)->delete();
+        foreach ($treatmentIds as $id) {
+            AppointmentTreatmentType::create([
+                'appointment_id' => $appointment->id,
+                'treatment_type_id' => $id
+            ]);
         }
 
 

@@ -31,7 +31,7 @@ class AppointmentUpdateRequest extends FormRequest
             'reminder_sent' => ['required'],
             'created_at' => ['required'],
             'creator_id' => ['required', 'integer', 'exists:users,id'],
-            'planned_treatment_id' => ['required', 'integer', 'exists:treatment_types,id'],
+            'planned_treatment_id' => ['nullable', 'integer', 'exists:treatment_types,id'],
         ];
     }
 }
