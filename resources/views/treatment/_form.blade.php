@@ -138,55 +138,75 @@
                 <i class="bi bi-clipboard2-pulse-fill me-2"></i>Types de traitement <span class="text-danger">*</span>
             </label>
 
-            <div class="card">
-                <div class="card-header bg-light">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" placeholder="Rechercher un type de traitement..." id="treatmentSearchInput">
-                            </div>
+            {{-- Sélecteur de traitement avec recherche --}}
+            <div class="treatment-selector mb-3">
+                <div class="position-relative">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-primary text-white">
+                            <i class="bi bi-plus-lg"></i>
+                        </span>
+                        <input type="text"
+                               class="form-control form-control-lg"
+                               placeholder="Tapez pour rechercher un traitement..."
+                               id="treatmentSearchInput"
+                               autocomplete="off">
+                    </div>
+                    <div id="treatmentDropdown" class="treatment-dropdown-menu">
+                        <div class="treatment-options-list" id="treatmentOptionsList">
+                            @foreach($treatmentTypes as $type)
+                                <div class="treatment-option-item"
+                                     data-id="{{ $type->id }}"
+                                     data-price="{{ $type->base_price }}"
+                                     data-name="{{ $type->name }}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="bi bi-clipboard2-pulse text-primary me-2"></i>
+                                            <span class="treatment-name">{{ $type->name }}</span>
+                                        </div>
+                                        <span class="badge bg-success rounded-pill">{{ number_format($type->base_price, 0, ',', ' ') }} FBU</span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="col-md-6">
-                            <select class="form-select" id="treatmentTypeSelect">
-                                <option value="">-- Ajouter un traitement --</option>
-                                @foreach($treatmentTypes as $type)
-                                    <option value="{{ $type->id }}" data-price="{{ $type->base_price }}" data-name="{{ $type->name }}">
-                                        {{ $type->name }} - {{ number_format($type->base_price, 0, ',', ' ') }} FBU
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="no-results-message" id="noResultsMessage">
+                            <i class="bi bi-emoji-frown fs-3 mb-2"></i>
+                            <p class="mb-0">Aucun traitement trouvé</p>
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0" id="treatmentsTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width: 40%;">Traitement</th>
-                                    <th style="width: 15%;">Prix unitaire</th>
-                                    <th style="width: 15%;">Quantité</th>
-                                    <th style="width: 20%;">Sous-total</th>
-                                    <th style="width: 10%;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="treatmentsTableBody">
-                                {{-- Les lignes seront ajoutées dynamiquement --}}
-                            </tbody>
-                            <tfoot class="table-light">
-                                <tr>
-                                    <th colspan="3" class="text-end">Total:</th>
-                                    <th id="totalAmount">0 FBU</th>
-                                    <th></th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div id="noTreatmentsMessage" class="text-center text-muted py-4">
-                        <i class="bi bi-inbox fs-1"></i>
-                        <p class="mt-2">Aucun traitement ajouté. Sélectionnez un traitement dans la liste ci-dessus.</p>
-                    </div>
+            </div>
+
+            {{-- Table des traitements sélectionnés --}}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h6 class="mb-0"><i class="bi bi-list-check me-2"></i>Traitements sélectionnés</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="treatmentsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 35%;">Traitement</th>
+                                <th style="width: 20%;">Prix unitaire (FBU)</th>
+                                <th style="width: 15%;">Quantité</th>
+                                <th style="width: 20%;">Sous-total</th>
+                                <th style="width: 10%;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="treatmentsTableBody">
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr class="fw-bold">
+                                <td colspan="3" class="text-end">Total Général:</td>
+                                <td id="totalAmount" class="text-success fs-5">0 FBU</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div id="noTreatmentsMessage" class="text-center py-5">
+                    <i class="bi bi-cart3 fs-1 text-muted"></i>
+                    <p class="text-muted mt-2 mb-0">Aucun traitement ajouté</p>
+                    <small class="text-muted">Utilisez le champ de recherche ci-dessus pour ajouter des traitements</small>
                 </div>
             </div>
 
@@ -197,6 +217,69 @@
         </div>
     </div>
 </div>
+
+<style>
+.treatment-selector .input-group-lg .form-control {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+}
+.treatment-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    max-height: 350px;
+    overflow-y: auto;
+}
+.treatment-dropdown-menu.show {
+    display: block;
+}
+.treatment-option-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.15s ease;
+}
+.treatment-option-item:last-child {
+    border-bottom: none;
+}
+.treatment-option-item:hover {
+    background-color: #e7f1ff;
+}
+.treatment-option-item.highlighted {
+    background-color: #0d6efd;
+    color: #fff;
+}
+.treatment-option-item.highlighted .badge {
+    background-color: #fff !important;
+    color: #198754 !important;
+}
+.treatment-option-item.highlighted .text-primary {
+    color: #fff !important;
+}
+.no-results-message {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+.no-results-message.show {
+    display: block;
+}
+#treatmentsTable {
+    display: none;
+}
+#treatmentsTable.has-items {
+    display: table;
+}
+</style>
 
 <div class="mb-4 row">
     <div class="col-md-6">
@@ -288,15 +371,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderTreatmentsTable() {
         const tbody = document.getElementById('treatmentsTableBody');
         const noMessage = document.getElementById('noTreatmentsMessage');
+        const table = document.getElementById('treatmentsTable');
 
         tbody.innerHTML = '';
 
         if (selectedTreatments.size === 0) {
             noMessage.style.display = 'block';
-            document.querySelector('#treatmentsTable').style.display = 'none';
+            table.classList.remove('has-items');
         } else {
             noMessage.style.display = 'none';
-            document.querySelector('#treatmentsTable').style.display = 'table';
+            table.classList.add('has-items');
 
             selectedTreatments.forEach((treatment, id) => {
                 const subtotal = (parseFloat(treatment.price) || 0) * (parseInt(treatment.quantity) || 1);
@@ -304,20 +388,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.dataset.id = id;
                 row.innerHTML = `
                     <td>
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
                         <strong>${treatment.name}</strong>
                     </td>
                     <td>
-                        <div class="input-group input-group-sm">
-                            <input type="number" class="form-control treatment-price" value="${treatment.price}" min="0" step="100" data-id="${id}">
-                            <span class="input-group-text">FBU</span>
-                        </div>
+                        <input type="number" class="form-control form-control-sm treatment-price" value="${treatment.price}" min="0" step="100" data-id="${id}">
                     </td>
                     <td>
-                        <input type="number" class="form-control form-control-sm treatment-quantity" value="${treatment.quantity}" min="1" data-id="${id}">
+                        <input type="number" class="form-control form-control-sm treatment-quantity text-center" value="${treatment.quantity}" min="1" data-id="${id}" style="width: 80px;">
                     </td>
-                    <td class="subtotal fw-bold">${formatNumber(subtotal)} FBU</td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-treatment" data-id="${id}">
+                    <td class="subtotal fw-bold text-primary">${formatNumber(subtotal)} FBU</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger remove-treatment" data-id="${id}" title="Supprimer">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -376,15 +458,124 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Gestion du select pour ajouter un traitement
-    document.getElementById('treatmentTypeSelect').addEventListener('change', function(e) {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-            const id = selectedOption.value;
-            const name = selectedOption.dataset.name;
-            const price = parseFloat(selectedOption.dataset.price) || 0;
-            addTreatment(id, name, price);
-            this.value = '';
+    // Gestion du dropdown de recherche de traitement
+    const searchInput = document.getElementById('treatmentSearchInput');
+    const dropdown = document.getElementById('treatmentDropdown');
+    const optionsList = document.getElementById('treatmentOptionsList');
+    const treatmentOptions = optionsList.querySelectorAll('.treatment-option-item');
+    const noResultsMsg = document.getElementById('noResultsMessage');
+    let highlightedIndex = -1;
+
+    // Afficher le dropdown
+    function showDropdown() {
+        dropdown.classList.add('show');
+        filterOptions(searchInput.value);
+    }
+
+    // Masquer le dropdown
+    function hideDropdown() {
+        dropdown.classList.remove('show');
+        highlightedIndex = -1;
+        removeAllHighlights();
+    }
+
+    // Supprimer tous les highlights
+    function removeAllHighlights() {
+        treatmentOptions.forEach(opt => opt.classList.remove('highlighted'));
+    }
+
+    // Filtrer les options
+    function filterOptions(searchTerm) {
+        searchTerm = searchTerm.toLowerCase().trim();
+        let hasVisibleOptions = false;
+        let visibleOptions = [];
+
+        treatmentOptions.forEach(option => {
+            const name = option.dataset.name.toLowerCase();
+            const matches = searchTerm === '' || name.includes(searchTerm);
+            option.style.display = matches ? 'block' : 'none';
+            if (matches) {
+                hasVisibleOptions = true;
+                visibleOptions.push(option);
+            }
+        });
+
+        if (hasVisibleOptions) {
+            noResultsMsg.classList.remove('show');
+            optionsList.style.display = 'block';
+        } else {
+            noResultsMsg.classList.add('show');
+            optionsList.style.display = 'none';
+        }
+
+        highlightedIndex = -1;
+        removeAllHighlights();
+    }
+
+    // Événements du champ de recherche
+    searchInput.addEventListener('focus', showDropdown);
+
+    searchInput.addEventListener('input', function(e) {
+        showDropdown();
+        filterOptions(e.target.value);
+    });
+
+    // Navigation au clavier
+    searchInput.addEventListener('keydown', function(e) {
+        const visibleOptions = Array.from(treatmentOptions).filter(opt => opt.style.display !== 'none');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlightedIndex = Math.min(highlightedIndex + 1, visibleOptions.length - 1);
+            updateHighlight(visibleOptions);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlightedIndex = Math.max(highlightedIndex - 1, 0);
+            updateHighlight(visibleOptions);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
+                selectOption(visibleOptions[highlightedIndex]);
+            }
+        } else if (e.key === 'Escape') {
+            hideDropdown();
+            searchInput.blur();
+        }
+    });
+
+    function updateHighlight(visibleOptions) {
+        removeAllHighlights();
+        if (highlightedIndex >= 0 && visibleOptions[highlightedIndex]) {
+            visibleOptions[highlightedIndex].classList.add('highlighted');
+            visibleOptions[highlightedIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    // Sélection d'une option
+    function selectOption(option) {
+        const id = option.dataset.id;
+        const name = option.dataset.name;
+        const price = parseFloat(option.dataset.price) || 0;
+
+        addTreatment(id, name, price);
+
+        searchInput.value = '';
+        hideDropdown();
+        searchInput.focus();
+    }
+
+    // Clic sur une option
+    treatmentOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectOption(this);
+        });
+    });
+
+    // Fermer le dropdown en cliquant ailleurs
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.treatment-selector')) {
+            hideDropdown();
         }
     });
 
@@ -424,18 +615,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = btn.dataset.id;
             removeTreatment(id);
         }
-    });
-
-    // Recherche dans les types de traitement
-    document.getElementById('treatmentSearchInput').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const select = document.getElementById('treatmentTypeSelect');
-
-        Array.from(select.options).forEach((option, index) => {
-            if (index === 0) return;
-            const text = option.textContent.toLowerCase();
-            option.style.display = text.includes(searchTerm) ? '' : 'none';
-        });
     });
 
     // Fonction pour auto-compléter les champs lors de la sélection d'un rendez-vous
