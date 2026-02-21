@@ -103,72 +103,11 @@
 <div class="mb-4 row">
     <div class="col-md-6">
         <div class="form-group mb-3">
-            <label for="treatment_type_select" class="form-label fw-bold">
-                <i class="bi bi-clipboard2-pulse-fill me-2"></i>Type de traitement <span class="text-danger">*</span>
-            </label>
-            <div class="multi-select-wrapper">
-                <div class="multi-select-display border rounded p-2 d-flex flex-wrap gap-1 align-items-center @error('treatment_type_id') is-invalid @enderror" id="multiSelectDisplay">
-                    @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)
-                        {{-- Afficher les types déjà sélectionnés lors de la modification --}}
-                        @foreach($treatment->treatmentTypes as $selectedType)
-                            <span class="selected-item-tag badge rounded-pill px-2 py-1 bg-primary text-white">
-                                {{ $selectedType->name }}
-                                <span class="tag-close-btn ms-1" data-value="{{ $selectedType->id }}">×</span>
-                            </span>
-                        @endforeach
-                    @else
-                        <span class="placeholder-message text-muted fst-italic">Sélectionnez un ou plusieurs types</span>
-                    @endif
-                </div>
-                <div class="multi-select-menu" id="multiSelectMenu">
-                    <div class="p-2 border-bottom">
-                        <input type="text" class="form-control form-control-sm" placeholder="Rechercher un type..." id="treatmentSearchInput">
-                    </div>
-                    <div class="menu-options-container" id="menuOptionsContainer">
-                        @foreach($treatmentTypes as $type)
-                            <div class="menu-option-item p-2 border-bottom d-flex align-items-center gap-2
-                                @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) option-selected @endif"
-                                data-value="{{ $type->id }}" data-price="{{ $type->base_price }}" data-name="{{ $type->name }}">
-                                <input type="checkbox" class="option-check-input form-check-input"
-                                    @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->contains('id', $type->id)) checked @endif>
-                                <span>{{ $type->name }} - {{ number_format($type->base_price, 0, ',', ' ') }} FBU</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                <input type="hidden" name="treatment_type_id" id="selectedTreatmentTypes"
-                    value="{{ old('treatment_type_id', isset($treatment) && $treatment->treatmentTypes ? $treatment->treatmentTypes->pluck('id')->implode(',') : '') }}">
-                @error('treatment_type_id')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="form-group mb-3">
             <label for="date" class="form-label fw-bold">
                 <i class="bi bi-calendar-date-fill me-2"></i>Date du traitement <span class="text-danger">*</span>
             </label>
             <input type="date" name="date" id="date" class="form-control @error('date') is-invalid @enderror" value="{{ old('date', isset($treatment) ? $treatment->date->format('Y-m-d') : '') }}" required>
             @error('date')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-</div>
-
-<div class="mb-4 row">
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label for="applied_price" class="form-label fw-bold">
-                <i class="bi bi-currency-exchange me-2"></i>Prix appliqué
-            </label>
-            <div class="input-group">
-                <input type="number" step="0.01" name="applied_price" id="applied_price" class="form-control @error('applied_price') is-invalid @enderror" value="{{ old('applied_price', isset($treatment) ? $treatment->applied_price : '') }}">
-                <span class="input-group-text">FBU</span>
-            </div>
-            @error('applied_price')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -186,6 +125,90 @@
                 <option value="Annule" {{ old('status', isset($treatment) ? $treatment->status : '') == 'Annule' ? 'selected' : '' }}>Annulé</option>
             </select>
             @error('status')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+<div class="mb-4 row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <label class="form-label fw-bold">
+                <i class="bi bi-clipboard2-pulse-fill me-2"></i>Types de traitement <span class="text-danger">*</span>
+            </label>
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Rechercher un type de traitement..." id="treatmentSearchInput">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" id="treatmentTypeSelect">
+                                <option value="">-- Ajouter un traitement --</option>
+                                @foreach($treatmentTypes as $type)
+                                    <option value="{{ $type->id }}" data-price="{{ $type->base_price }}" data-name="{{ $type->name }}">
+                                        {{ $type->name }} - {{ number_format($type->base_price, 0, ',', ' ') }} FBU
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="treatmentsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 40%;">Traitement</th>
+                                    <th style="width: 15%;">Prix unitaire</th>
+                                    <th style="width: 15%;">Quantité</th>
+                                    <th style="width: 20%;">Sous-total</th>
+                                    <th style="width: 10%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="treatmentsTableBody">
+                                {{-- Les lignes seront ajoutées dynamiquement --}}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="3" class="text-end">Total:</th>
+                                    <th id="totalAmount">0 FBU</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div id="noTreatmentsMessage" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-1"></i>
+                        <p class="mt-2">Aucun traitement ajouté. Sélectionnez un traitement dans la liste ci-dessus.</p>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" name="treatments_data" id="treatmentsData" value="">
+            @error('treatments_data')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+<div class="mb-4 row">
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            <label for="applied_price" class="form-label fw-bold">
+                <i class="bi bi-currency-exchange me-2"></i>Prix total appliqué
+            </label>
+            <div class="input-group">
+                <input type="number" step="0.01" name="applied_price" id="applied_price" class="form-control @error('applied_price') is-invalid @enderror" value="{{ old('applied_price', isset($treatment) ? $treatment->applied_price : '') }}" readonly>
+                <span class="input-group-text">FBU</span>
+            </div>
+            @error('applied_price')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -222,68 +245,111 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let selectedTreatments = new Map(); // Pour stocker les traitements sélectionnés avec leurs prix
+    let selectedTreatments = new Map();
 
     // Initialiser les traitements déjà sélectionnés (en cas de modification)
     @if(isset($treatment) && $treatment->treatmentTypes && $treatment->treatmentTypes->count() > 0)
         @foreach($treatment->treatmentTypes as $selectedType)
+            @php
+                $pivot = \App\Models\TreatementTreatmentType::where('treatment_id', $treatment->id)
+                    ->where('treatment_type_id', $selectedType->id)->first();
+                $qty = $pivot ? $pivot->quantity : 1;
+                $price = $pivot ? $pivot->price : $selectedType->base_price;
+            @endphp
             selectedTreatments.set('{{ $selectedType->id }}', {
                 id: '{{ $selectedType->id }}',
                 name: '{{ $selectedType->name }}',
-                price: {{ $selectedType->base_price }}
+                basePrice: {{ $selectedType->base_price }},
+                price: {{ $price }},
+                quantity: {{ $qty }}
             });
         @endforeach
-        updateTotalCalculated();
+        renderTreatmentsTable();
     @endif
 
-    // Fonction pour mettre à jour le total calculé directement dans le prix appliqué
-    function updateTotalCalculated() {
-        let total = 0;
-        selectedTreatments.forEach(treatment => {
-            total += parseFloat(treatment.price) || 0;
-        });
-
-        // Mettre à jour directement le prix appliqué avec le total calculé
-        const appliedPriceInput = document.getElementById('applied_price');
-        appliedPriceInput.value = total;
+    function formatNumber(num) {
+        return new Intl.NumberFormat('fr-FR').format(num);
     }
 
-    // Fonction pour mettre à jour l'affichage du multi-select
-    function updateMultiSelectDisplay() {
-        const display = document.getElementById('multiSelectDisplay');
-        const placeholder = display.querySelector('.placeholder-message');
-
-        // Supprimer le placeholder s'il existe
-        if (placeholder) {
-            placeholder.remove();
-        }
-
-        // Supprimer tous les tags existants
-        const existingTags = display.querySelectorAll('.selected-item-tag');
-        existingTags.forEach(tag => tag.remove());
-
-        // Ajouter les nouveaux tags
+    function updateTotal() {
+        let total = 0;
         selectedTreatments.forEach(treatment => {
-            const tag = document.createElement('span');
-            tag.className = 'selected-item-tag badge rounded-pill px-2 py-1 bg-primary text-white';
-            tag.innerHTML = `${treatment.name} <span class="tag-close-btn ms-1" data-value="${treatment.id}">×</span>`;
-            display.appendChild(tag);
+            total += (parseFloat(treatment.price) || 0) * (parseInt(treatment.quantity) || 1);
         });
 
-        // Ajouter le placeholder si aucun élément sélectionné
+        document.getElementById('totalAmount').textContent = formatNumber(total) + ' FBU';
+        document.getElementById('applied_price').value = total;
+
+        // Mettre à jour le champ hidden avec les données JSON
+        const treatmentsArray = Array.from(selectedTreatments.values());
+        document.getElementById('treatmentsData').value = JSON.stringify(treatmentsArray);
+    }
+
+    function renderTreatmentsTable() {
+        const tbody = document.getElementById('treatmentsTableBody');
+        const noMessage = document.getElementById('noTreatmentsMessage');
+
+        tbody.innerHTML = '';
+
         if (selectedTreatments.size === 0) {
-            const placeholderSpan = document.createElement('span');
-            placeholderSpan.className = 'placeholder-message text-muted fst-italic';
-            placeholderSpan.textContent = 'Sélectionnez un ou plusieurs types';
-            display.appendChild(placeholderSpan);
+            noMessage.style.display = 'block';
+            document.querySelector('#treatmentsTable').style.display = 'none';
+        } else {
+            noMessage.style.display = 'none';
+            document.querySelector('#treatmentsTable').style.display = 'table';
+
+            selectedTreatments.forEach((treatment, id) => {
+                const subtotal = (parseFloat(treatment.price) || 0) * (parseInt(treatment.quantity) || 1);
+                const row = document.createElement('tr');
+                row.dataset.id = id;
+                row.innerHTML = `
+                    <td>
+                        <strong>${treatment.name}</strong>
+                    </td>
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <input type="number" class="form-control treatment-price" value="${treatment.price}" min="0" step="100" data-id="${id}">
+                            <span class="input-group-text">FBU</span>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm treatment-quantity" value="${treatment.quantity}" min="1" data-id="${id}">
+                    </td>
+                    <td class="subtotal fw-bold">${formatNumber(subtotal)} FBU</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-treatment" data-id="${id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
-        // Mettre à jour l'input hidden
-        const selectedIds = Array.from(selectedTreatments.keys()).join(',');
-        document.getElementById('selectedTreatmentTypes').value = selectedIds;
+        updateTotal();
+    }
 
-        // Calculer et mettre le total dans le prix appliqué
-        updateTotalCalculated();
+    function addTreatment(id, name, price) {
+        if (selectedTreatments.has(id)) {
+            // Si déjà présent, augmenter la quantité
+            const existing = selectedTreatments.get(id);
+            existing.quantity += 1;
+            selectedTreatments.set(id, existing);
+        } else {
+            selectedTreatments.set(id, {
+                id: id,
+                name: name,
+                basePrice: price,
+                price: price,
+                quantity: 1
+            });
+        }
+        renderTreatmentsTable();
+    }
+
+    function removeTreatment(id) {
+        selectedTreatments.delete(id);
+        renderTreatmentsTable();
     }
 
     // Fonction pour pré-remplir les types de traitement à partir du rendez-vous
@@ -291,40 +357,86 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const treatments = JSON.parse(plannedTreatments);
             if (treatments && treatments.length > 0) {
-                // Vider la sélection actuelle
                 selectedTreatments.clear();
 
-                // Décocher toutes les options
-                document.querySelectorAll('#menuOptionsContainer .option-check-input').forEach(checkbox => {
-                    checkbox.checked = false;
-                    checkbox.closest('.menu-option-item').classList.remove('option-selected');
-                });
-
-                // Ajouter les nouveaux traitements
                 treatments.forEach(treatment => {
                     selectedTreatments.set(treatment.id.toString(), {
                         id: treatment.id.toString(),
                         name: treatment.name,
-                        price: parseFloat(treatment.price) || 0
+                        basePrice: parseFloat(treatment.price) || 0,
+                        price: parseFloat(treatment.price) || 0,
+                        quantity: 1
                     });
-
-                    // Cocher l'option correspondante
-                    const option = document.querySelector(`#menuOptionsContainer .menu-option-item[data-value="${treatment.id}"]`);
-                    if (option) {
-                        const checkbox = option.querySelector('.option-check-input');
-                        if (checkbox) {
-                            checkbox.checked = true;
-                            option.classList.add('option-selected');
-                        }
-                    }
                 });
 
-                updateMultiSelectDisplay();
+                renderTreatmentsTable();
             }
         } catch (e) {
             console.log('Erreur lors du parsing des traitements planifiés:', e);
         }
     }
+
+    // Gestion du select pour ajouter un traitement
+    document.getElementById('treatmentTypeSelect').addEventListener('change', function(e) {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            const id = selectedOption.value;
+            const name = selectedOption.dataset.name;
+            const price = parseFloat(selectedOption.dataset.price) || 0;
+            addTreatment(id, name, price);
+            this.value = '';
+        }
+    });
+
+    // Gestion de la modification de prix et quantité
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('treatment-price')) {
+            const id = e.target.dataset.id;
+            const treatment = selectedTreatments.get(id);
+            if (treatment) {
+                treatment.price = parseFloat(e.target.value) || 0;
+                selectedTreatments.set(id, treatment);
+                const row = e.target.closest('tr');
+                const subtotal = treatment.price * treatment.quantity;
+                row.querySelector('.subtotal').textContent = formatNumber(subtotal) + ' FBU';
+                updateTotal();
+            }
+        }
+
+        if (e.target.classList.contains('treatment-quantity')) {
+            const id = e.target.dataset.id;
+            const treatment = selectedTreatments.get(id);
+            if (treatment) {
+                treatment.quantity = parseInt(e.target.value) || 1;
+                selectedTreatments.set(id, treatment);
+                const row = e.target.closest('tr');
+                const subtotal = treatment.price * treatment.quantity;
+                row.querySelector('.subtotal').textContent = formatNumber(subtotal) + ' FBU';
+                updateTotal();
+            }
+        }
+    });
+
+    // Suppression d'un traitement
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-treatment') || e.target.closest('.remove-treatment')) {
+            const btn = e.target.classList.contains('remove-treatment') ? e.target : e.target.closest('.remove-treatment');
+            const id = btn.dataset.id;
+            removeTreatment(id);
+        }
+    });
+
+    // Recherche dans les types de traitement
+    document.getElementById('treatmentSearchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const select = document.getElementById('treatmentTypeSelect');
+
+        Array.from(select.options).forEach((option, index) => {
+            if (index === 0) return;
+            const text = option.textContent.toLowerCase();
+            option.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
 
     // Fonction pour auto-compléter les champs lors de la sélection d'un rendez-vous
     const appointmentOptions = document.querySelectorAll('#appointment_options .select-option');
@@ -338,96 +450,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const appointmentDate = this.dataset.date;
             const plannedTreatments = this.dataset.plannedTreatments;
 
-            // Compléter le patient
             if (patientId) {
                 document.getElementById('patient_id').value = patientId;
                 document.getElementById('patient_selected').textContent = `${patientId} - ${patientName}`;
             }
 
-            // Compléter le dentiste
             if (dentistId) {
                 document.getElementById('dentist_id').value = dentistId;
                 document.getElementById('dentist_selected').textContent = `${dentistId} - ${dentistName}`;
             }
 
-            // Compléter la date du traitement avec la date du rendez-vous
             if (appointmentDate) {
                 document.getElementById('date').value = appointmentDate;
             }
 
-            // Pré-remplir les types de traitement à partir du rendez-vous
             if (plannedTreatments && plannedTreatments !== '[]') {
                 fillTreatmentTypesFromAppointment(plannedTreatments);
             }
         });
     });
 
-    // Gestion du multi-select pour les types de traitement - uniquement sur les checkboxes
-    document.addEventListener('change', function(e) {
-        if (e.target.classList.contains('option-check-input')) {
-            const option = e.target.closest('.menu-option-item');
-            const treatmentId = option.dataset.value;
-            const treatmentName = option.dataset.name;
-            const treatmentPrice = parseFloat(option.dataset.price) || 0;
-
-            if (e.target.checked) {
-                option.classList.add('option-selected');
-                selectedTreatments.set(treatmentId, {
-                    id: treatmentId,
-                    name: treatmentName,
-                    price: treatmentPrice
-                });
-            } else {
-                option.classList.remove('option-selected');
-                selectedTreatments.delete(treatmentId);
-            }
-
-            updateMultiSelectDisplay();
-        }
-    });
-
-    // Gestion des événements de clic
-    document.addEventListener('click', function(e) {
-        // Gestion de la suppression des tags
-        if (e.target.classList.contains('tag-close-btn')) {
-            const treatmentId = e.target.dataset.value;
-            selectedTreatments.delete(treatmentId);
-
-            // Décocher l'option correspondante
-            const option = document.querySelector(`#menuOptionsContainer .menu-option-item[data-value="${treatmentId}"]`);
-            if (option) {
-                const checkbox = option.querySelector('.option-check-input');
-                if (checkbox) {
-                    checkbox.checked = false;
-                    option.classList.remove('option-selected');
-                }
-            }
-
-            updateMultiSelectDisplay();
-        }
-
-        // Gestion de l'affichage/masquage du menu
-        if (e.target.closest('#multiSelectDisplay')) {
-            const menu = document.getElementById('multiSelectMenu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-        } else if (!e.target.closest('#multiSelectMenu')) {
-            document.getElementById('multiSelectMenu').style.display = 'none';
-        }
-    });
-
-    // Recherche dans les types de traitement
-    document.getElementById('treatmentSearchInput').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const options = document.querySelectorAll('#menuOptionsContainer .menu-option-item');
-
-        options.forEach(option => {
-            const text = option.textContent.toLowerCase();
-            option.style.display = text.includes(searchTerm) ? 'block' : 'none';
-        });
-    });
-
-    // Calculer et mettre le total initial dans le prix appliqué si des traitements sont déjà sélectionnés
-    updateTotalCalculated();
+    // Initialiser l'affichage
+    renderTreatmentsTable();
 });
 </script>
 

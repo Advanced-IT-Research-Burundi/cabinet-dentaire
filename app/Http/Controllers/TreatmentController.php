@@ -157,57 +157,42 @@ class TreatmentController extends Controller
      */
     public function store(TreatmentStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'patient_id' => 'required|integer|exists:patients,id',
-            'dentist_id' =>'required|integer|exists:users,id',
-            'appointment_id' => 'required|integer|exists:appointments,id',
-            'date' => 'required|date',
-            'description' => 'nullable|string',
-            'medical_notes' => 'nullable|string',
-            'applied_price' => 'nullable|numeric',
-            'status' => 'required|in:Planifie,En_cours,Termine,Annule'
-        ]);
         try {
-            //code...
             \DB::beginTransaction();
 
-            $request->validate([
-                    'treatment_type_id' => 'required|string',
+            $treatmentsData = json_decode($request->treatments_data, true);
+
+            if (empty($treatmentsData)) {
+                return back()->withErrors(['treatments_data' => 'Veuillez ajouter au moins un traitement.'])->withInput();
+            }
+
+            $treatment = Treatment::create([
+                'patient_id' => $request->patient_id,
+                'dentist_id' => $request->dentist_id,
+                'appointment_id' => $request->appointment_id,
+                'date' => $request->date,
+                'description' => $request->description,
+                'medical_notes' => $request->medical_notes,
+                'applied_price' => $request->applied_price,
+                'status' => $request->status,
+                'user_id' => auth()->user()->id,
+            ]);
+
+            foreach ($treatmentsData as $treatmentItem) {
+                TreatementTreatmentType::create([
+                    'treatment_id' => $treatment->id,
+                    'treatment_type_id' => $treatmentItem['id'],
+                    'quantity' => $treatmentItem['quantity'] ?? 1,
+                    'price' => $treatmentItem['price'] ?? 0,
                 ]);
+            }
 
-                $treatmentIds = !empty($request->treatment_type_id)
-                    ? explode(',', $request->treatment_type_id)
-                    : [];
-
-
-                $treatment = Treatment::create([
-                    'patient_id' => $request->patient_id,
-                    'dentist_id' => $request->dentist_id,
-                    'appointment_id' => $request->appointment_id,
-                    'date' => $request->date,
-                    'description' => $request->description,
-                    'medical_notes' => $request->medical_notes,
-                    'applied_price' => $request->applied_price,
-                    'status' => $request->status,
-                    'user_id' => auth()->user()->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                foreach ($treatmentIds as $id ) {
-                    TreatementTreatmentType::create([
-                        'treatment_id'=> $treatment->id,
-                        'treatment_type_id'=> $id
-                    ]);
-
-                }
             \DB::commit();
             return redirect()->route('treatments.index')
-            ->with('success', 'Treatment created successfully.');
+                ->with('success', 'Traitement créé avec succès.');
         } catch (\Throwable $th) {
             \DB::rollBack();
-            dd($th);
-            return back()->withErrors(['error' => 'An error occurred while creating the treatment. Please try again.']);
-            //throw $th;
+            return back()->withErrors(['error' => 'Une erreur est survenue lors de la création du traitement. Veuillez réessayer.'])->withInput();
         }
     }
 
@@ -258,9 +243,36 @@ class TreatmentController extends Controller
         TreatmentUpdateRequest $request,
         Treatment $treatment
     ): RedirectResponse {
-        $treatment->update($request->validated());
-        return redirect()->route('treatments.index')
-            ->with('success', 'Treatment updated successfully.');
+        try {
+            \DB::beginTransaction();
+
+            $treatment->update($request->validated());
+
+            // Mettre à jour les types de traitement avec quantité et prix
+            if ($request->has('treatments_data') && $request->treatments_data) {
+                $treatmentsData = json_decode($request->treatments_data, true);
+
+                // Supprimer les anciens enregistrements
+                TreatementTreatmentType::where('treatment_id', $treatment->id)->delete();
+
+                // Ajouter les nouveaux
+                foreach ($treatmentsData as $treatmentItem) {
+                    TreatementTreatmentType::create([
+                        'treatment_id' => $treatment->id,
+                        'treatment_type_id' => $treatmentItem['id'],
+                        'quantity' => $treatmentItem['quantity'] ?? 1,
+                        'price' => $treatmentItem['price'] ?? 0,
+                    ]);
+                }
+            }
+
+            \DB::commit();
+            return redirect()->route('treatments.index')
+                ->with('success', 'Traitement mis à jour avec succès.');
+        } catch (\Throwable $th) {
+            \DB::rollBack();
+            return back()->withErrors(['error' => 'Une erreur est survenue lors de la mise à jour du traitement.'])->withInput();
+        }
     }
 
     /**

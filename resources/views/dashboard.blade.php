@@ -525,7 +525,7 @@
                                                 </a>
                                                 @endcan
                                                 @can('is-dentiste')
-                                                <form action="{{ route('appointments.complete', $appointment) }}"
+                                                <form action="{{ route('appointments.finish', $appointment) }}"
                                                       method="POST" class="d-inline">
                                                     @csrf
                                                     @method('PATCH')

@@ -115,7 +115,9 @@ class Treatment extends Model
 
     public function treatmentTypes():BelongsToMany
     {
-        return $this->belongsToMany(TreatmentType::class,'treatement_treatment_types','treatment_id','treatment_type_id');
+        return $this->belongsToMany(TreatmentType::class,'treatement_treatment_types','treatment_id','treatment_type_id')
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
     }
 
     /**

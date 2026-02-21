@@ -78,6 +78,7 @@ class TreatmentStoreRequest extends FormRequest
                 'required',
                 'in:Planifie,En_cours,Termine,Annule'
             ],
+            'treatments_data' => ['required', 'string'],
         ];
     }
 }
