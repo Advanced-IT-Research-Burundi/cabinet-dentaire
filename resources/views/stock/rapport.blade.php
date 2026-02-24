@@ -4,37 +4,6 @@
 
 @push('styles')
 <style>
-    /* Style personnalisé pour DataTables */
-    .dataTables_wrapper .dataTables_filter input {
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        padding: 0.375rem 0.75rem;
-    }
-
-    .dataTables_wrapper .dataTables_length select {
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        padding: 0.25rem 2rem 0.25rem 0.5rem;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        padding: 0.25rem 0.75rem;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        margin: 0 2px;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background: #0d6efd;
-        color: white !important;
-        border-color: #0d6efd;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background: #e9ecef;
-        color: #0d6efd !important;
-    }
-
     .stats-card {
         border-left: 4px solid;
         transition: transform 0.2s;
@@ -48,20 +17,74 @@
     .stock-faible { border-left-color: #ffc107; }
     .stock-rupture { border-left-color: #dc3545; }
     .stock-expire { border-left-color: #6c757d; }
+
+    .nav-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        font-weight: 600;
+    }
+    .nav-tabs .nav-link i {
+        margin-right: 5px;
+    }
+    .filter-card {
+        background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+        border: none;
+        border-radius: 10px;
+    }
+    .filter-card .card-body {
+        padding: 1.5rem;
+    }
+    .filter-card label {
+        color: white;
+        font-weight: 500;
+    }
+    .filter-card .form-control,
+    .filter-card .form-select {
+        border: none;
+        border-radius: 8px;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+
+    .pagination {
+        margin-bottom: 0;
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="container-fluid">
-    <!-- Statistiques rapides -->
-    <div class="row m-0">
+    <!-- Navigation par onglets -->
+    <ul class="nav nav-tabs mb-4" id="rapportTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock-content" type="button" role="tab">
+                <i class="bi bi-box-seam"></i> Rapport du Stock
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mouvements-tab" data-bs-toggle="tab" data-bs-target="#mouvements-content" type="button" role="tab">
+                <i class="bi bi-arrow-left-right"></i> Rapport des Mouvements
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="rapportTabsContent">
+        <!-- Onglet Rapport du Stock -->
+        <div class="tab-pane fade show active" id="stock-content" role="tabpanel">
+            <!-- Statistiques rapides -->
+            <div class="row m-0">
         <div class="col-md-3">
             <div class="card stats-card stock-disponible shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-muted mb-0">Stock Disponible</h6>
-                            <h3 class="mb-0 text-success">{{ $produits->where('status', 'Disponible')->count() }}</h3>
+                            <h3 class="mb-0 text-success">{{ $stats['disponible'] }}</h3>
                         </div>
                         <i class="bi bi-check-circle-fill text-success fs-1"></i>
                     </div>
@@ -74,7 +97,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-muted mb-0">Stock Faible</h6>
-                            <h3 class="mb-0 text-warning">{{ $produits->where('status', 'Faible_stock')->count() }}</h3>
+                            <h3 class="mb-0 text-warning">{{ $stats['faible'] }}</h3>
                         </div>
                         <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
                     </div>
@@ -87,7 +110,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6 class="card-title text-muted mb-0">En Rupture</h6>
-                            <h3 class="mb-0 text-danger">{{ $produits->where('status', 'En_rupture')->count() }}</h3>
+                            <h3 class="mb-0 text-danger">{{ $stats['rupture'] }}</h3>
                         </div>
                         <i class="bi bi-x-circle-fill text-danger fs-1"></i>
                     </div>
@@ -99,13 +122,54 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title text-muted mb-0">Expirés</h6>
-                            <h3 class="mb-0 text-secondary">{{ $produits->where('status', 'Expire')->count() }}</h3>
+                            <h6 class="card-title text-muted mb-0">Expires</h6>
+                            <h3 class="mb-0 text-secondary">{{ $stats['expire'] }}</h3>
                         </div>
                         <i class="bi bi-clock-fill text-secondary fs-1"></i>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Filtres de recherche -->
+    <div class="card shadow-sm mt-3 mb-3">
+        <div class="card-body py-2">
+            <form method="GET" action="{{ route('stock.rapport') }}" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="search" placeholder="Rechercher produit, marque, code..." value="{{ $search ?? '' }}">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">Tous les statuts</option>
+                        <option value="Disponible" {{ ($status ?? '') == 'Disponible' ? 'selected' : '' }}>Disponible</option>
+                        <option value="Faible_stock" {{ ($status ?? '') == 'Faible_stock' ? 'selected' : '' }}>Stock faible</option>
+                        <option value="En_rupture" {{ ($status ?? '') == 'En_rupture' ? 'selected' : '' }}>En rupture</option>
+                        <option value="Expire" {{ ($status ?? '') == 'Expire' ? 'selected' : '' }}>Expire</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="per_page" class="form-select form-select-sm">
+                        <option value="10" {{ ($perPage ?? 25) == 10 ? 'selected' : '' }}>10 par page</option>
+                        <option value="25" {{ ($perPage ?? 25) == 25 ? 'selected' : '' }}>25 par page</option>
+                        <option value="50" {{ ($perPage ?? 25) == 50 ? 'selected' : '' }}>50 par page</option>
+                        <option value="100" {{ ($perPage ?? 25) == 100 ? 'selected' : '' }}>100 par page</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-funnel"></i> Filtrer
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{{ route('stock.rapport') }}" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="bi bi-x-circle"></i> Reinitialiser
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -132,7 +196,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="stockTable" class="table table-striped table-hover" style="width:100%">
+                <table class="table table-striped table-hover table-sm" style="width:100%">
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
@@ -223,38 +287,46 @@
                     </tbody>
                     <tfoot>
                         <tr class="table-secondary">
-                            <th colspan="6" class="text-end">Total:</th>
-                            <th class="text-center">{{ number_format($produits->sum('quantite'), 0) }}</th>
+                            <th colspan="6" class="text-end">Total (global):</th>
+                            <th class="text-center">{{ number_format($stats['total_quantite'], 0) }}</th>
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th class="text-end">{{ number_format($produits->sum(function($produit) {
-                                return $produit->quantite * $produit->price;
-                            }), 0, ',', ' ') }} FBU</th>
+                            <th class="text-end">{{ number_format($stats['total_valeur_htva'], 0, ',', ' ') }} FBU</th>
                             <th colspan="3"></th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="text-muted">
+                    Affichage de {{ $produits->firstItem() ?? 0 }} a {{ $produits->lastItem() ?? 0 }} sur {{ $produits->total() }} produits
+                </div>
+                <div>
+                    {{ $produits->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Résumé des valeurs -->
+    <!-- Resume des valeurs -->
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Résumé Financier</h5>
+                    <h5 class="mb-0">Resume Financier</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-1"><strong>Valeur totale HTVA:</strong></p>
-                            <h4 class="text-info">{{ number_format($produits->sum(function($p) { return $p->quantite * $p->price; }), 0, ',', ' ') }} FBU</h4>
+                            <h4 class="text-info">{{ number_format($stats['total_valeur_htva'], 0, ',', ' ') }} FBU</h4>
                         </div>
                         <div class="col-6">
                             <p class="mb-1"><strong>Valeur totale TTC:</strong></p>
-                            <h4 class="text-success">{{ number_format($produits->sum(function($p) { return $p->quantite * $p->price_ttc; }), 0, ',', ' ') }} FBU</h4>
+                            <h4 class="text-success">{{ number_format($stats['total_valeur_ttc'], 0, ',', ' ') }} FBU</h4>
                         </div>
                     </div>
                 </div>
@@ -263,77 +335,141 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Statistiques Générales</h5>
+                    <h5 class="mb-0">Statistiques Generales</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
                             <p class="mb-1"><strong>Total produits:</strong></p>
-                            <h4 class="text-primary">{{ $produits->count() }}</h4>
+                            <h4 class="text-primary">{{ $stats['total_produits'] }}</h4>
                         </div>
                         <div class="col-6">
-                            <p class="mb-1"><strong>Total unités:</strong></p>
-                            <h4 class="text-dark">{{ number_format($produits->sum('quantite'), 0) }}</h4>
+                            <p class="mb-1"><strong>Total unites:</strong></p>
+                            <h4 class="text-dark">{{ number_format($stats['total_quantite'], 0) }}</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+        </div>
+        <!-- Fin onglet Stock -->
+
+        <!-- Onglet Rapport des Mouvements -->
+        <div class="tab-pane fade" id="mouvements-content" role="tabpanel">
+            <!-- Formulaire de filtres -->
+            <div class="card filter-card shadow-sm mb-4">
+                <div class="card-body">
+                    <form id="mouvementsFilterForm" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="date_debut" class="form-label">Date de debut</label>
+                            <input type="date" class="form-control" id="date_debut" name="date_debut"
+                                   value="{{ now()->subMonth()->format('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="date_fin" class="form-label">Date de fin</label>
+                            <input type="date" class="form-control" id="date_fin" name="date_fin"
+                                   value="{{ now()->format('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="type_mouvement" class="form-label">Type de mouvement</label>
+                            <select class="form-select" id="type_mouvement" name="type_mouvement">
+                                <option value="all">Tous les mouvements</option>
+                                <option value="entrees">Entrees uniquement</option>
+                                <option value="sorties">Sorties uniquement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Exporter</label>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-light flex-fill" onclick="exportMouvements('excel')">
+                                    <i class="bi bi-file-earmark-excel"></i> Excel
+                                </button>
+                                <button type="button" class="btn btn-light flex-fill" onclick="exportMouvements('pdf')">
+                                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informations sur les types de mouvements -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="bi bi-arrow-down-circle"></i> Types d'Entrees</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li><span class="badge bg-success">EN</span> Entree Normales</li>
+                                <li><span class="badge bg-success">ER</span> Entree Retour</li>
+                                <li><span class="badge bg-success">EI</span> Entree Inventaire</li>
+                                <li><span class="badge bg-success">EAJ</span> Entrees Ajustement</li>
+                                <li><span class="badge bg-success">ET</span> Entrees Transfert</li>
+                                <li><span class="badge bg-success">EAU</span> Entrees Autres</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-danger text-white">
+                            <h6 class="mb-0"><i class="bi bi-arrow-up-circle"></i> Types de Sorties</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li><span class="badge bg-danger">SN</span> Sorties Normales</li>
+                                <li><span class="badge bg-danger">SP</span> Sorties Perte</li>
+                                <li><span class="badge bg-danger">SV</span> Sorties Vol</li>
+                                <li><span class="badge bg-danger">SD</span> Sorties Desuetude</li>
+                                <li><span class="badge bg-danger">SC</span> Sorties Casse</li>
+                                <li><span class="badge bg-danger">SAJ</span> Sorties Ajustement</li>
+                                <li><span class="badge bg-danger">ST</span> Sorties Transfert</li>
+                                <li><span class="badge bg-danger">SAU</span> Sorties Autres</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message d'instructions -->
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Instructions:</strong> Selectionnez la periode et le type de mouvement souhaites, puis cliquez sur le bouton Excel ou PDF pour exporter le rapport des mouvements de stock.
+            </div>
+        </div>
+        <!-- Fin onglet Mouvements -->
+    </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-        // Initialisation de DataTable avec des options personnalisées
-        var table = $('#stockTable').DataTable({
-            responsive: true,
-            dom: "<'row'<'col-md-6'l><'col-md-6'f>>" +
-                 "<'row'<'col-md-12'tr>>" +
-                 "<'row'<'col-md-5'i><'col-md-7'p>>",
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
-                search: "Rechercher:",
-                lengthMenu: "Afficher _MENU_ éléments par page",
-                info: "Affichage de _START_ à _END_ sur _TOTAL_ éléments",
-                infoEmpty: "Aucun élément à afficher",
-                infoFiltered: "(filtré de _MAX_ éléments au total)",
-                paginate: {
-                    first: "Premier",
-                    last: "Dernier",
-                    next: "Suivant",
-                    previous: "Précédent"
-                }
-            },
-            order: [[0, 'desc']],
-            pageLength: 25,
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tout"]],
-            columnDefs: [
-                { targets: [6, 7], className: 'text-center' },
-                { targets: [8, 9, 10], className: 'text-end' },
-                { targets: [11, 12, 13], className: 'text-center' }
-            ]
-        });
+    // Fonction d'export des mouvements
+    function exportMouvements(format) {
+        var dateDebut = document.getElementById('date_debut').value;
+        var dateFin = document.getElementById('date_fin').value;
+        var typeMouvement = document.getElementById('type_mouvement').value;
 
-        // Personnalisation de la recherche
-        $('.dataTables_filter input')
-            .attr('placeholder', 'Rechercher produit, catégorie, marque...')
-            .addClass('form-control form-control-sm');
+        if (!dateDebut || !dateFin) {
+            alert('Veuillez selectionner les dates de debut et de fin.');
+            return;
+        }
 
-        // Personnalisation du sélecteur de nombre d'entrées
-        $('.dataTables_length select').addClass('form-select form-select-sm');
+        if (new Date(dateDebut) > new Date(dateFin)) {
+            alert('La date de debut doit etre anterieure a la date de fin.');
+            return;
+        }
 
-        // Filtres par statut
-        $('#stockTable tbody').on('click', '.badge', function() {
-            var status = $(this).text();
-            table.search(status).draw();
-        });
+        var baseUrl = format === 'excel'
+            ? '{{ route("stock.mouvements.export-excel") }}'
+            : '{{ route("stock.mouvements.export-pdf") }}';
 
-        // Reset du filtre au double-clic
-        $('#stockTable tbody').on('dblclick', function() {
-            table.search('').draw();
-        });
-    });
+        var url = baseUrl + '?date_debut=' + dateDebut + '&date_fin=' + dateFin + '&type_mouvement=' + typeMouvement;
+
+        window.location.href = url;
+    }
 </script>
 @endpush

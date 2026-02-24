@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\StockMovement;
 use App\Models\MouvementStock;
 use App\Exports\StockExport;
+use App\Exports\MouvementStockExport;
 use App\Imports\StockImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -23,16 +24,130 @@ class StockController extends Controller
     public function syncronisation(Request $request)
     {
         $search = $request->input('search');
+        $typeMouvement = $request->input('type_mouvement');
+        $dateDebut = $request->input('date_debut');
+        $dateFin = $request->input('date_fin');
+        $statutObr = $request->input('statut_obr');
+        $perPage = $request->input('per_page', 15);
 
-        $mouvements = MouvementStock::when($search, function ($query, $search) {
-            $query->where('item_code', 'like', "%{$search}%")
-                ->orWhere('item_designation', 'like', "%{$search}%")
-                ->orWhere('item_movement_invoice_ref', 'like', "%{$search}%");
-        })
-            ->latest()
-            ->paginate(15);
+        $query = MouvementStock::query();
 
-        return view('stock.syncronisation', compact('mouvements'));
+        // Filtre de recherche
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('item_code', 'like', "%{$search}%")
+                  ->orWhere('item_designation', 'like', "%{$search}%")
+                  ->orWhere('item_movement_invoice_ref', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtre par type de mouvement
+        if ($typeMouvement) {
+            if ($typeMouvement === 'entrees') {
+                $query->entrees();
+            } elseif ($typeMouvement === 'sorties') {
+                $query->sorties();
+            } elseif (array_key_exists($typeMouvement, MouvementStock::MOUVEMENT_TYPES)) {
+                $query->where('item_movement_type', $typeMouvement);
+            }
+        }
+
+        // Filtre par période
+        if ($dateDebut) {
+            $query->whereDate('item_movement_date', '>=', $dateDebut);
+        }
+        if ($dateFin) {
+            $query->whereDate('item_movement_date', '<=', $dateFin);
+        }
+
+        // Filtre par statut OBR
+        if ($statutObr !== null && $statutObr !== '') {
+            $query->where('is_send_to_obr', $statutObr);
+        }
+
+        $mouvements = $query->latest()->paginate($perPage)->withQueryString();
+
+        // Statistiques
+        $statsQuery = MouvementStock::query();
+        if ($search) {
+            $statsQuery->where(function($q) use ($search) {
+                $q->where('item_code', 'like', "%{$search}%")
+                  ->orWhere('item_designation', 'like', "%{$search}%")
+                  ->orWhere('item_movement_invoice_ref', 'like', "%{$search}%");
+            });
+        }
+        if ($typeMouvement === 'entrees') {
+            $statsQuery->entrees();
+        } elseif ($typeMouvement === 'sorties') {
+            $statsQuery->sorties();
+        } elseif ($typeMouvement && array_key_exists($typeMouvement, MouvementStock::MOUVEMENT_TYPES)) {
+            $statsQuery->where('item_movement_type', $typeMouvement);
+        }
+        if ($dateDebut) {
+            $statsQuery->whereDate('item_movement_date', '>=', $dateDebut);
+        }
+        if ($dateFin) {
+            $statsQuery->whereDate('item_movement_date', '<=', $dateFin);
+        }
+        if ($statutObr !== null && $statutObr !== '') {
+            $statsQuery->where('is_send_to_obr', $statutObr);
+        }
+
+        $stats = [
+            'total' => (clone $statsQuery)->count(),
+            'entrees' => (clone $statsQuery)->entrees()->count(),
+            'sorties' => (clone $statsQuery)->sorties()->count(),
+            'synchronises' => (clone $statsQuery)->where('is_send_to_obr', 1)->count(),
+            'non_synchronises' => (clone $statsQuery)->where('is_send_to_obr', 0)->count(),
+        ];
+
+        $mouvementTypes = MouvementStock::MOUVEMENT_TYPES;
+
+        return view('stock.syncronisation', compact(
+            'mouvements', 'stats', 'mouvementTypes',
+            'search', 'typeMouvement', 'dateDebut', 'dateFin', 'statutObr', 'perPage'
+        ));
+    }
+
+    public function exportSyncronisationExcel(Request $request)
+    {
+        $dateDebut = $request->get('date_debut');
+        $dateFin = $request->get('date_fin');
+        $typeMouvement = $request->get('type_mouvement', 'all');
+
+        $filename = 'mouvements_stock_' . ($dateDebut ?? now()->subMonth()->format('Y-m-d')) . '_' . ($dateFin ?? now()->format('Y-m-d')) . '.xlsx';
+
+        return Excel::download(
+            new MouvementStockExport($dateDebut, $dateFin, $typeMouvement),
+            $filename
+        );
+    }
+
+    public function exportSyncronisationPdf(Request $request)
+    {
+        $dateDebut = $request->get('date_debut', now()->subMonth()->format('Y-m-d'));
+        $dateFin = $request->get('date_fin', now()->format('Y-m-d'));
+        $typeMouvement = $request->get('type_mouvement', 'all');
+
+        $query = MouvementStock::with(['stock', 'user'])
+            ->whereBetween('item_movement_date', [$dateDebut, $dateFin]);
+
+        if ($typeMouvement === 'entrees') {
+            $query->entrees();
+        } elseif ($typeMouvement === 'sorties') {
+            $query->sorties();
+        } elseif ($typeMouvement !== 'all' && array_key_exists($typeMouvement, MouvementStock::MOUVEMENT_TYPES)) {
+            $query->where('item_movement_type', $typeMouvement);
+        }
+
+        $mouvements = $query->orderBy('item_movement_date', 'desc')->get();
+
+        $pdf = Pdf::loadView('stock.mouvements-pdf', compact('mouvements', 'dateDebut', 'dateFin', 'typeMouvement'));
+        $pdf->setPaper('A4', 'landscape');
+
+        $filename = 'mouvements_stock_' . $dateDebut . '_' . $dateFin . '.pdf';
+
+        return $pdf->download($filename);
     }
 
 
@@ -54,13 +169,52 @@ class StockController extends Controller
         return view('stock.index', compact('stocks'));
     }
 
-    public function rapport()
+    public function rapport(Request $request)
     {
-        $produits = Stock::with(['category', 'supplier', 'user'])
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+        $perPage = $request->get('per_page', 25);
+        $search = $request->get('search');
+        $status = $request->get('status');
 
-        return view('stock.rapport', compact('produits'));
+        $query = Stock::with(['category', 'supplier', 'user']);
+
+        // Filtre de recherche
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('marque', 'like', "%{$search}%")
+                  ->orWhere('code_product', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtre par statut
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $produits = $query->orderBy('created_at', 'desc')->paginate($perPage)->withQueryString();
+
+        // Statistiques globales (indépendantes de la pagination)
+        $statsQuery = Stock::query();
+        if ($search) {
+            $statsQuery->where(function($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                  ->orWhere('marque', 'like', "%{$search}%")
+                  ->orWhere('code_product', 'like', "%{$search}%");
+            });
+        }
+
+        $stats = [
+            'disponible' => (clone $statsQuery)->where('status', 'Disponible')->count(),
+            'faible' => (clone $statsQuery)->where('status', 'Faible_stock')->count(),
+            'rupture' => (clone $statsQuery)->where('status', 'En_rupture')->count(),
+            'expire' => (clone $statsQuery)->where('status', 'Expire')->count(),
+            'total_quantite' => (clone $statsQuery)->sum('quantite'),
+            'total_valeur_htva' => (clone $statsQuery)->selectRaw('SUM(quantite * price) as total')->value('total') ?? 0,
+            'total_valeur_ttc' => (clone $statsQuery)->selectRaw('SUM(quantite * price_ttc) as total')->value('total') ?? 0,
+            'total_produits' => (clone $statsQuery)->count(),
+        ];
+
+        return view('stock.rapport', compact('produits', 'stats', 'search', 'status', 'perPage'));
     }
 
 
@@ -472,6 +626,45 @@ class StockController extends Controller
         $pdf->setPaper('A4', 'landscape');
 
         return $pdf->download('rapport_stock_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function exportMouvementsExcel(Request $request)
+    {
+        $dateDebut = $request->get('date_debut', now()->subMonth()->format('Y-m-d'));
+        $dateFin = $request->get('date_fin', now()->format('Y-m-d'));
+        $typeMouvement = $request->get('type_mouvement', 'all');
+
+        $filename = 'rapport_mouvements_' . $dateDebut . '_' . $dateFin . '.xlsx';
+
+        return Excel::download(
+            new MouvementStockExport($dateDebut, $dateFin, $typeMouvement),
+            $filename
+        );
+    }
+
+    public function exportMouvementsPdf(Request $request)
+    {
+        $dateDebut = $request->get('date_debut', now()->subMonth()->format('Y-m-d'));
+        $dateFin = $request->get('date_fin', now()->format('Y-m-d'));
+        $typeMouvement = $request->get('type_mouvement', 'all');
+
+        $query = MouvementStock::with(['stock', 'user'])
+            ->whereBetween('item_movement_date', [$dateDebut, $dateFin]);
+
+        if ($typeMouvement === 'entrees') {
+            $query->entrees();
+        } elseif ($typeMouvement === 'sorties') {
+            $query->sorties();
+        }
+
+        $mouvements = $query->orderBy('item_movement_date', 'desc')->get();
+
+        $pdf = Pdf::loadView('stock.mouvements-pdf', compact('mouvements', 'dateDebut', 'dateFin', 'typeMouvement'));
+        $pdf->setPaper('A4', 'landscape');
+
+        $filename = 'rapport_mouvements_' . $dateDebut . '_' . $dateFin . '.pdf';
+
+        return $pdf->download($filename);
     }
 
     public function importForm()

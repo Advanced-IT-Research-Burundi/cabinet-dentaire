@@ -265,10 +265,16 @@ Route::prefix('stock')->name('stock.')->group(function () {
     // Route pour le rapport
     Route::get('/stocks-rapport', [StockController::class, 'rapport'])->name('rapport');
     Route::get('/stocks-syncronisation', [StockController::class, 'syncronisation'])->name('syncronisation');
+    Route::get('/syncronisation/export/excel', [StockController::class, 'exportSyncronisationExcel'])->name('syncronisation.export-excel');
+    Route::get('/syncronisation/export/pdf', [StockController::class, 'exportSyncronisationPdf'])->name('syncronisation.export-pdf');
 
     // Routes d'export
     Route::get('/stocks/export/excel', [StockController::class, 'exportExcel'])->name('export-excel');
     Route::get('/stocks/export/pdf', [StockController::class, 'exportPdf'])->name('export-pdf');
+
+    // Routes d'export des mouvements
+    Route::get('/mouvements/export/excel', [StockController::class, 'exportMouvementsExcel'])->name('mouvements.export-excel');
+    Route::get('/mouvements/export/pdf', [StockController::class, 'exportMouvementsPdf'])->name('mouvements.export-pdf');
 
     // Routes d'import
     Route::get('/stocks/import/form', [StockController::class, 'importForm'])->name('import-form');
