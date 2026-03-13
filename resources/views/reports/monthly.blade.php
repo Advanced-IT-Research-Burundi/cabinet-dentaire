@@ -146,13 +146,13 @@
                         <tbody>
                             @forelse($treatments as $treatment)
                             <tr>
-                                <td>{{ $treatment->date->format('d/m/Y') }}</td>
+                                <td>{{ $treatment?->date?->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="fw-bold">{{ $treatment->patient->full_name }}</div>
-                                    <small class="text-muted">{{ $treatment->treatmentTypes->pluck('name')->join(', ') }}</small>
+                                    <div class="fw-bold">{{ $treatment?->patient?->full_name }}</div>
+                                    <small class="text-muted">{{ $treatment?->treatmentTypes?->pluck('name')->join(', ') }}</small>
                                 </td>
-                                <td>{{ $treatment->dentist ? ($treatment->dentist->user->full_name ?? 'Dentiste #' . $treatment->dentist->id) : 'Non assigné' }}</td>
-                                <td class="text-end">{{ number_format($treatment->applied_price, 0, ',', ' ') }} FBU</td>
+                                <td>{{ $treatment?->dentist ? ($treatment?->dentist?->user?->full_name ?? 'Dentiste #' . $treatment?->dentist?->id) : 'Non assigné' }}</td>
+                                <td class="text-end">{{ number_format($treatment?->applied_price, 0, ',', ' ') }} FBU</td>
                             </tr>
                             @empty
                             <tr><td colspan="4" class="text-center py-3">Aucun traitement trouvé pour cette période</td></tr>
