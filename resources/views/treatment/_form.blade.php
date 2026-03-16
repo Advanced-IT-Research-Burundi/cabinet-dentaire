@@ -12,7 +12,7 @@
             <div class="select-container">
                 <div class="custom-select @error('appointment_id') is-invalid @enderror">
                     <div class="select-selected" id="appointment_selected">
-                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment->appointment->start_time)->format('d/m/Y H:i') . ' - ' . $treatment->appointment->patient->id . ' - ' . $treatment->appointment->patient->full_name : 'Sélectionnez un rendez-vous' }}
+                        {{ isset($treatment) && $treatment->appointment ? \Carbon\Carbon::parse($treatment?->appointment?->start_time)->format('d/m/Y H:i') . ' - ' . $treatment?->appointment?->patient?->id . ' - ' . $treatment?->appointment?->patient?->full_name : 'Sélectionnez un rendez-vous' }}
                     </div>
                     <div class="select-dropdown">
                         <div class="select-search">
@@ -22,13 +22,13 @@
                             @foreach($appointments as $appointment)
                                 <div class="select-option"
                                      data-value="{{ $appointment->id }}"
-                                     data-patient-id="{{ $appointment->patient_id }}"
-                                     data-patient-name="{{ $appointment->patient->full_name }}"
-                                     data-dentist-id="{{ $appointment->dentist_id }}"
-                                     data-dentist-name="{{ $appointment->dentist->user->full_name }}"
-                                     data-date="{{ $appointment->date->format('Y-m-d') }}"
-                                     data-planned-treatments="{{ $appointment->plannedTreatments->count() > 0 ? $appointment->plannedTreatments->map(function($pt) { return ['id' => $pt->id, 'name' => $pt->name, 'price' => $pt->base_price]; })->toJson() : ($appointment->plannedTreatment ? json_encode([['id' => $appointment->plannedTreatment->id, 'name' => $appointment->plannedTreatment->name, 'price' => $appointment->plannedTreatment->base_price]]) : '[]') }}">
-                                    {{ $appointment->date->format('d/m/Y') }} - {{ $appointment->patient->id }} - {{ $appointment->patient->full_name }}
+                                     data-patient-id="{{ $appointment?->patient_id }}"
+                                     data-patient-name="{{ $appointment?->patient?->full_name }}"
+                                     data-dentist-id="{{ $appointment?->dentist_id }}"
+                                     data-dentist-name="{{ $appointment?->dentist?->user?->full_name }}"
+                                     data-date="{{ $appointment?->date?->format('Y-m-d') }}"
+                                     data-planned-treatments="{{ $appointment?->plannedTreatments?->count() > 0 ? $appointment?->plannedTreatments?->map(function($pt) { return ['id' => $pt->id, 'name' => $pt->name, 'price' => $pt->base_price]; })->toJson() : ($appointment?->plannedTreatment ? json_encode([['id' => $appointment?->plannedTreatment?->id, 'name' => $appointment?->plannedTreatment?->name, 'price' => $appointment?->plannedTreatment?->base_price]]) : '[]') }}">
+                                    {{ $appointment?->date?->format('d/m/Y') }} - {{ $appointment?->patient?->id }} - {{ $appointment?->patient?->full_name }}
                                 </div>
                             @endforeach
                         </div>
