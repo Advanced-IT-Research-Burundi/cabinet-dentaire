@@ -156,7 +156,14 @@ class AppointmentController extends Controller
      public function create()
     {
             $appointment = new Appointment();
-            $patients = Patient::orderBy('last_name')->take(1000)->get();
+            $patients = Patient::select(['id','first_name','last_name'])
+            ->where(function($query){
+                $query->whereNotNull('first_name')
+                ->orWhereNotNull('last_name')
+                
+                ;
+            })
+            ->orderBy('last_name')->get();
             $dentists = Dentist::with('user')->get();
             $treatmentTypes = TreatmentType::orderBy('name')->get();
 

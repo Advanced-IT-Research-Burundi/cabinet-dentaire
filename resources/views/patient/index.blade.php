@@ -112,17 +112,17 @@
                                         <a href="{{ route('patients.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                        <!-- <button type="button" class="btn btn-sm btn-outline-danger"
                                                 onclick="confirmDelete('{{ $patient->id }}')">
                                             <i class="bi bi-trash"></i>
-                                        </button>
+                                        </button> -->
                                     </div>
-                                    <form id="delete-form-{{ $patient->id }}"
+                                    <!-- <form id="delete-form-{{ $patient->id }}"
                                           action="{{ route('patients.destroy', $patient) }}"
                                           method="POST" class="d-none">
                                         @csrf
                                         @method('DELETE')
-                                    </form>
+                                    </form> -->
                                 </td>
                             </tr>
                         @empty

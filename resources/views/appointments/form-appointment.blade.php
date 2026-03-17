@@ -29,8 +29,10 @@
                                        @foreach($patients as $patient)
                                             <div class="select-option"
                                                 data-value="{{ $patient->id }}"
-                                                data-display="{{ $patient->id }} - {{ $patient?->full_name }}">
-                                                {{ $patient->id }} - {{ $patient?->full_name }}
+                                                data-display="{{ $patient->id }} - 
+                                                {{ $patient?->first_name  }} {{ $patient?->last_name  }}">
+                                                {{ $patient->id }} - 
+                                                {{ $patient?->first_name  }} {{ $patient?->last_name  }}
                                             </div>
                                         @endforeach
                                     </div>
