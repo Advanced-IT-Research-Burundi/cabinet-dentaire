@@ -72,7 +72,7 @@
                 <div class="custom-select @error('dentist_id') is-invalid @enderror">
                     <div class="select-selected" id="dentist_selected">
                         @if (isset($treatment))
-                                {{ $treatment->dentist ? ($treatment->dentist->user?->full_name ?? "#{$treatment->dentist_id}") : 'Sélectionnez un dentiste' }}
+                                {{ $treatment->dentist ? ($treatment?->dentist?->user?->full_name ?? "#{$treatment?->dentist_id}") : 'Sélectionnez un dentiste' }}
                             @else
                                 Sélectionnez un dentiste
                             @endif

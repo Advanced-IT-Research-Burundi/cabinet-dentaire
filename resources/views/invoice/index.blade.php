@@ -64,7 +64,7 @@
                             @foreach($invoices as $invoice)
                                 <tr>
                                     <td>{{ $invoice->id }}</td>
-                                    <td>{{ $invoice->patient->full_name }}</td>
+                                    <td>{{ $invoice?->patient?->full_name }}</td>
                                     <td>{{ \Carbon\Carbon::parse($invoice->issue_date)->format('d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</td>
                                     <td>{{ number_format($invoice->total_amount, 2, ',', ' ') }} FBU</td>

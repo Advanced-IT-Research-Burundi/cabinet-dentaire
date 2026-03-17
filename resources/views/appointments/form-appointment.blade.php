@@ -19,7 +19,7 @@
                         <div class="select-container">
                             <div class="custom-select @error('patient_id') is-invalid @enderror">
                                 <div class="select-selected" id="patient_selected">
-                                    {{ isset($treatment) && $treatment->patient ? $treatment->patient->full_name : 'Sélectionnez un patient' }}
+                                    {{ isset($treatment) && $treatment?->patient ? $treatment?->patient?->full_name : 'Sélectionnez un patient' }}
                                 </div>
                                 <div class="select-dropdown">
                                     <div class="select-search">
@@ -29,8 +29,8 @@
                                        @foreach($patients as $patient)
                                             <div class="select-option"
                                                 data-value="{{ $patient->id }}"
-                                                data-display="{{ $patient->id }} - {{ $patient->full_name }}">
-                                                {{ $patient->id }} - {{ $patient->full_name }}
+                                                data-display="{{ $patient->id }} - {{ $patient?->full_name }}">
+                                                {{ $patient->id }} - {{ $patient?->full_name }}
                                             </div>
                                         @endforeach
                                     </div>
@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="dentist_id" id="dentist_id" value="{{ old('dentist_id', isset($treatment) ? $treatment->dentist_id : '') }}">
+                        <input type="hidden" name="dentist_id" id="dentist_id" value="{{ old('dentist_id', isset($treatment) ? $treatment?->dentist_id : '') }}">
                         @error('dentist_id')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
