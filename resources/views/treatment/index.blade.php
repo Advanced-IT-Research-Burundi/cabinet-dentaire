@@ -135,7 +135,7 @@
                             <tr>
                                 <td>{{ $treatment->id  }}</td>
                                 <td>
-                                    {{ $treatment->patient->full_name }}
+                                    {{ $treatment?->patient?->full_name }}
                                 </td>
                                 <td>
                                     {{ $treatment?->dentist?->user?->full_name }}

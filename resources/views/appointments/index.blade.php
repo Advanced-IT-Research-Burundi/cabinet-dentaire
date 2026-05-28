@@ -88,14 +88,14 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary">
-                                                {{ $appointment->patient->id }}
+                                                {{ $appointment?->patient?->id }}
                                                 </span>
-                                                {{ $appointment->patient->full_name }}
+                                                {{ $appointment?->patient?->full_name }}
                                                 {{-- {{ $appointment->patient->last_name }} --}}
                                             </td>
                                             <td>
-                                                Dr. {{ $appointment->dentist->user->first_name }}
-                                                {{ $appointment->dentist->user->last_name}}
+                                                Dr. {{ $appointment?->dentist?->user?->first_name }}
+                                                {{ $appointment?->dentist?->user?->last_name}}
                                             </td>
                                             <td>
                                                 @forelse ( $appointment?->plannedTreatments as $traitement)
