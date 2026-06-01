@@ -159,14 +159,17 @@ class TreatmentController extends Controller
     {
         try {
             \DB::beginTransaction();
-
             $treatmentsData = json_decode($request->treatments_data, true);
 
             if (empty($treatmentsData)) {
                 return back()->withErrors(['treatments_data' => 'Veuillez ajouter au moins un traitement.'])->withInput();
             }
 
-            $treatment = Treatment::create([
+        
+          
+
+            foreach ($treatmentsData as $treatmentItem) {
+                  $treatment = Treatment::create([
                 'patient_id' => $request->patient_id,
                 'dentist_id' => $request->dentist_id,
                 'appointment_id' => $request->appointment_id,
@@ -177,8 +180,6 @@ class TreatmentController extends Controller
                 'status' => $request->status,
                 'user_id' => auth()->user()->id,
             ]);
-
-            foreach ($treatmentsData as $treatmentItem) {
                 TreatementTreatmentType::create([
                     'treatment_id' => $treatment->id,
                     'treatment_type_id' => $treatmentItem['id'],

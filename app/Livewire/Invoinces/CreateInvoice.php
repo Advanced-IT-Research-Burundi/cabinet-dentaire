@@ -203,6 +203,7 @@ class CreateInvoice extends Component
 
     public function createInvoice()
     {
+        
         if (!$this->patient) {
             session()->flash('error', 'Veuillez d\'abord sélectionner un patient');
             return;
@@ -222,9 +223,8 @@ class CreateInvoice extends Component
         try {
             DB::beginTransaction();
             $treatements = \App\Models\Treatment::
-            with(['dentist', 'treatmentType'])
+            with(['dentist', 'treatmentType', 'treatmentTypes'])
             ->whereIn('id', $this->selectedTreatments)->get();
-
             // Produits pharmaceutiques
             $listeroducts = collect($this->productsChoosed)->map(function ($product) {
                 return [

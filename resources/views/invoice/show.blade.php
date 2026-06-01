@@ -492,6 +492,7 @@
                 <p>Si vous avez des questions concernant cette facture, veuillez contacter</p>
                 <p>+257 79364090, budentalservices@gmail.com</p>
                 <p>ID : <b>{{ $invoice->invoice_identifier }}</b></p>
+                <p> Créer Par :  {{ $invoice?->creator?->first_name . ' ' . $invoice?->creator?->last_name ?? '-' }} </p>
             </div>
         </div>
     </div>
@@ -567,6 +568,13 @@
             <div>Merci pour votre visite!</div>
             <div>ID: {{ $invoice->invoice_identifier }}</div>
             <div style="margin-top: 8px;">================================</div>
+
+            <div>
+                Creer par {{ $invoice->creator->name }}
+            </div>
+            @if ($invoice->is_canceled)
+            <div style="color: red; font-weight: bold;">ANNULE</div>
+            @endif
         </div>
     </div>
 

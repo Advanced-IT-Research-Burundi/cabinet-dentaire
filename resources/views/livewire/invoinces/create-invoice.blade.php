@@ -53,10 +53,14 @@
                             <input type="checkbox" wire:model.live="selectedTreatments" value="{{ $treatement->id }}">
                         </td>
                         <td>{{ $treatement->id }}</td>
-                        <td>{{ $treatement->dentist->name }}</td>
+                        <td>{{ $treatement?->dentist?->user?->name }}</td>
                         <td>
-                            @forelse ( $treatement->treatmentTypes as $traitement)
-                                <li>{{ $traitement?->name ?? 'N/A' }}</li>
+                            
+                            @forelse ( $treatement->treatmentTypes as $qte=>$traitement)
+                                <li>{{ $traitement?->name ?? 'N/A' }}
+                                | Prix:
+                                {{$traitement->base_price  }}
+                                </li>
                             @empty
                                 {{ $treatement?->treatmentType?->name ?? 'N/A' }}
                             @endforelse

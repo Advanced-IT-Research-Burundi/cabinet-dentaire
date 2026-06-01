@@ -15,14 +15,11 @@ class InvoiceController extends Controller
     public function cancelToObr($id ){
 
         $reson = request("reason");
-
         if(!$reson || $reson == ""){
             return back()->with("error", "Veuillez fournir une raison d'annulation.");
-
         }
 
         $invoice = Invoice::find($id);
-
         $invoice->is_canceled = true;
         $invoice->is_canceled_at = now();
         $invoice->is_canceled_by = auth()->user()->id;
@@ -38,7 +35,6 @@ class InvoiceController extends Controller
     {
         $query = Invoice::with('obrPointer', 'patient', 'creator')
         ->latest();
-
         // Filtrer par numéro de facture
         if ($request->filled('facture_no')) {
             $query->where('id', $request->facture_no);
