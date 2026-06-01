@@ -83,6 +83,15 @@
                                             <i class="bi bi-clipboard"></i>
                                             Mouvement
                                         </a>
+                                        @if($stock->quantite <= 0)
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $stock->id }})">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <form id="delete-form-{{ $stock->id }}" action="{{ route('stocks.destroy', $stock) }}" method="POST" class="d-none">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
