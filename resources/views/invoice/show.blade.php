@@ -477,7 +477,7 @@
                 </div>
             </div>
 
-            <div class="approval" style="margin-top: 30px;">
+            <!-- <div class="approval" style="margin-top: 30px;">
                 <div class="approval-title">APPROUVÉ PAR</div>
                 <div>
                     Nom <span class="signature-line"></span>
@@ -485,7 +485,7 @@
                 <div style="margin-top: 10px;">
                     Signature <span class="signature-line"></span>
                 </div>
-            </div>
+            </div> -->
 
             <div class="footer">
                 <p>Merci pour votre collaboration !</p>
