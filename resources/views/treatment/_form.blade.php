@@ -298,7 +298,7 @@
     </div>
 </div>
 
-<div class="mb-4 row">
+<!-- <div class="mb-4 row">
     <div class="col-md-12">
         <div class="form-group mb-3">
             <label for="description" class="form-label fw-bold">
@@ -309,8 +309,10 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
-    </div>
+    </div> 
 </div>
+
+-->
 
 <div class="mb-4 row">
     <div class="col-md-12">
