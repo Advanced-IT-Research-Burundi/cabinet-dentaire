@@ -192,7 +192,8 @@ class CreateInvoice extends Component
     public function selectAll()
     {
         if ($this->patient) {
-            $this->selectedTreatments = $this->patient->treatementsNotPaids->pluck('id')->toArray();
+            $this->selectedTreatments = 
+            $this->patient->treatementsNotPaids->pluck('id')->toArray();
         }
     }
 

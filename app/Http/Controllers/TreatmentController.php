@@ -165,10 +165,8 @@ class TreatmentController extends Controller
                 return back()->withErrors(['treatments_data' => 'Veuillez ajouter au moins un traitement.'])->withInput();
             }
 
-        
-          
 
-            foreach ($treatmentsData as $treatmentItem) {
+            foreach ($treatmentsData as $treatmentItem) {               
                   $treatment = Treatment::create([
                 'patient_id' => $request->patient_id,
                 'dentist_id' => $request->dentist_id,
@@ -176,7 +174,7 @@ class TreatmentController extends Controller
                 'date' => $request->date,
                 'description' => $request->description,
                 'medical_notes' => $request->medical_notes,
-                'applied_price' => $request->applied_price,
+                'applied_price' =>$treatmentItem['quantity'] * $treatmentItem['price'] ,
                 'status' => $request->status,
                 'user_id' => auth()->user()->id,
             ]);

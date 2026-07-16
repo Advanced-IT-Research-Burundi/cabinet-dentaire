@@ -25,6 +25,7 @@
             @endif
         </div>
         <div>
+
             @if ($patient)
             <h6>Informations sur les services non payés</h6>
             <div class="alert alert-info">
@@ -58,14 +59,17 @@
                             
                             @forelse ( $treatement->treatmentTypes as $qte=>$traitement)
                                 <li>{{ $traitement?->name ?? 'N/A' }}
+                                | Qte: {{ $traitement?->pivot?->quantity ?? 'N/A'  }}
                                 | Prix:
-                                {{$traitement->base_price  }}
+                                {{$traitement?->base_price  }}
                                 </li>
                             @empty
                                 {{ $treatement?->treatmentType?->name ?? 'N/A' }}
                             @endforelse
                         </td>
-                        <td>{{ $treatement->applied_price }}</td>
+                        <td>
+                         {{ $traitement?->pivot?->price * $traitement?->pivot?->quantity }}
+                        </td>
                         <td>{{ $treatement->created_at }}</td>
                         <td>{{ $treatement->status }}</td>
                     </tr>
