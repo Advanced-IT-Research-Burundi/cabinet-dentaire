@@ -648,8 +648,94 @@ document.addEventListener('DOMContentLoaded', function() {
             if (plannedTreatments && plannedTreatments !== '[]') {
                 fillTreatmentTypesFromAppointment(plannedTreatments);
             }
+
+            if (patientId) {
+                loadPatientHistory(patientId);
+            }
         });
     });
+
+    // Chargement de l'historique des traitements du patient (panneau de droite)
+    function loadPatientHistory(patientId) {
+        const emptyEl = document.getElementById('patientHistoryEmpty');
+        const loadingEl = document.getElementById('patientHistoryLoading');
+        const listEl = document.getElementById('patientHistoryList');
+
+        if (!emptyEl || !loadingEl || !listEl) {
+            return;
+        }
+
+        emptyEl.classList.add('d-none');
+        listEl.classList.add('d-none');
+        loadingEl.classList.remove('d-none');
+
+        fetch(`{{ url('treatments/patient-history') }}/${patientId}`, {
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(data => {
+                loadingEl.classList.add('d-none');
+                renderPatientHistory(data.treatments || []);
+            })
+            .catch(() => {
+                loadingEl.classList.add('d-none');
+                emptyEl.classList.remove('d-none');
+                emptyEl.querySelector('p').textContent = "Impossible de charger l'historique du patient.";
+            });
+    }
+
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value ?? '';
+        return div.innerHTML;
+    }
+
+    function renderPatientHistory(treatments) {
+        const emptyEl = document.getElementById('patientHistoryEmpty');
+        const listEl = document.getElementById('patientHistoryList');
+
+        if (!treatments.length) {
+            listEl.classList.add('d-none');
+            emptyEl.classList.remove('d-none');
+            emptyEl.querySelector('p').textContent = 'Aucun traitement antérieur pour ce patient.';
+            return;
+        }
+
+        emptyEl.classList.add('d-none');
+        listEl.classList.remove('d-none');
+
+        listEl.innerHTML = treatments.map(t => `
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="fw-bold"><i class="bi bi-calendar-date me-1"></i>${escapeHtml(t.date) || 'N/A'}</span>
+                    <span class="badge bg-secondary">${escapeHtml(t.status)}</span>
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-person-badge-fill text-primary me-1"></i>
+                    <strong>Dentiste :</strong> ${escapeHtml(t.dentist_name) || 'Non spécifié'}
+                </div>
+                ${t.treatment_types ? `
+                <div class="mb-1">
+                    <i class="bi bi-clipboard2-pulse text-primary me-1"></i>
+                    <strong>Traitements :</strong> ${escapeHtml(t.treatment_types)}
+                </div>` : ''}
+                ${t.description ? `
+                <div class="mb-1">
+                    <i class="bi bi-card-text text-primary me-1"></i>
+                    <strong>Description :</strong> ${escapeHtml(t.description)}
+                </div>` : ''}
+                ${t.medical_notes ? `
+                <div class="mb-0">
+                    <i class="bi bi-journal-medical text-primary me-1"></i>
+                    <strong>Notes médicales :</strong> ${escapeHtml(t.medical_notes)}
+                </div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    @if(isset($treatment) && $treatment->patient_id)
+        loadPatientHistory({{ $treatment->patient_id }});
+    @endif
 
     // Initialiser l'affichage
     renderTreatmentsTable();

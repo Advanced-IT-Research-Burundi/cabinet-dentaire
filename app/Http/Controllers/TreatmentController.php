@@ -28,6 +28,7 @@ use App\Http\Requests\TreatmentStoreRequest;
 use App\Http\Requests\TreatmentUpdateRequest;
 use App\Models\Dentist;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 
 /**
  * TreatmentController Class
@@ -146,6 +147,36 @@ class TreatmentController extends Controller
             'treatmentTypes',
             'appointments'
         ));
+    }
+
+    /**
+     * Return the treatment history (past treatments, medical notes,
+     * description and treating dentist) for a given patient.
+     *
+     * @param Patient $patient The patient instance
+     *
+     * @return JsonResponse Returns the patient's treatment history as JSON
+     */
+    public function patientHistory(Patient $patient): JsonResponse
+    {
+        $treatments = Treatment::with(['dentist.user', 'treatmentTypes'])
+            ->where('patient_id', $patient->id)
+            ->orderBy('date', 'desc')
+            ->take(20)
+            ->get()
+            ->map(function ($treatment) {
+                return [
+                    'date' => $treatment->date?->format('d/m/Y'),
+                    'dentist_name' => $treatment->dentist?->user?->full_name ?? 'Non spécifié',
+                    'treatment_types' => $treatment->treatmentTypes->pluck('name')->join(', '),
+                    'description' => $treatment->description,
+                    'medical_notes' => $treatment->medical_notes,
+                    'status' => $treatment->status,
+                    'applied_price' => $treatment->applied_price,
+                ];
+            });
+
+        return response()->json(['treatments' => $treatments]);
     }
 
     /**

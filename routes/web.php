@@ -73,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('patients', PatientController::class);
     Route::resource('dentists', DentistController::class);
     Route::resource('treatments', TreatmentController::class);
+    Route::get('treatments/patient-history/{patient}', [TreatmentController::class, 'patientHistory'])->name('treatments.patient-history');
     Route::resource('mouvements_stocks', MouvementStockController::class);
     // Can is Admin
     Route::resource('payments', PaymentController::class);
