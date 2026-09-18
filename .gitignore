@@ -8,6 +8,7 @@
 .env
 .env.backup
 .env.production
+/resources/js/compta/.env
 Homestead.json
 Homestead.yaml
 auth.json

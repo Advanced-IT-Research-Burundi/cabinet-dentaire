@@ -37,6 +37,7 @@ use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\ParametrageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ComptaProxyController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -51,6 +52,16 @@ Route::get('patients/search',[PatientController::class, 'search'])->name('patien
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 //->can('is-admin');
+
+Route::middleware(['auth'])->group(function () {
+    Route::view('/compta/{any?}', 'compta.app')
+        ->where('any', '.*')
+        ->name('compta.app');
+
+    Route::any('/api/compta/{path?}', ComptaProxyController::class)
+        ->where('path', '.*')
+        ->name('compta.proxy');
+});
 
 Route::middleware(['auth', 'canany:is-admin,is-pharmacist'])->group(function () {
     Route::resource('invoices', InvoiceController::class);

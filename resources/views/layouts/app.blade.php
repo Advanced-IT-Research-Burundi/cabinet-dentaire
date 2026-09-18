@@ -222,6 +222,11 @@
                                         <i class="bi bi-cash"></i>Caisses
                                     </a></li>
                                     <li>
+                                      <a class="dropdown-item modern-dropdown-item" href="{{ route('compta.app') }}">
+                                        <i class="bi bi-calculator"></i>Comptabilité
+                                      </a>
+                                    </li>
+                                    <li>
                                       <a class="dropdown-item modern-dropdown-item" href="{{ route('reports.monthly') }}">
                                         <i class="bi bi-file-earmark-bar-graph"></i>
                                         Rapports Mensuel
