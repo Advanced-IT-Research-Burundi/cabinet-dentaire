@@ -6,7 +6,7 @@
         <p>Liste filtrable par état, journal et exercice</p>
       </div>
       <RouterLink class="compta-btn compta-btn-primary" :to="{ name: 'compta.saisie' }">
-        <i class="pi pi-plus"></i> Nouvelle saisie
+        <i class="bi bi-plus-lg"></i> Nouvelle saisie
       </RouterLink>
     </div>
 

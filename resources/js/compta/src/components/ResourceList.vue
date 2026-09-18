@@ -5,9 +5,19 @@
         <h1>{{ title }}</h1>
         <p>{{ subtitle }}</p>
       </div>
-      <button type="button" class="compta-btn compta-btn-secondary" @click="load" :disabled="loading">
-        <i class="pi pi-refresh"></i>
-      </button>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+        <button
+          v-if="createLabel && formSchema"
+          type="button"
+          class="compta-btn compta-btn-primary"
+          @click="openCreate"
+        >
+          <i class="bi bi-plus-lg"></i> {{ createLabel }}
+        </button>
+        <button type="button" class="compta-btn compta-btn-secondary" @click="load" :disabled="loading">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
     </div>
 
     <div class="compta-filters" v-if="searchable">
@@ -36,11 +46,23 @@
         </table>
       </div>
     </div>
+
+    <ResourceFormModal
+      v-if="formSchema"
+      :open="showCreate"
+      :title="createLabel"
+      :fields="formSchema.fields"
+      :create-fn="createFn"
+      :defaults="createDefaults"
+      @close="showCreate = false"
+      @created="onCreated"
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import ResourceFormModal from './ResourceFormModal.vue'
 
 const props = defineProps({
   title: String,
@@ -50,12 +72,17 @@ const props = defineProps({
   searchable: { type: Boolean, default: false },
   watchExercice: { type: Boolean, default: false },
   exerciceId: { type: [Number, null], default: null },
+  createLabel: { type: String, default: '' },
+  formSchema: { type: Object, default: null },
+  createFn: { type: Function, default: null },
+  createDefaults: { type: Object, default: () => ({}) },
 })
 
 const rows = ref([])
 const loading = ref(false)
 const error = ref(null)
 const q = ref('')
+const showCreate = ref(false)
 
 function cell(row, col) {
   if (col.format) return col.format(row)
@@ -76,6 +103,21 @@ async function load() {
   } finally {
     loading.value = false
   }
+}
+
+function openCreate() {
+  // #region agent log
+  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H3',location:'ResourceList.vue:openCreate',message:'nouveau button clicked',data:{title:props.title,createLabel:props.createLabel,hasSchema:!!props.formSchema,hasCreateFn:typeof props.createFn==='function'},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  showCreate.value = true
+}
+
+function onCreated() {
+  // #region agent log
+  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H4',location:'ResourceList.vue:onCreated',message:'resource created refresh',data:{title:props.title},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  showCreate.value = false
+  load()
 }
 
 onMounted(load)

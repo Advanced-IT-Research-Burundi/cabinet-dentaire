@@ -5,7 +5,12 @@
         <h1>Budgets</h1>
         <p>Suivi prévu / engagé / réalisé</p>
       </div>
-      <button type="button" class="compta-btn compta-btn-secondary" @click="load">Actualiser</button>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+        <button type="button" class="compta-btn compta-btn-primary" @click="showCreate = true">
+          <i class="bi bi-plus-lg"></i> {{ form.createLabel }}
+        </button>
+        <button type="button" class="compta-btn compta-btn-secondary" @click="load">Actualiser</button>
+      </div>
     </div>
 
     <div class="compta-card">
@@ -16,6 +21,8 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Code</th>
+              <th>Intitulé</th>
               <th>Département</th>
               <th>Poste</th>
               <th>Prévu</th>
@@ -28,6 +35,8 @@
           <tbody>
             <tr v-for="b in budgets" :key="b.id">
               <td>{{ b.id }}</td>
+              <td>{{ b.code || '—' }}</td>
+              <td>{{ b.intitule || '—' }}</td>
               <td>{{ b.departement_id }}</td>
               <td>{{ b.poste_budgetaire_id }}</td>
               <td>{{ fmt(b.montant_prevu) }}</td>
@@ -48,24 +57,42 @@
               </td>
             </tr>
             <tr v-if="!budgets.length">
-              <td colspan="8" class="compta-empty">Aucun budget</td>
+              <td colspan="10" class="compta-empty">Aucun budget</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
+    <ResourceFormModal
+      :open="showCreate"
+      :title="form.createLabel"
+      :fields="form.fields"
+      :create-fn="budgetsApi.create"
+      :defaults="createDefaults"
+      @close="showCreate = false"
+      @created="onCreated"
+    />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { budgetsApi } from '../services/api'
+import { resourceForms } from '../config/resourceForms'
 import { useContextStore } from '../modules/context/store'
+import ResourceFormModal from '../components/ResourceFormModal.vue'
 
+const form = resourceForms.budgets
 const context = useContextStore()
 const budgets = ref([])
 const loading = ref(false)
 const error = ref(null)
+const showCreate = ref(false)
+
+const createDefaults = computed(() => ({
+  exercice_id: context.exerciceId || null,
+}))
 
 function fmt(n) {
   return new Intl.NumberFormat('fr-BI').format(Number(n) || 0)
@@ -90,6 +117,14 @@ async function load() {
   } finally {
     loading.value = false
   }
+}
+
+function onCreated() {
+  // #region agent log
+  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H2',location:'BudgetsView.vue:onCreated',message:'budget created refresh',data:{},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  showCreate.value = false
+  load()
 }
 
 onMounted(load)

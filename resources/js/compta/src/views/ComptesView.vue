@@ -5,6 +5,9 @@
         <h1>Plan comptable</h1>
         <p>Recherche par numéro ou intitulé (SYSCOHADA)</p>
       </div>
+      <button type="button" class="compta-btn compta-btn-primary" @click="showCreate = true">
+        <i class="bi bi-plus-lg"></i> {{ form.createLabel }}
+      </button>
     </div>
 
     <div class="compta-filters">
@@ -61,13 +64,25 @@
         <button type="button" class="compta-btn compta-btn-secondary" :disabled="page >= pagination.last_page" @click="page++; load()">Suivant</button>
       </div>
     </div>
+
+    <ResourceFormModal
+      :open="showCreate"
+      :title="form.createLabel"
+      :fields="form.fields"
+      :create-fn="comptesApi.create"
+      @close="showCreate = false"
+      @created="onCreated"
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import { comptesApi } from '../services/api'
+import { resourceForms } from '../config/resourceForms'
+import ResourceFormModal from '../components/ResourceFormModal.vue'
 
+const form = resourceForms.comptes
 const comptes = ref([])
 const pagination = ref(null)
 const loading = ref(false)
@@ -75,6 +90,7 @@ const error = ref(null)
 const q = ref('')
 const mouvementOnly = ref(true)
 const page = ref(1)
+const showCreate = ref(false)
 let debounce = null
 
 function indent(c) {
@@ -107,6 +123,14 @@ async function load() {
   } finally {
     loading.value = false
   }
+}
+
+function onCreated() {
+  // #region agent log
+  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H1',location:'ComptesView.vue:onCreated',message:'compte created refresh',data:{},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  showCreate.value = false
+  load()
 }
 
 onMounted(load)

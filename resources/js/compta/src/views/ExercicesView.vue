@@ -4,13 +4,18 @@
     subtitle="Exercices comptables"
     :fetcher="exercicesApi.list"
     :columns="columns"
+    :create-label="form.createLabel"
+    :form-schema="form"
+    :create-fn="exercicesApi.create"
   />
 </template>
 
 <script setup>
 import ResourceList from '../components/ResourceList.vue'
 import { exercicesApi } from '../services/api'
+import { resourceForms } from '../config/resourceForms'
 
+const form = resourceForms.exercices
 const columns = [
   { key: 'code', label: 'Code' },
   { key: 'date_debut', label: 'Début', format: (r) => String(r.date_debut || '').slice(0, 10) },
