@@ -14,6 +14,9 @@ function resource(path) {
     async update(id, payload) {
       return unwrap(await http.put(`${path}/${id}`, payload)).data
     },
+    async remove(id) {
+      return unwrap(await http.delete(`${path}/${id}`))
+    },
   }
 }
 

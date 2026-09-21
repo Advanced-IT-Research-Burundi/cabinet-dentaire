@@ -106,4 +106,44 @@ export const resourceForms = {
       { key: 'cloturee', label: 'Clôturée', type: 'boolean', default: false },
     ],
   },
+  typeJournaux: {
+    createLabel: 'Nouveau type de journal',
+    editLabel: 'Modifier le type de journal',
+    endpoint: 'type-journals',
+    fields: [
+      { key: 'code', label: 'Code', type: 'text', required: true },
+      { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
+    ],
+  },
+  typeTiers: {
+    createLabel: 'Nouveau type de tiers',
+    editLabel: 'Modifier le type de tiers',
+    endpoint: 'type-tiers',
+    fields: [
+      { key: 'code', label: 'Code', type: 'text', required: true },
+      { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
+    ],
+  },
+  typeComptes: {
+    createLabel: 'Nouveau type de compte',
+    editLabel: 'Modifier le type de compte',
+    endpoint: 'type-comptes',
+    fields: [
+      { key: 'code', label: 'Code', type: 'text', required: true },
+      { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
+    ],
+  },
+  typeBudgets: {
+    createLabel: 'Nouveau type de budget',
+    editLabel: 'Modifier le type de budget',
+    endpoint: 'type-budgets',
+    fields: [
+      { key: 'code', label: 'Code', type: 'text', required: true },
+      { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
+    ],
+  },
 }

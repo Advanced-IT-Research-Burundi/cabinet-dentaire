@@ -68,6 +68,26 @@ const router = createRouter({
           component: () => import('../views/PeriodesView.vue'),
         },
         {
+          path: 'type-journaux',
+          name: 'compta.type-journaux',
+          component: () => import('../views/TypeJournauxView.vue'),
+        },
+        {
+          path: 'type-tiers',
+          name: 'compta.type-tiers',
+          component: () => import('../views/TypeTiersView.vue'),
+        },
+        {
+          path: 'type-comptes',
+          name: 'compta.type-comptes',
+          component: () => import('../views/TypeComptesView.vue'),
+        },
+        {
+          path: 'type-budgets',
+          name: 'compta.type-budgets',
+          component: () => import('../views/TypeBudgetsView.vue'),
+        },
+        {
           path: 'balance',
           name: 'compta.balance',
           component: () => import('../views/BalanceView.vue'),

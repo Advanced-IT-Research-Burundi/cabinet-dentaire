@@ -60,23 +60,27 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import * as api from '../services/api'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
   title: { type: String, required: true },
   fields: { type: Array, required: true },
-  createFn: { type: Function, required: true },
+  createFn: { type: Function, default: null },
+  updateFn: { type: Function, default: null },
+  record: { type: Object, default: null },
   defaults: { type: Object, default: () => ({}) },
 })
 
-const emit = defineEmits(['close', 'created'])
+const emit = defineEmits(['close', 'created', 'updated', 'saved'])
 
 const form = reactive({})
 const lookups = reactive({})
 const saving = ref(false)
 const formError = ref(null)
+
+const isEdit = computed(() => !!props.record?.id)
 
 function optionLabel(opt) {
   return (
@@ -90,7 +94,9 @@ function optionLabel(opt) {
 
 function resetForm() {
   props.fields.forEach((f) => {
-    if (props.defaults[f.key] !== undefined) {
+    if (props.record && props.record[f.key] !== undefined && props.record[f.key] !== null) {
+      form[f.key] = props.record[f.key]
+    } else if (props.defaults[f.key] !== undefined) {
       form[f.key] = props.defaults[f.key]
     } else if (f.default !== undefined) {
       form[f.key] = f.default
@@ -135,36 +141,54 @@ async function loadLookups() {
   )
 }
 
+function buildPayload() {
+  const payload = {}
+  props.fields.forEach((f) => {
+    let val = form[f.key]
+    if (f.type === 'lookup' && (val === '' || val === null)) {
+      val = null
+    } else if (f.type === 'lookup' && val != null) {
+      val = Number(val)
+    } else if (f.type === 'number') {
+      val = Number(val) || 0
+    } else if (f.type === 'boolean') {
+      val = !!val
+    }
+    payload[f.key] = val
+  })
+  return payload
+}
+
 async function submit() {
   saving.value = true
   formError.value = null
   try {
-    const payload = {}
-    props.fields.forEach((f) => {
-      let val = form[f.key]
-      if (f.type === 'lookup' && (val === '' || val === null)) {
-        val = null
-      } else if (f.type === 'lookup' && val != null) {
-        val = Number(val)
-      } else if (f.type === 'number') {
-        val = Number(val) || 0
-      } else if (f.type === 'boolean') {
-        val = !!val
-      }
-      payload[f.key] = val
-    })
+    const payload = buildPayload()
     // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H5',location:'ResourceFormModal.vue:submit',message:'create submit payload',data:{title:props.title,keys:Object.keys(payload)},timestamp:Date.now()})}).catch(()=>{});
+    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit',message:'form submit',data:{title:props.title,isEdit:isEdit.value,id:props.record?.id??null,keys:Object.keys(payload)},timestamp:Date.now()})}).catch(()=>{});
     // #endregion
-    const created = await props.createFn(payload)
-    // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H5',location:'ResourceFormModal.vue:submit:ok',message:'create success',data:{title:props.title,id:created?.id??null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    emit('created', created)
+
+    let result
+    if (isEdit.value) {
+      if (typeof props.updateFn !== 'function') throw new Error('Mise à jour non disponible')
+      result = await props.updateFn(props.record.id, payload)
+      // #region agent log
+      fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T2',location:'ResourceFormModal.vue:submit:ok',message:'update success',data:{title:props.title,id:result?.id??props.record.id},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      emit('updated', result)
+    } else {
+      if (typeof props.createFn !== 'function') throw new Error('Création non disponible')
+      result = await props.createFn(payload)
+      // #region agent log
+      fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit:ok',message:'create success',data:{title:props.title,id:result?.id??null},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      emit('created', result)
+    }
+    emit('saved', result)
     emit('close')
   } catch (e) {
     // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H5',location:'ResourceFormModal.vue:submit:err',message:'create failed',data:{title:props.title,error:String(e?.message||e)},timestamp:Date.now()})}).catch(()=>{});
+    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit:err',message:'save failed',data:{title:props.title,isEdit:isEdit.value,error:String(e?.message||e)},timestamp:Date.now()})}).catch(()=>{});
     // #endregion
     formError.value = e.message
   } finally {
