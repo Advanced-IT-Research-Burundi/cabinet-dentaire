@@ -40,6 +40,12 @@
           <i class="bi bi-list"></i> Menu
         </button>
 
+        <div class="compta-current-company">
+          <span class="label">Entreprise</span>
+          <strong>{{ societeLabel }}</strong>
+          <small v-if="context.societeActive?.nif">NIF {{ context.societeActive.nif }}</small>
+        </div>
+
         <div>
           <span class="label">Exercice</span>
           <select
@@ -81,13 +87,18 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { navigation } from '../config/navigation'
 import { useContextStore } from '../modules/context/store'
 
 const context = useContextStore()
 const collapsed = ref(false)
 const mobileOpen = ref(false)
+const societeLabel = computed(() => (
+  context.societeActive?.raison_sociale ||
+  context.societeActive?.intitule ||
+  'Aucune entreprise'
+))
 
 onMounted(() => {
   context.bootstrap()

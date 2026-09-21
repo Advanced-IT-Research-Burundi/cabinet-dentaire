@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import { exercicesApi, periodesApi, journalsApi, comptesApi } from '../../services/api'
+import { comptesApi, exercicesApi, journalsApi, periodesApi, societesApi } from '../../services/api'
 
 export const useContextStore = defineStore('comptaContext', {
   state: () => ({
     exercices: [],
+    societes: [],
     periodes: [],
     journals: [],
     comptes: [],
@@ -16,6 +17,14 @@ export const useContextStore = defineStore('comptaContext', {
   getters: {
     exerciceActif(state) {
       return state.exercices.find((e) => e.id === state.exerciceId) || null
+    },
+    societeActive(state) {
+      const exercice = state.exercices.find((e) => e.id === state.exerciceId)
+      if (exercice?.societe) return exercice.societe
+      if (exercice?.societe_id) {
+        return state.societes.find((s) => s.id === exercice.societe_id) || null
+      }
+      return state.societes.find((s) => s.actif) || state.societes[0] || null
     },
     periodeActive(state) {
       return state.periodes.find((p) => p.id === state.periodeId) || null
@@ -31,12 +40,14 @@ export const useContextStore = defineStore('comptaContext', {
       this.loading = true
       this.error = null
       try {
-        const [ex, pe, jo, co] = await Promise.all([
+        const [so, ex, pe, jo, co] = await Promise.all([
+          societesApi.list(),
           exercicesApi.list(),
           periodesApi.list(),
           journalsApi.list(),
           comptesApi.list({ per_page: 500, mouvement: 1 }),
         ])
+        this.societes = Array.isArray(so.data) ? so.data : []
         this.exercices = Array.isArray(ex.data) ? ex.data : []
         this.periodes = Array.isArray(pe.data) ? pe.data : []
         this.journals = Array.isArray(jo.data) ? jo.data : []

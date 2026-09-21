@@ -46,8 +46,7 @@ export const navigation = [
   {
     label: 'Paramètres',
     items: [
-      { label: 'Exercices', icon: 'bi bi-calendar3', to: { name: 'compta.exercices' } },
-      { label: 'Périodes', icon: 'bi bi-calendar-plus', to: { name: 'compta.periodes' } },
+      { label: 'Paramètre', icon: 'bi bi-sliders', to: { name: 'compta.parametres' } },
     ],
   },
 ]

@@ -106,6 +106,7 @@ const props = defineProps({
   deleteFn: { type: Function, default: null },
   createDefaults: { type: Object, default: () => ({}) },
 })
+const emit = defineEmits(['saved'])
 
 const rows = ref([])
 const loading = ref(false)
@@ -165,6 +166,7 @@ function closeModal() {
 function onSaved() {
   closeModal()
   load()
+  emit('saved')
 }
 
 async function removeRow(row) {

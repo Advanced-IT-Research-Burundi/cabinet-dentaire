@@ -95,7 +95,7 @@ function optionLabel(opt) {
 function resetForm() {
   props.fields.forEach((f) => {
     if (props.record && props.record[f.key] !== undefined && props.record[f.key] !== null) {
-      form[f.key] = props.record[f.key]
+      form[f.key] = f.type === 'date' ? normalizeDate(props.record[f.key]) : props.record[f.key]
     } else if (props.defaults[f.key] !== undefined) {
       form[f.key] = props.defaults[f.key]
     } else if (f.default !== undefined) {
@@ -111,6 +111,10 @@ function resetForm() {
     }
   })
   formError.value = null
+}
+
+function normalizeDate(value) {
+  return value ? String(value).slice(0, 10) : ''
 }
 
 async function loadLookups() {

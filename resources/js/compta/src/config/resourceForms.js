@@ -83,8 +83,25 @@ export const resourceForms = {
       { key: 'actif', label: 'Actif', type: 'boolean', default: true },
     ],
   },
+  societes: {
+    createLabel: 'Nouvelle société',
+    editLabel: 'Modifier la société',
+    endpoint: 'societes',
+    fields: [
+      { key: 'raison_sociale', label: 'Raison sociale', type: 'text', required: true },
+      { key: 'nif', label: 'NIF', type: 'text' },
+      { key: 'rc', label: 'RC', type: 'text' },
+      { key: 'adresse', label: 'Adresse', type: 'text' },
+      { key: 'telephone', label: 'Téléphone', type: 'text' },
+      { key: 'email', label: 'Email', type: 'email' },
+      { key: 'devise', label: 'Devise', type: 'text', required: true, default: 'BIF' },
+      { key: 'date_creation', label: 'Date création', type: 'date' },
+      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
+    ],
+  },
   exercices: {
     createLabel: 'Nouvel exercice',
+    editLabel: 'Modifier l’exercice',
     endpoint: 'exercices',
     fields: [
       { key: 'societe_id', label: 'Société', type: 'lookup', lookup: 'societes', required: true },
@@ -97,6 +114,7 @@ export const resourceForms = {
   },
   periodes: {
     createLabel: 'Nouvelle période',
+    editLabel: 'Modifier la période',
     endpoint: 'periodes',
     fields: [
       { key: 'exercice_id', label: 'Exercice', type: 'lookup', lookup: 'exercices', required: true },

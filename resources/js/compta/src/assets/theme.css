@@ -125,6 +125,26 @@
   margin-right: 0.25rem;
 }
 
+.compta-current-company {
+  display: grid;
+  gap: 0.1rem;
+  min-width: min(240px, 100%);
+  padding-right: 0.75rem;
+  border-right: 1px solid var(--compta-border);
+}
+
+.compta-current-company strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--compta-text);
+  line-height: 1.2;
+}
+
+.compta-current-company small {
+  color: var(--compta-muted);
+  font-size: 0.72rem;
+}
+
 .compta-page {
   flex: 1;
   padding: 1.25rem;
@@ -289,6 +309,33 @@
   background: rgba(30, 115, 190, 0.1);
   color: var(--compta-primary);
   font-weight: 600;
+}
+
+.compta-tabmenu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  border-bottom: 1px solid var(--compta-border);
+  margin-bottom: 1rem;
+}
+
+.compta-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--compta-muted);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.compta-tab.active {
+  color: var(--compta-primary);
+  border-bottom-color: var(--compta-primary);
 }
 
 .compta-input,

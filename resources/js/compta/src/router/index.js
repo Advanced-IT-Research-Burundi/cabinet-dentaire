@@ -68,6 +68,11 @@ const router = createRouter({
           component: () => import('../views/PeriodesView.vue'),
         },
         {
+          path: 'parametres',
+          name: 'compta.parametres',
+          component: () => import('../views/ParametresView.vue'),
+        },
+        {
           path: 'type-journaux',
           name: 'compta.type-journaux',
           component: () => import('../views/TypeJournauxView.vue'),
