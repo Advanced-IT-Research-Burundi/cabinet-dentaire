@@ -102,15 +102,4 @@ const router = createRouter({
   ],
 })
 
-// #region agent log
-router.beforeEach((to, from, next) => {
-  to.meta.__navT0 = performance.now()
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'post-fix',hypothesisId:'E',location:'router/index.js:beforeEach',message:'nav_start',data:{from:from.fullPath,to:to.fullPath,name:to.name},timestamp:Date.now()})}).catch(()=>{});
-  next()
-})
-router.afterEach((to) => {
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'post-fix',hypothesisId:'E',location:'router/index.js:afterEach',message:'nav_done',data:{to:to.fullPath,name:to.name,ms:Math.round(performance.now()-(to.meta.__navT0||0))},timestamp:Date.now()})}).catch(()=>{});
-})
-// #endregion
-
 export default router

@@ -146,18 +146,12 @@ async function load() {
 }
 
 function openCreate() {
-  // #region agent log
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T3',location:'ResourceList.vue:openCreate',message:'nouveau clicked',data:{title:props.title},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   editing.value = null
   actionError.value = null
   modalOpen.value = true
 }
 
 function openEdit(row) {
-  // #region agent log
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T2',location:'ResourceList.vue:openEdit',message:'edit clicked',data:{title:props.title,id:row.id},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   editing.value = { ...row }
   actionError.value = null
   modalOpen.value = true
@@ -169,9 +163,6 @@ function closeModal() {
 }
 
 function onSaved() {
-  // #region agent log
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T4',location:'ResourceList.vue:onSaved',message:'saved refresh',data:{title:props.title},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   closeModal()
   load()
 }
@@ -181,15 +172,9 @@ async function removeRow(row) {
   deletingId.value = row.id
   actionError.value = null
   try {
-    // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T5',location:'ResourceList.vue:removeRow',message:'delete start',data:{title:props.title,id:row.id},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     await props.deleteFn(row.id)
     await load()
   } catch (e) {
-    // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T5',location:'ResourceList.vue:removeRow:err',message:'delete failed',data:{title:props.title,id:row.id,error:String(e?.message||e)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     actionError.value = e.message
   } finally {
     deletingId.value = null

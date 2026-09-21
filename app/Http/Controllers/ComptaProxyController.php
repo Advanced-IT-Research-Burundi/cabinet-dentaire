@@ -14,31 +14,6 @@ class ComptaProxyController extends Controller
     {
         $baseUrl = rtrim((string) config('services.compta.url'), '/');
 
-        // #region agent log
-        $__dbg = function (string $message, array $data, string $hypothesisId) {
-            $payload = json_encode([
-                'sessionId' => '5fa0d4',
-                'runId' => 'post-fix',
-                'hypothesisId' => $hypothesisId,
-                'location' => 'ComptaProxyController.php',
-                'message' => $message,
-                'data' => $data,
-                'timestamp' => (int) (microtime(true) * 1000),
-            ], JSON_UNESCAPED_UNICODE);
-            @file_put_contents(
-                '/home/bienvenu/Documents/ADVANCED ITB/budental/.cursor/debug-5fa0d4.log',
-                $payload."\n",
-                FILE_APPEND
-            );
-        };
-        $__dbg('proxy_invoke', [
-            'baseUrl' => $baseUrl,
-            'path' => $path,
-            'method' => $request->method(),
-            'env_COMPTA_API_URL' => env('COMPTA_API_URL'),
-        ], 'A');
-        // #endregion
-
         if ($baseUrl === '') {
             return response()->json([
                 'success' => false,
@@ -55,11 +30,6 @@ class ComptaProxyController extends Controller
             $url .= '?'.$request->getQueryString();
         }
 
-        // #region agent log
-        $__dbg('proxy_target_url', ['url' => $url], 'C');
-        $__t0 = microtime(true);
-        // #endregion
-
         try {
             $response = Http::acceptJson()
                 ->withHeaders($this->forwardHeaders($request))
@@ -71,13 +41,6 @@ class ComptaProxyController extends Controller
                     $this->requestOptions($request)
                 );
         } catch (ConnectionException $e) {
-            // #region agent log
-            $__dbg('proxy_connection_exception', [
-                'url' => $url,
-                'error' => $e->getMessage(),
-                'ms' => (int) ((microtime(true) - $__t0) * 1000),
-            ], 'A');
-            // #endregion
             return response()->json([
                 'success' => false,
                 'message' => 'API comptabilité injoignable.',
@@ -85,13 +48,6 @@ class ComptaProxyController extends Controller
                 'error' => $e->getMessage(),
             ], 502);
         } catch (RequestException $e) {
-            // #region agent log
-            $__dbg('proxy_request_exception', [
-                'url' => $url,
-                'error' => $e->getMessage(),
-                'ms' => (int) ((microtime(true) - $__t0) * 1000),
-            ], 'C');
-            // #endregion
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur lors de l\'appel à l\'API comptabilité.',
@@ -99,14 +55,6 @@ class ComptaProxyController extends Controller
                 'error' => $e->getMessage(),
             ], 502);
         }
-
-        // #region agent log
-        $__dbg('proxy_success', [
-            'url' => $url,
-            'status' => $response->status(),
-            'ms' => (int) ((microtime(true) - $__t0) * 1000),
-        ], 'A');
-        // #endregion
 
         return response($response->body(), $response->status())
             ->withHeaders([

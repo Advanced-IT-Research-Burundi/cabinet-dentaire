@@ -126,9 +126,6 @@ async function load() {
 }
 
 function onCreated() {
-  // #region agent log
-  fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'crud-create',hypothesisId:'H1',location:'ComptesView.vue:onCreated',message:'compte created refresh',data:{},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   showCreate.value = false
   load()
 }

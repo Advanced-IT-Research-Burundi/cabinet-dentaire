@@ -8,7 +8,15 @@ export const IS_PROD = isProdFlag === true || isProdFlag === 'true'
 export const APP_URL = import.meta.env.APP_URL || ''
 export const APP_URL_LOCAL = import.meta.env.APP_URL_LOCAL || ''
 
-export const baseUrl = IS_PROD ? APP_URL : APP_URL_LOCAL
+function normalizeUrl(url) {
+  return String(url || '').replace(/\/+$/, '')
+}
 
-/** Prefixe API same-origin (proxy Laravel) */
-export const API_PREFIX = '/api/compta'
+export const baseUrl = normalizeUrl(IS_PROD ? APP_URL : APP_URL_LOCAL)
+
+if (!baseUrl) {
+  throw new Error('APP_URL ou APP_URL_LOCAL doit être configuré pour le front compta.')
+}
+
+/** Prefixe API compta, construit uniquement depuis .env compta. */
+export const API_PREFIX = `${baseUrl}/api`

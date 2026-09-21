@@ -164,32 +164,20 @@ async function submit() {
   formError.value = null
   try {
     const payload = buildPayload()
-    // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit',message:'form submit',data:{title:props.title,isEdit:isEdit.value,id:props.record?.id??null,keys:Object.keys(payload)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
 
     let result
     if (isEdit.value) {
       if (typeof props.updateFn !== 'function') throw new Error('Mise à jour non disponible')
       result = await props.updateFn(props.record.id, payload)
-      // #region agent log
-      fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T2',location:'ResourceFormModal.vue:submit:ok',message:'update success',data:{title:props.title,id:result?.id??props.record.id},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       emit('updated', result)
     } else {
       if (typeof props.createFn !== 'function') throw new Error('Création non disponible')
       result = await props.createFn(payload)
-      // #region agent log
-      fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit:ok',message:'create success',data:{title:props.title,id:result?.id??null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       emit('created', result)
     }
     emit('saved', result)
     emit('close')
   } catch (e) {
-    // #region agent log
-    fetch('http://127.0.0.1:7845/ingest/d75feb9c-36a3-4797-b93e-748750fb52bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'5fa0d4'},body:JSON.stringify({sessionId:'5fa0d4',runId:'types-crud',hypothesisId:'T1',location:'ResourceFormModal.vue:submit:err',message:'save failed',data:{title:props.title,isEdit:isEdit.value,error:String(e?.message||e)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     formError.value = e.message
   } finally {
     saving.value = false
