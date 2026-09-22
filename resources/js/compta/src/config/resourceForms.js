@@ -9,10 +9,6 @@ export const resourceForms = {
       { key: 'code', label: 'Code', type: 'text', required: true },
       { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
       { key: 'type_journal_id', label: 'Type de journal', type: 'lookup', lookup: 'typeJournals', required: true },
-      { key: 'compte_id', label: 'Compte', type: 'lookup', lookup: 'comptes', required: true },
-      { key: 'compte_contrepartie_id', label: 'Compte contrepartie', type: 'lookup', lookup: 'comptes', required: false },
-      { key: 'numerotation_automatique', label: 'Numérotation auto', type: 'boolean', default: true },
-      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
     ],
   },
   tiers: {
@@ -21,6 +17,9 @@ export const resourceForms = {
     fields: [
       { key: 'code', label: 'Code', type: 'text', required: true },
       { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'contact', label: 'Contact', type: 'text' },
+      { key: 'abrege', label: 'Abréviation', type: 'text' },
+      { key: 'compte_collectif_id', label: 'Compte collectif', type: 'lookup', lookup: 'comptes' },
       { key: 'type_tiers_id', label: 'Type de tiers', type: 'lookup', lookup: 'typeTiers', required: true },
       { key: 'adresse', label: 'Adresse', type: 'text' },
       { key: 'telephone', label: 'Téléphone', type: 'text' },
@@ -47,11 +46,6 @@ export const resourceForms = {
     fields: [
       { key: 'numero', label: 'Numéro', type: 'text', required: true },
       { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
-      { key: 'type_compte_id', label: 'Type de compte', type: 'lookup', lookup: 'typeComptes', required: true },
-      { key: 'compte_parent_id', label: 'Compte parent', type: 'lookup', lookup: 'comptes', required: false },
-      { key: 'mouvement', label: 'Mouvement', type: 'boolean', default: true },
-      { key: 'collectif', label: 'Collectif', type: 'boolean', default: false },
-      { key: 'actif', label: 'Actif', type: 'boolean', default: true },
     ],
   },
   budgets: {

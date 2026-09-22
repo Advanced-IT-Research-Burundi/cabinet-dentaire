@@ -18,10 +18,6 @@
         placeholder="Ex. 521 ou Banque…"
         @input="onSearch"
       />
-      <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem">
-        <input v-model="mouvementOnly" type="checkbox" @change="load" />
-        Comptes de mouvement uniquement
-      </label>
     </div>
 
     <div class="compta-card">
@@ -33,25 +29,15 @@
             <tr>
               <th>N°</th>
               <th>Intitulé</th>
-              <th>Mouvement</th>
-              <th>Collectif</th>
-              <th>Actif</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="c in comptes" :key="c.id">
-              <td>
-                <span :style="{ paddingLeft: `${indent(c)}px`, fontWeight: c.mouvement ? 500 : 600 }">
-                  {{ c.numero }}
-                </span>
-              </td>
+              <td>{{ c.numero }}</td>
               <td>{{ c.intitule }}</td>
-              <td>{{ c.mouvement ? 'Oui' : 'Non' }}</td>
-              <td>{{ c.collectif ? 'Oui' : 'Non' }}</td>
-              <td>{{ c.actif ? 'Oui' : 'Non' }}</td>
             </tr>
             <tr v-if="!comptes.length">
-              <td colspan="5" class="compta-empty">Aucun compte</td>
+              <td colspan="2" class="compta-empty">Aucun compte</td>
             </tr>
           </tbody>
         </table>
@@ -88,15 +74,9 @@ const pagination = ref(null)
 const loading = ref(false)
 const error = ref(null)
 const q = ref('')
-const mouvementOnly = ref(true)
 const page = ref(1)
 const showCreate = ref(false)
 let debounce = null
-
-function indent(c) {
-  const len = String(c.numero || '').length
-  return Math.max(0, (len - 1) * 6)
-}
 
 function onSearch() {
   clearTimeout(debounce)
@@ -114,7 +94,6 @@ async function load() {
       page: page.value,
       per_page: 50,
       q: q.value || undefined,
-      mouvement: mouvementOnly.value ? 1 : undefined,
     })
     comptes.value = Array.isArray(res.data) ? res.data : []
     pagination.value = res.pagination

@@ -27,12 +27,12 @@ export const navigation = [
   {
     label: 'Référentiels',
     items: [
-      { label: 'Journaux', icon: 'bi bi-bookmark', to: { name: 'compta.journaux' } },
+      { label: 'Code Journaux', icon: 'bi bi-bookmark', to: { name: 'compta.journaux' } },
       { label: 'Types de journaux', icon: 'bi bi-bookmark-star', to: { name: 'compta.type-journaux' } },
-      { label: 'Tiers', icon: 'bi bi-people', to: { name: 'compta.tiers' } },
+      { label: 'Plan Tiers', icon: 'bi bi-people', to: { name: 'compta.tiers' } },
       { label: 'Types de tiers', icon: 'bi bi-person-badge', to: { name: 'compta.type-tiers' } },
-      { label: 'Banques', icon: 'bi bi-bank', to: { name: 'compta.banques' } },
-      { label: 'Types de comptes', icon: 'bi bi-tags', to: { name: 'compta.type-comptes' } },
+    //   { label: 'Banques', icon: 'bi bi-bank', to: { name: 'compta.banques' } },
+    //   { label: 'Types de comptes', icon: 'bi bi-tags', to: { name: 'compta.type-comptes' } },
     ],
   },
   {

@@ -18,8 +18,10 @@ import { resourceForms } from '../config/resourceForms'
 
 const form = resourceForms.tiers
 const columns = [
-  { key: 'code', label: 'Code', format: (r) => r.code || r.numero || r.id },
+  { key: 'code', label: 'No Compte', format: (r) => r.code || r.numero || r.id },
   { key: 'intitule', label: 'Intitulé', format: (r) => r.intitule || r.raison_sociale || r.nom },
+  { key: 'contact', label: 'Contact' },
+  { key: 'abrege', label: 'Abréviation' },
   { key: 'type_tiers_id', label: 'Type' },
 ]
 </script>
