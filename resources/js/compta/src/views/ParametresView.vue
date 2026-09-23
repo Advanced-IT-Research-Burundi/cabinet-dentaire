@@ -116,7 +116,7 @@ const tabs = [
   { key: 'exercices', label: 'Exercice', icon: 'bi bi-calendar3' },
   { key: 'periodes', label: 'Période', icon: 'bi bi-calendar-plus' },
   { key: 'journaux', label: 'Journaux', icon: 'bi bi-bookmark' },
-  { key: 'typeJournaux', label: 'Types de journaux', icon: 'bi bi-bookmark-star' },
+//   { key: 'typeJournaux', label: 'Types de journaux', icon: 'bi bi-bookmark-star' },
 ]
 
 const periodeDefaults = computed(() => ({

@@ -47,6 +47,39 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        foreach ([
+            ['code' => 'CLI', 'intitule' => 'Client'],
+            ['code' => 'FOU', 'intitule' => 'Fournisseur'],
+            ['code' => 'AUT', 'intitule' => 'Autre tiers'],
+        ] as $typeTier) {
+            \DB::table('type_tiers')->updateOrInsert(
+                ['code' => $typeTier['code']],
+                [
+                    'intitule' => $typeTier['intitule'],
+                    'actif' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
+        foreach ([
+            ['code' => 'ACH', 'intitule' => 'Journal des achats'],
+            ['code' => 'VTE', 'intitule' => 'Journal des ventes'],
+            ['code' => 'OD', 'intitule' => 'Opérations diverses'],
+        ] as $typeJournal) {
+            \DB::table('type_journals')->updateOrInsert(
+                ['code' => $typeJournal['code']],
+                [
+                    'intitule' => $typeJournal['intitule'],
+                    'actif' => true,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
         $this->call([
             CompanySeeder::class,
             TraitementSeeder::class,

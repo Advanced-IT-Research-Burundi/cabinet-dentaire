@@ -28,7 +28,7 @@ export const navigation = [
     label: 'Référentiels',
     items: [
       { label: 'Plan Tiers', icon: 'bi bi-people', to: { name: 'compta.tiers' } },
-      { label: 'Types de tiers', icon: 'bi bi-person-badge', to: { name: 'compta.type-tiers' } },
+    //   { label: 'Types de tiers', icon: 'bi bi-person-badge', to: { name: 'compta.type-tiers' } },
     //   { label: 'Banques', icon: 'bi bi-bank', to: { name: 'compta.banques' } },
     //   { label: 'Types de comptes', icon: 'bi bi-tags', to: { name: 'compta.type-comptes' } },
     ],
