@@ -44,7 +44,7 @@
               <th>Crédit</th>
               <th>État</th>
               <th>Date</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -56,7 +56,7 @@
               <td>{{ format(p.total_credit) }}</td>
               <td><EtatBadge :etat="p.etat" /></td>
               <td>{{ formatDate(p.date_comptable) }}</td>
-              <td>
+              <td style="white-space: nowrap">
                 <RouterLink
                   class="compta-btn compta-btn-ghost"
                   style="padding: 0.25rem 0.5rem"
@@ -64,6 +64,15 @@
                 >
                   Ouvrir
                 </RouterLink>
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-ghost"
+                  style="padding: 0.25rem 0.5rem; color: #b91c1c"
+                  :disabled="deletingId === p.id"
+                  @click="removePiece(p)"
+                >
+                  Supprimer
+                </button>
               </td>
             </tr>
             <tr v-if="!pieces.length">
@@ -111,6 +120,7 @@ const pieces = ref([])
 const pagination = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const deletingId = ref(null)
 const etat = ref(route.query.etat || null)
 const q = ref('')
 const page = ref(1)
@@ -151,6 +161,20 @@ async function load() {
     error.value = e.message
   } finally {
     loading.value = false
+  }
+}
+
+async function removePiece(piece) {
+  if (!window.confirm(`Supprimer la pièce ${piece.numero_piece || `#${piece.id}`} ?`)) return
+  deletingId.value = piece.id
+  error.value = null
+  try {
+    await piecesApi.remove(piece.id)
+    await load()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    deletingId.value = null
   }
 }
 

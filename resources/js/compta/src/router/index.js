@@ -53,6 +53,16 @@ const router = createRouter({
           component: () => import('../views/BudgetsView.vue'),
         },
         {
+          path: 'immobilisations',
+          name: 'compta.immobilisations',
+          component: () => import('../views/ImmobilisationsView.vue'),
+        },
+        {
+          path: 'amortissements',
+          name: 'compta.amortissements',
+          component: () => import('../views/AmortissementsView.vue'),
+        },
+        {
           path: 'postes',
           name: 'compta.postes',
           component: () => import('../views/PostesView.vue'),

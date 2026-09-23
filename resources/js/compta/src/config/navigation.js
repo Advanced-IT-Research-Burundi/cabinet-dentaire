@@ -44,6 +44,13 @@ export const navigation = [
     ],
   },
   {
+    label: 'Immobilisations',
+    items: [
+      { label: 'Immobilisations', icon: 'bi bi-building-gear', to: { name: 'compta.immobilisations' } },
+      { label: 'Amortissements', icon: 'bi bi-graph-down-arrow', to: { name: 'compta.amortissements' } },
+    ],
+  },
+  {
     label: 'Paramètres',
     items: [
       { label: 'Paramètre', icon: 'bi bi-sliders', to: { name: 'compta.parametres' } },

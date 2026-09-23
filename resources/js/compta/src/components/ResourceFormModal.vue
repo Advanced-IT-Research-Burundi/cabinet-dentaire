@@ -36,6 +36,19 @@
               Oui
             </label>
 
+            <select
+              v-else-if="field.type === 'select'"
+              v-model="form[field.key]"
+              class="compta-select"
+              style="width: 100%"
+              :required="field.required"
+            >
+              <option :value="null">—</option>
+              <option v-for="opt in field.options || []" :key="opt.value" :value="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
+
             <input
               v-else
               v-model="form[field.key]"
@@ -130,6 +143,8 @@ async function loadLookups() {
     departements: api.departementsApi,
     sections: api.sectionsApi,
     postes: api.postesApi,
+    immobilisations: api.immobilisationsApi,
+    ecritures: api.ecrituresApi,
   }
   await Promise.all(
     needed.map(async (key) => {
@@ -153,8 +168,12 @@ function buildPayload() {
       val = null
     } else if (f.type === 'lookup' && val != null) {
       val = Number(val)
+    } else if (f.type === 'select' && (val === '' || val === null)) {
+      val = null
     } else if (f.type === 'number') {
-      val = Number(val) || 0
+      val = val === '' || val === null ? (f.required ? 0 : null) : Number(val)
+    } else if (f.type === 'date' && val === '') {
+      val = null
     } else if (f.type === 'boolean') {
       val = !!val
     }
