@@ -13,10 +13,11 @@ export const resourceForms = {
   },
   tiers: {
     createLabel: 'Nouveau tiers',
+    editLabel: 'Modifier le tiers',
     endpoint: 'tiers',
     fields: [
-      { key: 'code', label: 'Code', type: 'text', required: true },
       { key: 'intitule', label: 'Intitulé', type: 'text', required: true },
+      { key: 'nom_complet', label: 'Nom complet', type: 'text' },
       { key: 'contact', label: 'Contact', type: 'text' },
       { key: 'abrege', label: 'Abréviation', type: 'text' },
       { key: 'compte_collectif_id', label: 'Compte collectif', type: 'lookup', lookup: 'comptes' },

@@ -36,7 +36,11 @@
       {{ success }}
     </div>
 
-    <div class="compta-card">
+    <div class="compta-card saisie-context">
+      <div class="saisie-context-status" :class="{ ready: contextReady }">
+        <span>{{ contextReady ? 'Contexte prêt' : 'Sélectionnez le journal et la période' }}</span>
+      </div>
+
       <div class="compta-form-grid">
         <div class="compta-field">
           <label>Journal</label>
@@ -47,30 +51,56 @@
             </option>
           </select>
         </div>
+
+        <div class="compta-field">
+          <label>Exercice</label>
+          <select v-model="form.exercice_id" class="compta-select" style="width: 100%" @change="onExerciceChange">
+            <option :value="null">—</option>
+            <option v-for="exercice in context.exercices" :key="exercice.id" :value="exercice.id">
+              {{ exercice.code || exercice.id }} — {{ exercice.date_debut }} / {{ exercice.date_fin }}
+            </option>
+          </select>
+        </div>
+
+        <div class="compta-field">
+          <label>Période</label>
+          <select v-model="form.periode_id" class="compta-select" style="width: 100%" :disabled="!form.exercice_id">
+            <option :value="null">—</option>
+            <option v-for="periode in periodesForForm" :key="periode.id" :value="periode.id">
+              {{ periode.libelle || periode.code || `Période #${periode.id}` }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="compta-card" :class="{ 'saisie-disabled': !contextReady }">
+      <div class="compta-form-grid">
         <div class="compta-field">
           <label>N° pièce</label>
-          <input v-model="form.numero_piece" class="compta-input" style="width: 100%" />
+          <input v-model="form.numero_piece" class="compta-input" style="width: 100%" :disabled="!contextReady" />
         </div>
         <div class="compta-field">
           <label>Date pièce</label>
-          <input v-model="form.date_piece" type="date" class="compta-input" style="width: 100%" />
+          <input v-model="form.date_piece" type="date" class="compta-input" style="width: 100%" :disabled="!contextReady" />
         </div>
         <div class="compta-field">
           <label>Date comptable</label>
-          <input v-model="form.date_comptable" type="date" class="compta-input" style="width: 100%" />
+          <input v-model="form.date_comptable" type="date" class="compta-input" style="width: 100%" :disabled="!contextReady" />
         </div>
         <div class="compta-field" style="grid-column: 1 / -1">
           <label>Libellé</label>
-          <input v-model="form.libelle" class="compta-input" style="width: 100%" />
+          <input v-model="form.libelle" class="compta-input" style="width: 100%" :disabled="!contextReady" />
         </div>
       </div>
 
       <div class="compta-table-wrap compta-lines-grid">
-        <table class="compta-table">
+        <table class="compta-table saisie-table">
           <thead>
             <tr>
               <th style="width: 3rem">#</th>
               <th>Compte</th>
+              <th>Compte auxiliaire</th>
               <th>Libellé</th>
               <th style="width: 8rem">Débit</th>
               <th style="width: 8rem">Crédit</th>
@@ -81,18 +111,65 @@
             <tr v-for="(line, idx) in lines" :key="idx">
               <td>{{ idx + 1 }}</td>
               <td>
-                <select v-model="line.compte_id" class="compta-select" style="width: 100%; min-width: 160px">
+                <select
+                  v-model="line.compte_id"
+                  class="compta-select saisie-line-input"
+                  :disabled="!contextReady"
+                  @change="onCompteChange(line)"
+                >
                   <option :value="null">—</option>
                   <option v-for="c in context.comptes" :key="c.id" :value="c.id">
                     {{ c.numero }} — {{ c.intitule }}
                   </option>
                 </select>
               </td>
-              <td><input v-model="line.libelle" /></td>
-              <td><input v-model.number="line.debit" type="number" min="0" step="0.01" /></td>
-              <td><input v-model.number="line.credit" type="number" min="0" step="0.01" /></td>
               <td>
-                <button type="button" class="compta-btn compta-btn-danger" style="padding: 0.25rem 0.4rem" @click="removeLine(idx)">
+                <select
+                  v-model="line.compte_auxiliaire_id"
+                  class="compta-select saisie-line-input"
+                  :class="{ 'saisie-invalid': auxiliaryMissing(line) }"
+                  :disabled="!contextReady || auxiliaryLocked(line)"
+                >
+                  <option :value="null">—</option>
+                  <option v-for="tier in auxiliaryOptions(line)" :key="tier.id" :value="tier.id">
+                    {{ tierLabel(tier) }}
+                  </option>
+                </select>
+                <small v-if="auxiliaryMissing(line)" class="saisie-help">Auxiliaire obligatoire</small>
+              </td>
+              <td>
+                <input v-model="line.libelle" class="compta-input saisie-line-input" :disabled="!contextReady" />
+              </td>
+              <td>
+                <input
+                  v-model.number="line.debit"
+                  class="compta-input saisie-line-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  :disabled="!contextReady"
+                  @input="normalizeAmounts(line, 'debit')"
+                />
+              </td>
+              <td>
+                <input
+                  v-model.number="line.credit"
+                  class="compta-input saisie-line-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  :disabled="!contextReady"
+                  @input="normalizeAmounts(line, 'credit')"
+                />
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-danger"
+                  style="padding: 0.25rem 0.4rem"
+                  :disabled="!contextReady"
+                  @click="removeLine(idx)"
+                >
                   <i class="pi pi-trash"></i>
                 </button>
               </td>
@@ -102,15 +179,16 @@
       </div>
 
       <div style="margin-top: 0.75rem">
-        <button type="button" class="compta-btn compta-btn-ghost" @click="addLine">
+        <button type="button" class="compta-btn compta-btn-ghost" :disabled="!contextReady" @click="addLine">
           <i class="pi pi-plus"></i> Ligne
         </button>
       </div>
 
-      <div class="compta-balance-bar" :class="balanced ? 'ok' : 'ko'">
+      <div class="compta-balance-bar" :class="balanced && linesHaveValidAuxiliaries ? 'ok' : 'ko'">
         <span>Total débit : <strong>{{ format(totalDebit) }}</strong></span>
         <span>Total crédit : <strong>{{ format(totalCredit) }}</strong></span>
         <span>Écart : <strong>{{ format(Math.abs(totalDebit - totalCredit)) }}</strong></span>
+        <span v-if="!linesHaveValidAuxiliaries" class="saisie-help">Compte auxiliaire à compléter</span>
         <span style="margin-left: auto">
           <EtatBadge :etat="form.etat" />
           {{ balanced ? 'Équilibré' : 'Non équilibré' }}
@@ -155,8 +233,15 @@ const form = reactive({
 const lines = ref([emptyLine(), emptyLine()])
 
 function emptyLine() {
-  return { compte_id: null, libelle: '', debit: 0, credit: 0 }
+  return { compte_id: null, compte_auxiliaire_id: null, libelle: '', debit: 0, credit: 0 }
 }
+
+const periodesForForm = computed(() => {
+  if (!form.exercice_id) return []
+  return context.periodes.filter((p) => Number(p.exercice_id) === Number(form.exercice_id))
+})
+
+const contextReady = computed(() => !!form.journal_id && !!form.exercice_id && !!form.periode_id)
 
 function addLine() {
   lines.value.push(emptyLine())
@@ -167,6 +252,35 @@ function removeLine(idx) {
   lines.value.splice(idx, 1)
 }
 
+function lineHasAmount(line) {
+  return Number(line.debit) > 0 || Number(line.credit) > 0
+}
+
+function auxiliaryOptions(line) {
+  if (!line.compte_id) return []
+  return context.tiers.filter((tier) => Number(tier.compte_collectif_id) === Number(line.compte_id))
+}
+
+function accountRequiresAuxiliary(line) {
+  return auxiliaryOptions(line).length > 0
+}
+
+function auxiliaryLocked(line) {
+  return !line.compte_id || !accountRequiresAuxiliary(line)
+}
+
+function auxiliaryMissing(line) {
+  return !!line.compte_id && accountRequiresAuxiliary(line) && !line.compte_auxiliaire_id
+}
+
+function validAuxiliary(line) {
+  if (!line.compte_id) return true
+  if (accountRequiresAuxiliary(line)) {
+    return auxiliaryOptions(line).some((tier) => Number(tier.id) === Number(line.compte_auxiliaire_id))
+  }
+  return !line.compte_auxiliaire_id
+}
+
 const totalDebit = computed(() =>
   lines.value.reduce((s, l) => s + (Number(l.debit) || 0), 0)
 )
@@ -174,20 +288,55 @@ const totalCredit = computed(() =>
   lines.value.reduce((s, l) => s + (Number(l.credit) || 0), 0)
 )
 const balanced = computed(() => Math.abs(totalDebit.value - totalCredit.value) < 0.005 && totalDebit.value > 0)
-const canSave = computed(() => {
-  const validLines = lines.value.filter((l) => l.compte_id && (Number(l.debit) > 0 || Number(l.credit) > 0))
-  return (
-    balanced.value &&
-    !!form.journal_id &&
-    !!form.numero_piece &&
-    !!(form.exercice_id || context.exerciceId) &&
-    !!(form.periode_id || context.periodeId) &&
-    validLines.length >= 2
-  )
-})
+const validLines = computed(() => lines.value.filter((l) => l.compte_id && lineHasAmount(l)))
+const linesHaveValidAuxiliaries = computed(() => validLines.value.every(validAuxiliary))
+const canSave = computed(() => (
+  contextReady.value &&
+  balanced.value &&
+  !!form.numero_piece &&
+  validLines.value.length >= 2 &&
+  linesHaveValidAuxiliaries.value
+))
+
+function tierLabel(tier) {
+  return tier.intitule || tier.nom_complet || tier.abrege || `#${tier.id}`
+}
 
 function format(n) {
   return new Intl.NumberFormat('fr-BI', { minimumFractionDigits: 2 }).format(Number(n) || 0)
+}
+
+function normalizeAmounts(line, side) {
+  if (side === 'debit' && Number(line.debit) > 0) line.credit = 0
+  if (side === 'credit' && Number(line.credit) > 0) line.debit = 0
+}
+
+function onCompteChange(line) {
+  if (!accountRequiresAuxiliary(line)) {
+    line.compte_auxiliaire_id = null
+    return
+  }
+
+  const exists = auxiliaryOptions(line).some((tier) => Number(tier.id) === Number(line.compte_auxiliaire_id))
+  if (!exists) line.compte_auxiliaire_id = null
+}
+
+function onExerciceChange() {
+  const periode =
+    periodesForForm.value.find((p) => !p.cloturee) ||
+    periodesForForm.value[0]
+
+  form.periode_id = periode?.id ?? null
+}
+
+function applyDefaultContext() {
+  if (!pieceId.value && !form.exercice_id && context.exerciceId) {
+    form.exercice_id = context.exerciceId
+  }
+
+  if (!pieceId.value && !form.periode_id && context.periodeId) {
+    form.periode_id = context.periodeId
+  }
 }
 
 async function loadPiece() {
@@ -210,6 +359,7 @@ async function loadPiece() {
     if (ecritures.length) {
       lines.value = ecritures.map((e) => ({
         compte_id: e.compte_id,
+        compte_auxiliaire_id: e.compte_auxiliaire_id || e.tiers_id || null,
         libelle: e.libelle || '',
         debit: Number(e.debit) || 0,
         credit: Number(e.credit) || 0,
@@ -225,11 +375,10 @@ async function save(etat) {
   error.value = null
   success.value = null
   try {
-    const validLines = lines.value.filter((l) => l.compte_id && (l.debit > 0 || l.credit > 0))
     const payload = {
       journal_id: Number(form.journal_id),
-      exercice_id: Number(form.exercice_id || context.exerciceId),
-      periode_id: Number(form.periode_id || context.periodeId),
+      exercice_id: Number(form.exercice_id),
+      periode_id: Number(form.periode_id),
       numero_piece: form.numero_piece,
       reference: form.reference,
       date_piece: form.date_piece,
@@ -240,9 +389,9 @@ async function save(etat) {
       etat,
       date_validation: etat === 'validee' || etat === 'comptabilisee' ? new Date().toISOString() : null,
       date_comptabilisation: etat === 'comptabilisee' ? new Date().toISOString() : null,
-      ecritures: validLines.map((l, i) => ({
+      ecritures: validLines.value.map((l, i) => ({
         compte_id: Number(l.compte_id),
-        tiers_id: null,
+        compte_auxiliaire_id: l.compte_auxiliaire_id ? Number(l.compte_auxiliaire_id) : null,
         date_ecriture: form.date_comptable,
         numero_ligne: i + 1,
         libelle: l.libelle || form.libelle,
@@ -270,6 +419,65 @@ async function save(etat) {
   }
 }
 
-onMounted(loadPiece)
+onMounted(() => {
+  applyDefaultContext()
+  loadPiece()
+})
+
 watch(pieceId, loadPiece)
+watch(() => context.exerciceId, applyDefaultContext)
+watch(() => context.periodeId, applyDefaultContext)
 </script>
+
+<style scoped>
+.saisie-context {
+  margin-bottom: 1rem;
+}
+
+.saisie-context-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  background: #fef2f2;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.saisie-context-status.ready {
+  border-color: #86efac;
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.saisie-disabled {
+  opacity: 0.72;
+}
+
+.saisie-table th,
+.saisie-table td {
+  vertical-align: top;
+}
+
+.saisie-line-input {
+  width: 100%;
+  min-width: 150px;
+}
+
+.saisie-invalid {
+  border-color: #dc2626 !important;
+  background: #fef2f2;
+}
+
+.saisie-help {
+  display: inline-block;
+  margin-top: 0.25rem;
+  color: #b91c1c;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+</style>

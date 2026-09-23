@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { comptesApi, exercicesApi, journalsApi, periodesApi, societesApi } from '../../services/api'
+import { comptesApi, exercicesApi, journalsApi, periodesApi, societesApi, tiersApi } from '../../services/api'
 
 export const useContextStore = defineStore('comptaContext', {
   state: () => ({
@@ -8,6 +8,7 @@ export const useContextStore = defineStore('comptaContext', {
     periodes: [],
     journals: [],
     comptes: [],
+    tiers: [],
     exerciceId: null,
     periodeId: null,
     loading: false,
@@ -40,18 +41,20 @@ export const useContextStore = defineStore('comptaContext', {
       this.loading = true
       this.error = null
       try {
-        const [so, ex, pe, jo, co] = await Promise.all([
+        const [so, ex, pe, jo, co, ti] = await Promise.all([
           societesApi.list(),
           exercicesApi.list(),
           periodesApi.list(),
           journalsApi.list(),
           comptesApi.list({ per_page: 500, mouvement: 1 }),
+          tiersApi.list({ per_page: 500 }),
         ])
         this.societes = Array.isArray(so.data) ? so.data : []
         this.exercices = Array.isArray(ex.data) ? ex.data : []
         this.periodes = Array.isArray(pe.data) ? pe.data : []
         this.journals = Array.isArray(jo.data) ? jo.data : []
         this.comptes = Array.isArray(co.data) ? co.data : []
+        this.tiers = Array.isArray(ti.data) ? ti.data : []
 
         const ouvert = this.exercices.find((e) => !e.cloture) || this.exercices[0]
         if (ouvert) {
