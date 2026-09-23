@@ -3,7 +3,7 @@
     <div class="compta-page-header">
       <div>
         <h1>Paramètre</h1>
-        <p>Société, exercice et période comptable</p>
+        <p>Société, exercice, période et journaux comptables</p>
       </div>
     </div>
 
@@ -52,7 +52,7 @@
     />
 
     <ResourceList
-      v-else
+      v-else-if="activeTab === 'periodes'"
       title="Période"
       subtitle="Périodes de l'exercice actif"
       :fetcher="periodesApi.list"
@@ -65,13 +65,45 @@
       :create-defaults="periodeDefaults"
       @saved="context.bootstrap"
     />
+
+    <ResourceList
+      v-else-if="activeTab === 'journaux'"
+      title="Journaux"
+      subtitle="Journaux de saisie"
+      searchable
+      :fetcher="journalsApi.list"
+      :columns="journalColumns"
+      :create-label="forms.journaux.createLabel"
+      :edit-label="forms.journaux.editLabel"
+      :form-schema="forms.journaux"
+      :create-fn="journalsApi.create"
+      :update-fn="journalsApi.update"
+      :delete-fn="journalsApi.remove"
+      @saved="context.bootstrap"
+    />
+
+    <ResourceList
+      v-else
+      title="Types de journaux"
+      subtitle="Catégories de journaux comptables"
+      searchable
+      :fetcher="typeJournalsApi.list"
+      :columns="typeJournalColumns"
+      :create-label="forms.typeJournaux.createLabel"
+      :edit-label="forms.typeJournaux.editLabel"
+      :form-schema="forms.typeJournaux"
+      :create-fn="typeJournalsApi.create"
+      :update-fn="typeJournalsApi.update"
+      :delete-fn="typeJournalsApi.remove"
+      @saved="context.bootstrap"
+    />
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue'
 import ResourceList from '../components/ResourceList.vue'
-import { exercicesApi, periodesApi, societesApi } from '../services/api'
+import { exercicesApi, journalsApi, periodesApi, societesApi, typeJournalsApi } from '../services/api'
 import { resourceForms } from '../config/resourceForms'
 import { useContextStore } from '../modules/context/store'
 
@@ -83,6 +115,8 @@ const tabs = [
   { key: 'societes', label: 'Société', icon: 'bi bi-building' },
   { key: 'exercices', label: 'Exercice', icon: 'bi bi-calendar3' },
   { key: 'periodes', label: 'Période', icon: 'bi bi-calendar-plus' },
+  { key: 'journaux', label: 'Journaux', icon: 'bi bi-bookmark' },
+  { key: 'typeJournaux', label: 'Types de journaux', icon: 'bi bi-bookmark-star' },
 ]
 
 const periodeDefaults = computed(() => ({
@@ -110,5 +144,17 @@ const periodeColumns = [
   { key: 'date_debut', label: 'Début', format: (r) => String(r.date_debut || '').slice(0, 10) },
   { key: 'date_fin', label: 'Fin', format: (r) => String(r.date_fin || '').slice(0, 10) },
   { key: 'cloturee', label: 'Clôturée', format: (r) => (r.cloturee ? 'Oui' : 'Non') },
+]
+
+const journalColumns = [
+  { key: 'code', label: 'Code' },
+  { key: 'intitule', label: 'Intitulé' },
+  { key: 'type_journal_id', label: 'Type', format: (r) => r.type_journal?.intitule || r.type_journal_id || '—' },
+]
+
+const typeJournalColumns = [
+  { key: 'code', label: 'Code' },
+  { key: 'intitule', label: 'Intitulé' },
+  { key: 'actif', label: 'Actif', format: (r) => (r.actif ? 'Oui' : 'Non') },
 ]
 </script>
