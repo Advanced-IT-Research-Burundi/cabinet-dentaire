@@ -2,197 +2,307 @@
   <div>
     <div class="compta-page-header">
       <div>
-        <h1>{{ pieceId ? `Pièce #${form.numero_piece || pieceId}` : 'Nouvelle saisie' }}</h1>
-        <p>Équilibre débit / crédit obligatoire avant enregistrement</p>
+        <h1>Saisie des écritures</h1>
+        <p>Création et modification d’une écriture indépendante par ligne.</p>
       </div>
       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
-        <RouterLink class="compta-btn compta-btn-secondary" :to="{ name: 'compta.pieces' }">Retour</RouterLink>
-        <button type="button" class="compta-btn compta-btn-primary" :disabled="!canSave || saving" @click="save('brouillon')">
-          Enregistrer
+        <button type="button" class="compta-btn compta-btn-secondary" @click="openContextModal">
+          Journal / période
         </button>
-        <button
-          v-if="form.etat === 'brouillon' || !pieceId"
-          type="button"
-          class="compta-btn compta-btn-secondary"
-          :disabled="!canSave || saving"
-          @click="save('validee')"
-        >
-          Valider
-        </button>
-        <button
-          v-if="form.etat === 'validee'"
-          type="button"
-          class="compta-btn compta-btn-primary"
-          :disabled="saving"
-          @click="save('comptabilisee')"
-        >
-          Comptabiliser
+        <RouterLink class="compta-btn compta-btn-secondary" :to="{ name: 'compta.pieces' }">Pièces</RouterLink>
+        <button type="button" class="compta-btn compta-btn-secondary" :disabled="loading" @click="load">
+          <i class="bi bi-arrow-clockwise"></i>
         </button>
       </div>
     </div>
 
     <div v-if="error" class="compta-error">{{ error }}</div>
-    <div v-if="success" class="compta-card" style="margin-bottom: 1rem; border-color: #86efac; color: #065f46">
-      {{ success }}
+    <div v-if="success" class="compta-card saisie-success">{{ success }}</div>
+
+    <div v-if="contextReady" class="ecriture-context-strip">
+      <span><strong>Journal</strong> {{ journalLabel }}</span>
+      <span><strong>Exercice</strong> {{ exerciceLabel }}</span>
+      <span><strong>Période</strong> {{ periodeLabel }}</span>
     </div>
 
-    <div class="compta-card saisie-context">
-      <div class="saisie-context-status" :class="{ ready: contextReady }">
-        <span>{{ contextReady ? 'Contexte prêt' : 'Sélectionnez le journal et la période' }}</span>
-      </div>
-
-      <div class="compta-form-grid">
-        <div class="compta-field">
-          <label>Journal</label>
-          <select v-model="form.journal_id" class="compta-select" style="width: 100%">
-            <option :value="null">—</option>
-            <option v-for="j in context.journals" :key="j.id" :value="j.id">
-              {{ j.code }} — {{ j.intitule || j.libelle }}
-            </option>
-          </select>
+    <div v-if="contextModalOpen" class="ecriture-context-backdrop" role="dialog" aria-modal="true">
+      <div class="ecriture-context-modal">
+        <div>
+          <h2>Choisir le journal et la période</h2>
+          <p>L’exercice est celui ouvert dans les paramètres.</p>
         </div>
 
-        <div class="compta-field">
-          <label>Exercice</label>
-          <select v-model="form.exercice_id" class="compta-select" style="width: 100%" @change="onExerciceChange">
-            <option :value="null">—</option>
-            <option v-for="exercice in context.exercices" :key="exercice.id" :value="exercice.id">
-              {{ exercice.code || exercice.id }} — {{ exercice.date_debut }} / {{ exercice.date_fin }}
-            </option>
-          </select>
+        <div class="ecriture-active-exercice" :class="{ missing: !context.exerciceId }">
+          <span>Exercice ouvert</span>
+          <strong>{{ exerciceLabel }}</strong>
         </div>
 
-        <div class="compta-field">
-          <label>Période</label>
-          <select v-model="form.periode_id" class="compta-select" style="width: 100%" :disabled="!form.exercice_id">
-            <option :value="null">—</option>
-            <option v-for="periode in periodesForForm" :key="periode.id" :value="periode.id">
-              {{ periode.libelle || periode.code || `Période #${periode.id}` }}
-            </option>
-          </select>
+        <div class="ecriture-context-fields">
+          <div class="compta-field">
+            <label>Code journal</label>
+            <select v-model="selectedJournalId" class="compta-select" style="width: 100%">
+              <option :value="null">—</option>
+              <option v-for="journal in context.journals" :key="journal.id" :value="journal.id">
+                {{ journal.code }} — {{ journal.intitule || journal.libelle }}
+              </option>
+            </select>
+          </div>
+
+          <div class="compta-field">
+            <label>Période</label>
+            <select v-model="selectedPeriodeId" class="compta-select" style="width: 100%" :disabled="!context.exerciceId">
+              <option :value="null">—</option>
+              <option v-for="periode in periodesForExercice" :key="periode.id" :value="periode.id">
+                {{ periode.libelle || periode.code || `Période #${periode.id}` }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div v-if="!context.exerciceId" class="compta-error">
+          Aucun exercice ouvert n’est sélectionné dans les paramètres.
+        </div>
+
+        <div class="ecriture-context-actions">
+          <RouterLink class="compta-btn compta-btn-secondary" :to="{ name: 'compta.pieces' }">Pièces</RouterLink>
+          <button type="button" class="compta-btn compta-btn-primary" :disabled="!contextReady" @click="confirmContext">
+            Ouvrir la saisie
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="compta-card" :class="{ 'saisie-disabled': !contextReady }">
-      <div class="compta-form-grid">
+    <div v-if="contextReady" class="compta-card ecriture-card">
+      <form class="ecriture-line-form" @submit.prevent="submit">
         <div class="compta-field">
-          <label>N° pièce</label>
-          <input v-model="form.numero_piece" class="compta-input" style="width: 100%" :disabled="!contextReady" />
+          <label>Pièce</label>
+          <select v-model="form.piece_id" class="compta-select" required @change="onPieceChange">
+            <option :value="null">—</option>
+            <option v-for="piece in pieces" :key="piece.id" :value="piece.id">
+              {{ pieceLabel(piece) }}
+            </option>
+          </select>
         </div>
+
         <div class="compta-field">
-          <label>Date pièce</label>
-          <input v-model="form.date_piece" type="date" class="compta-input" style="width: 100%" :disabled="!contextReady" />
+          <label>Date</label>
+          <input v-model="form.date_ecriture" class="compta-input" type="date" required />
         </div>
+
         <div class="compta-field">
-          <label>Date comptable</label>
-          <input v-model="form.date_comptable" type="date" class="compta-input" style="width: 100%" :disabled="!contextReady" />
+          <label>Facture</label>
+          <input v-model="form.numero_facture" class="compta-input" />
         </div>
-        <div class="compta-field" style="grid-column: 1 / -1">
+
+        <div class="compta-field">
+          <label>Compte</label>
+          <select v-model="form.compte_id" class="compta-select" required @change="onCompteChange">
+            <option :value="null">—</option>
+            <option v-for="compte in context.comptes" :key="compte.id" :value="compte.id">
+              {{ compte.numero }} — {{ compte.intitule }}
+            </option>
+          </select>
+        </div>
+
+        <div class="compta-field">
+          <label>Auxiliaire</label>
+          <select
+            v-model="form.compte_auxiliaire_id"
+            class="compta-select"
+            :class="{ 'saisie-invalid': auxiliaryMissing(form) }"
+            :disabled="auxiliaryLocked(form)"
+          >
+            <option :value="null">—</option>
+            <option v-for="tier in auxiliaryOptions(form)" :key="tier.id" :value="tier.id">
+              {{ tierLabel(tier) }}
+            </option>
+          </select>
+          <small v-if="auxiliaryMissing(form)" class="saisie-help">Obligatoire</small>
+        </div>
+
+        <div class="compta-field ecriture-grow">
           <label>Libellé</label>
-          <input v-model="form.libelle" class="compta-input" style="width: 100%" :disabled="!contextReady" />
+          <input v-model="form.libelle" class="compta-input" />
         </div>
-      </div>
 
-      <div class="compta-table-wrap compta-lines-grid">
-        <table class="compta-table saisie-table">
+        <div class="compta-field">
+          <label>Débit</label>
+          <input v-model.number="form.debit" class="compta-input" type="number" min="0" step="0.01" @input="normalizeAmounts('debit')" />
+        </div>
+
+        <div class="compta-field">
+          <label>Crédit</label>
+          <input v-model.number="form.credit" class="compta-input" type="number" min="0" step="0.01" @input="normalizeAmounts('credit')" />
+        </div>
+
+        <div class="ecriture-actions">
+          <button
+            type="submit"
+            class="compta-btn compta-btn-primary ecriture-icon-btn"
+            :disabled="!canSubmit || saving"
+            :title="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
+            :aria-label="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
+          >
+            <i :class="editingId ? 'bi bi-check-lg' : 'bi bi-plus-lg'"></i>
+          </button>
+          <button
+            v-if="editingId"
+            type="button"
+            class="compta-btn compta-btn-secondary ecriture-icon-btn"
+            title="Annuler la modification"
+            aria-label="Annuler la modification"
+            @click="resetForm"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </form>
+
+      <div class="compta-table-wrap">
+        <table class="compta-table ecriture-table">
+          <colgroup>
+            <col class="ecriture-col-piece" />
+            <col class="ecriture-col-date" />
+            <col class="ecriture-col-facture" />
+            <col class="ecriture-col-compte" />
+            <col class="ecriture-col-auxiliaire" />
+            <col class="ecriture-col-libelle" />
+            <col class="ecriture-col-montant" />
+            <col class="ecriture-col-montant" />
+            <col class="ecriture-col-actions" />
+          </colgroup>
           <thead>
             <tr>
-              <th style="width: 3rem">#</th>
+              <th>Pièce</th>
+              <th>Date</th>
+              <th>Facture</th>
               <th>Compte</th>
-              <th>Compte auxiliaire</th>
+              <th>Auxiliaire</th>
               <th>Libellé</th>
-              <th style="width: 8rem">Débit</th>
-              <th style="width: 8rem">Crédit</th>
-              <th style="width: 3rem"></th>
+              <th>Débit</th>
+              <th>Crédit</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(line, idx) in lines" :key="idx">
-              <td>{{ idx + 1 }}</td>
+            <tr
+              v-for="ecriture in ecritures"
+              :key="ecriture.id"
+              :class="{ 'saisie-row-editing': editingId === ecriture.id }"
+              @dblclick="edit(ecriture)"
+            >
+              <td>{{ pieceLabelById(ecriture.piece_id) }}</td>
+              <td>{{ formatDate(ecriture.date_ecriture) }}</td>
+              <td>{{ ecriture.numero_facture || '—' }}</td>
+              <td>{{ compteLabel(ecriture.compte_id) }}</td>
               <td>
-                <select
-                  v-model="line.compte_id"
-                  class="compta-select saisie-line-input"
-                  :disabled="!contextReady"
-                  @change="onCompteChange(line)"
-                >
-                  <option :value="null">—</option>
-                  <option v-for="c in context.comptes" :key="c.id" :value="c.id">
-                    {{ c.numero }} — {{ c.intitule }}
-                  </option>
-                </select>
+                <span :class="{ 'saisie-help': auxiliaryMissing(ecriture) }">
+                  {{ auxiliaryLabel(ecriture) }}
+                </span>
               </td>
-              <td>
-                <select
-                  v-model="line.compte_auxiliaire_id"
-                  class="compta-select saisie-line-input"
-                  :class="{ 'saisie-invalid': auxiliaryMissing(line) }"
-                  :disabled="!contextReady || auxiliaryLocked(line)"
-                >
-                  <option :value="null">—</option>
-                  <option v-for="tier in auxiliaryOptions(line)" :key="tier.id" :value="tier.id">
-                    {{ tierLabel(tier) }}
-                  </option>
-                </select>
-                <small v-if="auxiliaryMissing(line)" class="saisie-help">Auxiliaire obligatoire</small>
-              </td>
-              <td>
-                <input v-model="line.libelle" class="compta-input saisie-line-input" :disabled="!contextReady" />
-              </td>
-              <td>
-                <input
-                  v-model.number="line.debit"
-                  class="compta-input saisie-line-input"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  :disabled="!contextReady"
-                  @input="normalizeAmounts(line, 'debit')"
-                />
-              </td>
-              <td>
-                <input
-                  v-model.number="line.credit"
-                  class="compta-input saisie-line-input"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  :disabled="!contextReady"
-                  @input="normalizeAmounts(line, 'credit')"
-                />
-              </td>
-              <td>
+              <td>{{ ecriture.libelle || '—' }}</td>
+              <td>{{ format(ecriture.debit) }}</td>
+              <td>{{ format(ecriture.credit) }}</td>
+              <td style="white-space: nowrap">
                 <button
                   type="button"
-                  class="compta-btn compta-btn-danger"
-                  style="padding: 0.25rem 0.4rem"
-                  :disabled="!contextReady"
-                  @click="removeLine(idx)"
+                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                  title="Modifier"
+                  aria-label="Modifier"
+                  @click.stop="edit(ecriture)"
                 >
-                  <i class="pi pi-trash"></i>
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                  style="color: #b91c1c"
+                  title="Supprimer"
+                  aria-label="Supprimer"
+                  :disabled="deletingId === ecriture.id"
+                  @click.stop="remove(ecriture)"
+                >
+                  <i class="bi bi-trash"></i>
                 </button>
               </td>
             </tr>
+            <tr v-if="!ecritures.length">
+              <td colspan="9" class="compta-empty">Aucune écriture</td>
+            </tr><div class="compta-table-wrap">
+        <table class="compta-table ecriture-table">
+          <colgroup>
+            <col class="ecriture-col-piece" />
+            <col class="ecriture-col-date" />
+            <col class="ecriture-col-facture" />
+            <col class="ecriture-col-compte" />
+            <col class="ecriture-col-auxiliaire" />
+            <col class="ecriture-col-libelle" />
+            <col class="ecriture-col-montant" />
+            <col class="ecriture-col-montant" />
+            <col class="ecriture-col-actions" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Pièce</th>
+              <th>Date</th>
+              <th>Facture</th>
+              <th>Compte</th>
+              <th>Auxiliaire</th>
+              <th>Libellé</th>
+              <th>Débit</th>
+              <th>Crédit</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="ecriture in ecritures"
+              :key="ecriture.id"
+              :class="{ 'saisie-row-editing': editingId === ecriture.id }"
+              @dblclick="edit(ecriture)"
+            >
+              <td>{{ pieceLabelById(ecriture.piece_id) }}</td>
+              <td>{{ formatDate(ecriture.date_ecriture) }}</td>
+              <td>{{ ecriture.numero_facture || '—' }}</td>
+              <td>{{ compteLabel(ecriture.compte_id) }}</td>
+              <td>
+                <span :class="{ 'saisie-help': auxiliaryMissing(ecriture) }">
+                  {{ auxiliaryLabel(ecriture) }}
+                </span>
+              </td>
+              <td>{{ ecriture.libelle || '—' }}</td>
+              <td>{{ format(ecriture.debit) }}</td>
+              <td>{{ format(ecriture.credit) }}</td>
+              <td style="white-space: nowrap">
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                  title="Modifier"
+                  aria-label="Modifier"
+                  @click.stop="edit(ecriture)"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                  style="color: #b91c1c"
+                  title="Supprimer"
+                  aria-label="Supprimer"
+                  :disabled="deletingId === ecriture.id"
+                  @click.stop="remove(ecriture)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr v-if="!ecritures.length">
+              <td colspan="9" class="compta-empty">Aucune écriture</td>
+            </tr>
           </tbody>
         </table>
-      </div>
-
-      <div style="margin-top: 0.75rem">
-        <button type="button" class="compta-btn compta-btn-ghost" :disabled="!contextReady" @click="addLine">
-          <i class="pi pi-plus"></i> Ligne
-        </button>
-      </div>
-
-      <div class="compta-balance-bar" :class="balanced && linesHaveValidAuxiliaries ? 'ok' : 'ko'">
-        <span>Total débit : <strong>{{ format(totalDebit) }}</strong></span>
-        <span>Total crédit : <strong>{{ format(totalCredit) }}</strong></span>
-        <span>Écart : <strong>{{ format(Math.abs(totalDebit - totalCredit)) }}</strong></span>
-        <span v-if="!linesHaveValidAuxiliaries" class="saisie-help">Compte auxiliaire à compléter</span>
-        <span style="margin-left: auto">
-          <EtatBadge :etat="form.etat" />
-          {{ balanced ? 'Équilibré' : 'Non équilibré' }}
-        </span>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -200,60 +310,98 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { piecesApi } from '../services/api'
+import { useRoute } from 'vue-router'
+import { ecrituresApi, piecesApi } from '../services/api'
 import { useContextStore } from '../modules/context/store'
-import EtatBadge from '../components/EtatBadge.vue'
 
 const route = useRoute()
-const router = useRouter()
 const context = useContextStore()
+const today = new Date().toISOString().slice(0, 10)
 
-const pieceId = computed(() => route.params.id ? Number(route.params.id) : null)
+const pieces = ref([])
+const ecritures = ref([])
+const loading = ref(false)
 const saving = ref(false)
+const deletingId = ref(null)
+const editingId = ref(null)
+const selectedPieceId = ref(route.query.piece_id ? Number(route.query.piece_id) : null)
+const selectedJournalId = ref(null)
+const selectedPeriodeId = ref(null)
+const contextModalOpen = ref(true)
 const error = ref(null)
 const success = ref(null)
 
-const today = new Date().toISOString().slice(0, 10)
+const form = reactive(emptyForm())
 
-const form = reactive({
-  journal_id: null,
-  exercice_id: null,
-  periode_id: null,
-  numero_piece: '',
-  reference: null,
-  date_piece: today,
-  date_comptable: today,
-  libelle: '',
-  total_debit: 0,
-  total_credit: 0,
-  etat: 'brouillon',
+function emptyForm() {
+  return {
+    piece_id: selectedPieceId.value || null,
+    piece_comptable_id: selectedPieceId.value || null,
+    numero_facture: '',
+    compte_id: null,
+    compte_auxiliaire_id: null,
+    date_ecriture: today,
+    libelle: '',
+    debit: 0,
+    credit: 0,
+  }
+}
+
+const canSubmit = computed(() => (
+  contextReady.value &&
+  !!form.piece_id &&
+  !!form.compte_id &&
+  !!form.date_ecriture &&
+  validAuxiliary(form) &&
+  (Number(form.debit) > 0 || Number(form.credit) > 0)
+))
+
+const periodesForExercice = computed(() => {
+  if (!context.exerciceId) return []
+  return context.periodes.filter((periode) => Number(periode.exercice_id) === Number(context.exerciceId))
 })
 
-const lines = ref([emptyLine(), emptyLine()])
-
-function emptyLine() {
-  return { compte_id: null, compte_auxiliaire_id: null, libelle: '', debit: 0, credit: 0 }
-}
-
-const periodesForForm = computed(() => {
-  if (!form.exercice_id) return []
-  return context.periodes.filter((p) => Number(p.exercice_id) === Number(form.exercice_id))
+const contextReady = computed(() => !!context.exerciceId && !!selectedJournalId.value && !!selectedPeriodeId.value)
+const selectedJournal = computed(() => context.journals.find((journal) => Number(journal.id) === Number(selectedJournalId.value)) || null)
+const selectedPeriode = computed(() => context.periodes.find((periode) => Number(periode.id) === Number(selectedPeriodeId.value)) || null)
+const selectedExercice = computed(() => context.exercices.find((exercice) => Number(exercice.id) === Number(context.exerciceId)) || null)
+const journalLabel = computed(() => {
+  const journal = selectedJournal.value
+  return journal ? `${journal.code} — ${journal.intitule || journal.libelle || journal.id}` : '—'
+})
+const periodeLabel = computed(() => {
+  const periode = selectedPeriode.value
+  return periode ? (periode.libelle || periode.code || `Période #${periode.id}`) : '—'
+})
+const exerciceLabel = computed(() => {
+  const exercice = selectedExercice.value
+  if (!exercice) return 'Aucun exercice ouvert'
+  return `${exercice.code || exercice.id} — ${formatDate(exercice.date_debut)} / ${formatDate(exercice.date_fin)}`
 })
 
-const contextReady = computed(() => !!form.journal_id && !!form.exercice_id && !!form.periode_id)
-
-function addLine() {
-  lines.value.push(emptyLine())
+function pieceLabel(piece) {
+  return `${piece.numero_piece || `#${piece.id}`} — ${piece.libelle || piece.reference || piece.date_comptable || ''}`.trim()
 }
 
-function removeLine(idx) {
-  if (lines.value.length <= 2) return
-  lines.value.splice(idx, 1)
+function pieceLabelById(id) {
+  const piece = pieces.value.find((item) => Number(item.id) === Number(id))
+  return piece ? pieceLabel(piece) : `#${id}`
 }
 
-function lineHasAmount(line) {
-  return Number(line.debit) > 0 || Number(line.credit) > 0
+function compteLabel(id) {
+  const compte = context.comptes.find((item) => Number(item.id) === Number(id))
+  return compte ? `${compte.numero} — ${compte.intitule}` : `#${id}`
+}
+
+function tierLabel(tier) {
+  return tier.intitule || tier.nom_complet || tier.abrege || `#${tier.id}`
+}
+
+function auxiliaryLabel(line) {
+  if (auxiliaryMissing(line)) return 'Auxiliaire obligatoire'
+  if (!line.compte_auxiliaire_id) return '—'
+  const tier = context.tiers.find((item) => Number(item.id) === Number(line.compte_auxiliaire_id))
+  return tier ? tierLabel(tier) : `#${line.compte_auxiliaire_id}`
 }
 
 function auxiliaryOptions(line) {
@@ -281,137 +429,132 @@ function validAuxiliary(line) {
   return !line.compte_auxiliaire_id
 }
 
-const totalDebit = computed(() =>
-  lines.value.reduce((s, l) => s + (Number(l.debit) || 0), 0)
-)
-const totalCredit = computed(() =>
-  lines.value.reduce((s, l) => s + (Number(l.credit) || 0), 0)
-)
-const balanced = computed(() => Math.abs(totalDebit.value - totalCredit.value) < 0.005 && totalDebit.value > 0)
-const validLines = computed(() => lines.value.filter((l) => l.compte_id && lineHasAmount(l)))
-const linesHaveValidAuxiliaries = computed(() => validLines.value.every(validAuxiliary))
-const canSave = computed(() => (
-  contextReady.value &&
-  balanced.value &&
-  !!form.numero_piece &&
-  validLines.value.length >= 2 &&
-  linesHaveValidAuxiliaries.value
-))
-
-function tierLabel(tier) {
-  return tier.intitule || tier.nom_complet || tier.abrege || `#${tier.id}`
+function normalizeAmounts(side) {
+  if (side === 'debit' && Number(form.debit) > 0) form.credit = 0
+  if (side === 'credit' && Number(form.credit) > 0) form.debit = 0
 }
 
 function format(n) {
   return new Intl.NumberFormat('fr-BI', { minimumFractionDigits: 2 }).format(Number(n) || 0)
 }
 
-function normalizeAmounts(line, side) {
-  if (side === 'debit' && Number(line.debit) > 0) line.credit = 0
-  if (side === 'credit' && Number(line.credit) > 0) line.debit = 0
+function formatDate(value) {
+  return value ? String(value).slice(0, 10) : '—'
 }
 
-function onCompteChange(line) {
-  if (!accountRequiresAuxiliary(line)) {
-    line.compte_auxiliaire_id = null
+function onCompteChange() {
+  if (!validAuxiliary(form)) form.compte_auxiliaire_id = null
+}
+
+function onPieceChange() {
+  form.piece_comptable_id = form.piece_id || null
+  const piece = pieces.value.find((item) => Number(item.id) === Number(form.piece_id))
+  if (piece?.date_comptable && form.date_ecriture === today) {
+    form.date_ecriture = String(piece.date_comptable).slice(0, 10)
+  }
+}
+
+function payload() {
+  return {
+    piece_id: Number(form.piece_id),
+    piece_comptable_id: form.piece_comptable_id ? Number(form.piece_comptable_id) : Number(form.piece_id),
+    numero_facture: form.numero_facture || null,
+    compte_id: Number(form.compte_id),
+    compte_auxiliaire_id: form.compte_auxiliaire_id ? Number(form.compte_auxiliaire_id) : null,
+    date_ecriture: form.date_ecriture,
+    libelle: form.libelle || null,
+    debit: Number(form.debit) || 0,
+    credit: Number(form.credit) || 0,
+  }
+}
+
+async function loadPieces() {
+  if (!contextReady.value) {
+    pieces.value = []
     return
   }
 
-  const exists = auxiliaryOptions(line).some((tier) => Number(tier.id) === Number(line.compte_auxiliaire_id))
-  if (!exists) line.compte_auxiliaire_id = null
+  const params = {
+    per_page: 500,
+    exercice_id: context.exerciceId || undefined,
+    journal_id: selectedJournalId.value || undefined,
+    periode_id: selectedPeriodeId.value || undefined,
+  }
+  const res = await piecesApi.list(params)
+  pieces.value = Array.isArray(res.data) ? res.data : []
 }
 
-function onExerciceChange() {
-  const periode =
-    periodesForForm.value.find((p) => !p.cloturee) ||
-    periodesForForm.value[0]
-
-  form.periode_id = periode?.id ?? null
-}
-
-function applyDefaultContext() {
-  if (!pieceId.value && !form.exercice_id && context.exerciceId) {
-    form.exercice_id = context.exerciceId
+async function loadEcritures() {
+  if (!contextReady.value) {
+    ecritures.value = []
+    return
   }
 
-  if (!pieceId.value && !form.periode_id && context.periodeId) {
-    form.periode_id = context.periodeId
-  }
-}
-
-async function loadPiece() {
-  if (!pieceId.value) return
+  loading.value = true
   error.value = null
   try {
-    const p = await piecesApi.get(pieceId.value)
-    Object.assign(form, {
-      journal_id: p.journal_id,
-      exercice_id: p.exercice_id,
-      periode_id: p.periode_id,
-      numero_piece: p.numero_piece,
-      reference: p.reference,
-      date_piece: String(p.date_piece).slice(0, 10),
-      date_comptable: String(p.date_comptable).slice(0, 10),
-      libelle: p.libelle || '',
-      etat: p.etat,
-    })
-    const ecritures = Array.isArray(p.ecritures) ? p.ecritures : (p.ecritures?.data || [])
-    if (ecritures.length) {
-      lines.value = ecritures.map((e) => ({
-        compte_id: e.compte_id,
-        compte_auxiliaire_id: e.compte_auxiliaire_id || e.tiers_id || null,
-        libelle: e.libelle || '',
-        debit: Number(e.debit) || 0,
-        credit: Number(e.credit) || 0,
-      }))
+    const params = {
+      per_page: 500,
+      exercice_id: context.exerciceId || undefined,
+      journal_id: selectedJournalId.value || undefined,
+      periode_id: selectedPeriodeId.value || undefined,
     }
+    const res = await ecrituresApi.list(params)
+    ecritures.value = Array.isArray(res.data) ? res.data : []
   } catch (e) {
     error.value = e.message
+  } finally {
+    loading.value = false
   }
 }
 
-async function save(etat) {
+async function load() {
+  if (!contextReady.value) {
+    contextModalOpen.value = true
+    return
+  }
+
+  loading.value = true
+  error.value = null
+  try {
+    await loadPieces()
+    const selectedPieceExists = pieces.value.some((piece) => Number(piece.id) === Number(selectedPieceId.value))
+    if (selectedPieceId.value && !selectedPieceExists) {
+      selectedPieceId.value = null
+      form.piece_id = null
+      form.piece_comptable_id = null
+    }
+    if (selectedPieceId.value && !form.piece_id) {
+      form.piece_id = selectedPieceId.value
+      form.piece_comptable_id = selectedPieceId.value
+      onPieceChange()
+    }
+    await loadEcritures()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    loading.value = false
+  }
+}
+
+async function submit() {
+  if (!canSubmit.value) return
   saving.value = true
   error.value = null
   success.value = null
   try {
-    const payload = {
-      journal_id: Number(form.journal_id),
-      exercice_id: Number(form.exercice_id),
-      periode_id: Number(form.periode_id),
-      numero_piece: form.numero_piece,
-      reference: form.reference,
-      date_piece: form.date_piece,
-      date_comptable: form.date_comptable,
-      libelle: form.libelle,
-      total_debit: totalDebit.value,
-      total_credit: totalCredit.value,
-      etat,
-      date_validation: etat === 'validee' || etat === 'comptabilisee' ? new Date().toISOString() : null,
-      date_comptabilisation: etat === 'comptabilisee' ? new Date().toISOString() : null,
-      ecritures: validLines.value.map((l, i) => ({
-        compte_id: Number(l.compte_id),
-        compte_auxiliaire_id: l.compte_auxiliaire_id ? Number(l.compte_auxiliaire_id) : null,
-        date_ecriture: form.date_comptable,
-        numero_ligne: i + 1,
-        libelle: l.libelle || form.libelle,
-        debit: Number(l.debit) || 0,
-        credit: Number(l.credit) || 0,
-        rapprochement: false,
-      })),
-    }
-
-    let saved
-    if (pieceId.value) {
-      saved = await piecesApi.update(pieceId.value, payload)
+    if (editingId.value) {
+      await ecrituresApi.update(editingId.value, payload())
+      success.value = 'Écriture modifiée.'
     } else {
-      saved = await piecesApi.create(payload)
+      await ecrituresApi.create(payload())
+      success.value = 'Écriture enregistrée.'
     }
-    form.etat = saved.etat || etat
-    success.value = 'Pièce enregistrée.'
-    if (!pieceId.value && saved.id) {
-      router.replace({ name: 'compta.saisie', params: { id: saved.id } })
-    }
+    const keepPiece = form.piece_id
+    resetForm()
+    form.piece_id = keepPiece
+    form.piece_comptable_id = keepPiece
+    await loadEcritures()
   } catch (e) {
     error.value = e.message
   } finally {
@@ -419,53 +562,296 @@ async function save(etat) {
   }
 }
 
+function edit(ecriture) {
+  editingId.value = ecriture.id
+  Object.assign(form, {
+    piece_id: ecriture.piece_id,
+    piece_comptable_id: ecriture.piece_comptable_id || ecriture.piece_id,
+    numero_facture: ecriture.numero_facture || '',
+    compte_id: ecriture.compte_id,
+    compte_auxiliaire_id: ecriture.compte_auxiliaire_id || null,
+    date_ecriture: formatDate(ecriture.date_ecriture),
+    libelle: ecriture.libelle || '',
+    debit: Number(ecriture.debit) || 0,
+    credit: Number(ecriture.credit) || 0,
+  })
+}
+
+function resetForm() {
+  Object.assign(form, emptyForm())
+  editingId.value = null
+}
+
+function applyDefaultContext() {
+  const periodStillValid = periodesForExercice.value.some((periode) => Number(periode.id) === Number(selectedPeriodeId.value))
+  if (!periodStillValid) {
+    selectedPeriodeId.value = context.periodeId || null
+  }
+}
+
+function openContextModal() {
+  applyDefaultContext()
+  contextModalOpen.value = true
+}
+
+async function confirmContext() {
+  if (!contextReady.value) return
+  contextModalOpen.value = false
+  selectedPieceId.value = route.query.piece_id ? Number(route.query.piece_id) : null
+  resetForm()
+  await load()
+}
+
+async function remove(ecriture) {
+  if (!window.confirm('Supprimer cette écriture ?')) return
+  deletingId.value = ecriture.id
+  error.value = null
+  try {
+    await ecrituresApi.remove(ecriture.id)
+    await loadEcritures()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    deletingId.value = null
+  }
+}
+
 onMounted(() => {
   applyDefaultContext()
-  loadPiece()
+  contextModalOpen.value = true
 })
-
-watch(pieceId, loadPiece)
-watch(() => context.exerciceId, applyDefaultContext)
+watch(() => context.exerciceId, () => {
+  selectedPieceId.value = null
+  resetForm()
+  applyDefaultContext()
+  contextModalOpen.value = true
+})
 watch(() => context.periodeId, applyDefaultContext)
 </script>
 
 <style scoped>
-.saisie-context {
+.saisie-success {
   margin-bottom: 1rem;
+  border-color: #86efac;
+  color: #065f46;
 }
 
-.saisie-context-status {
-  display: inline-flex;
+.ecriture-context-strip {
+  display: flex;
   align-items: center;
-  min-height: 1.75rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   margin-bottom: 0.75rem;
-  padding: 0.25rem 0.6rem;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
-  background: #fef2f2;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--compta-border);
+  background: #f8fafc;
   border-radius: 6px;
   font-size: 0.875rem;
-  font-weight: 600;
+  color: #334155;
 }
 
-.saisie-context-status.ready {
-  border-color: #86efac;
+.ecriture-context-strip span {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.ecriture-context-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(15 23 42 / 0.45);
+}
+
+.ecriture-context-modal {
+  width: min(620px, 100%);
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--compta-border);
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 0.25);
+}
+
+.ecriture-context-modal h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.ecriture-context-modal p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.ecriture-active-exercice {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
   color: #166534;
   background: #f0fdf4;
 }
 
-.saisie-disabled {
-  opacity: 0.72;
+.ecriture-active-exercice.missing {
+  border-color: #fecaca;
+  color: #991b1b;
+  background: #fef2f2;
 }
 
-.saisie-table th,
-.saisie-table td {
-  vertical-align: top;
+.ecriture-context-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 0.75rem;
 }
 
-.saisie-line-input {
+.ecriture-context-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.ecriture-card {
+  --ecriture-col-piece: 150px;
+  --ecriture-col-date: 132px;
+  --ecriture-col-facture: 132px;
+  --ecriture-col-compte: 190px;
+  --ecriture-col-auxiliaire: 170px;
+  --ecriture-col-libelle: 220px;
+  --ecriture-col-montant: 100px;
+  --ecriture-col-actions: 88px;
+  --ecriture-total-width: 1282px;
+  overflow-x: auto;
+}
+
+.ecriture-line-form {
+  display: grid;
+  grid-template-columns:
+    var(--ecriture-col-piece)
+    var(--ecriture-col-date)
+    var(--ecriture-col-facture)
+    var(--ecriture-col-compte)
+    var(--ecriture-col-auxiliaire)
+    var(--ecriture-col-libelle)
+    var(--ecriture-col-montant)
+    var(--ecriture-col-montant)
+    var(--ecriture-col-actions);
+  min-width: var(--ecriture-total-width);
+  gap: 0;
+  align-items: end;
+}
+
+.ecriture-line-form .compta-field {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 0.75rem;
+}
+
+.ecriture-line-form .compta-input,
+.ecriture-line-form .compta-select {
   width: 100%;
-  min-width: 150px;
+  min-width: 0;
+}
+
+.ecriture-grow {
+  min-width: 0;
+}
+
+.ecriture-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+
+.ecriture-icon-btn {
+  width: 2.4rem;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.ecriture-table {
+  table-layout: fixed;
+  min-width: var(--ecriture-total-width);
+  margin-top: 1rem;
+}
+
+.ecriture-table th,
+.ecriture-table td {
+  overflow-wrap: anywhere;
+}
+
+.ecriture-col-piece {
+  width: var(--ecriture-col-piece);
+}
+
+.ecriture-col-date {
+  width: var(--ecriture-col-date);
+}
+
+.ecriture-col-facture {
+  width: var(--ecriture-col-facture);
+}
+
+.ecriture-col-compte {
+  width: var(--ecriture-col-compte);
+}
+
+.ecriture-col-auxiliaire {
+  width: var(--ecriture-col-auxiliaire);
+}
+
+.ecriture-col-libelle {
+  width: var(--ecriture-col-libelle);
+}
+
+.ecriture-col-montant {
+  width: var(--ecriture-col-montant);
+}
+
+.ecriture-col-actions {
+  width: var(--ecriture-col-actions);
+}
+
+@media (max-width: 1300px) {
+  .ecriture-line-form {
+    grid-template-columns:
+      var(--ecriture-col-piece)
+      var(--ecriture-col-date)
+      var(--ecriture-col-facture)
+      var(--ecriture-col-compte)
+      var(--ecriture-col-auxiliaire)
+      var(--ecriture-col-libelle)
+      var(--ecriture-col-montant)
+      var(--ecriture-col-montant)
+      var(--ecriture-col-actions);
+  }
+}
+
+@media (max-width: 720px) {
+  .ecriture-context-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ecriture-active-exercice,
+  .ecriture-context-actions {
+    flex-direction: column;
+  }
+}
+
+.saisie-row-editing td {
+  background: #eff6ff;
 }
 
 .saisie-invalid {

@@ -44,11 +44,11 @@
         <div class="compta-card">
           <h3 style="margin: 0 0 0.75rem; font-size: 0.95rem">Alertes clôture</h3>
           <p style="margin: 0 0 0.5rem; font-size: 0.875rem">
-            Non rapprochées :
+            Écritures banque :
             <strong>{{ dashboard.rapprochement?.ecritures_non_rapprochees ?? 0 }}</strong>
           </p>
           <p style="margin: 0; font-size: 0.875rem">
-            Non lettrées :
+            Écritures tiers :
             <strong>{{ dashboard.rapprochement?.ecritures_non_lettrees ?? 0 }}</strong>
           </p>
           <div style="margin-top: 1rem">

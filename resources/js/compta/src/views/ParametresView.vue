@@ -83,6 +83,14 @@
     />
 
     <ResourceList
+      v-else-if="activeTab === 'historiques'"
+      title="Historique exercices"
+      subtitle="Ouvertures et clôtures des exercices"
+      :fetcher="exerciceHistoriquesApi.list"
+      :columns="historiqueColumns"
+    />
+
+    <ResourceList
       v-else
       title="Types de journaux"
       subtitle="Catégories de journaux comptables"
@@ -103,7 +111,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import ResourceList from '../components/ResourceList.vue'
-import { exercicesApi, journalsApi, periodesApi, societesApi, typeJournalsApi } from '../services/api'
+import { exerciceHistoriquesApi, exercicesApi, journalsApi, periodesApi, societesApi, typeJournalsApi } from '../services/api'
 import { resourceForms } from '../config/resourceForms'
 import { useContextStore } from '../modules/context/store'
 
@@ -116,6 +124,7 @@ const tabs = [
   { key: 'exercices', label: 'Exercice', icon: 'bi bi-calendar3' },
   { key: 'periodes', label: 'Période', icon: 'bi bi-calendar-plus' },
   { key: 'journaux', label: 'Journaux', icon: 'bi bi-bookmark' },
+  { key: 'historiques', label: 'Historique exercices', icon: 'bi bi-clock-history' },
 //   { key: 'typeJournaux', label: 'Types de journaux', icon: 'bi bi-bookmark-star' },
 ]
 
@@ -156,5 +165,12 @@ const typeJournalColumns = [
   { key: 'code', label: 'Code' },
   { key: 'intitule', label: 'Intitulé' },
   { key: 'actif', label: 'Actif', format: (r) => (r.actif ? 'Oui' : 'Non') },
+]
+
+const historiqueColumns = [
+  { key: 'exercice_id', label: 'Exercice', format: (r) => r.exercice?.code || r.exercice_id || '—' },
+  { key: 'action', label: 'Action', format: (r) => (r.action === 'cloture' ? 'Clôture' : 'Ouverture') },
+  { key: 'date_action', label: 'Date', format: (r) => String(r.date_action || '').slice(0, 10) },
+  { key: 'commentaire', label: 'Commentaire', format: (r) => r.commentaire || '—' },
 ]
 </script>

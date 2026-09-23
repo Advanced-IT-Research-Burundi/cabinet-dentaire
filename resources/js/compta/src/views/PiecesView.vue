@@ -5,9 +5,9 @@
         <h1>Pièces comptables</h1>
         <p>Liste filtrable par état, journal et exercice</p>
       </div>
-      <RouterLink class="compta-btn compta-btn-primary" :to="{ name: 'compta.saisie' }">
-        <i class="bi bi-plus-lg"></i> Nouvelle saisie
-      </RouterLink>
+      <button type="button" class="compta-btn compta-btn-primary" @click="openCreate">
+        <i class="bi bi-plus-lg"></i> Nouvelle pièce
+      </button>
     </div>
 
     <div class="compta-filters">
@@ -60,10 +60,18 @@
                 <RouterLink
                   class="compta-btn compta-btn-ghost"
                   style="padding: 0.25rem 0.5rem"
-                  :to="{ name: 'compta.saisie', params: { id: p.id } }"
+                  :to="{ name: 'compta.saisie', query: { piece_id: p.id } }"
                 >
-                  Ouvrir
+                  Écritures
                 </RouterLink>
+                <button
+                  type="button"
+                  class="compta-btn compta-btn-ghost"
+                  style="padding: 0.25rem 0.5rem"
+                  @click="openEdit(p)"
+                >
+                  Modifier
+                </button>
                 <button
                   type="button"
                   class="compta-btn compta-btn-ghost"
@@ -104,15 +112,29 @@
         </button>
       </div>
     </div>
+
+    <ResourceFormModal
+      :open="modalOpen"
+      :title="editing ? 'Modifier la pièce' : 'Nouvelle pièce'"
+      :fields="forms.pieces.fields"
+      :create-fn="piecesApi.create"
+      :update-fn="piecesApi.update"
+      :record="editing"
+      :defaults="pieceDefaults"
+      @close="closeModal"
+      @saved="onSaved"
+    />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { piecesApi } from '../services/api'
 import { useContextStore } from '../modules/context/store'
 import EtatBadge from '../components/EtatBadge.vue'
+import ResourceFormModal from '../components/ResourceFormModal.vue'
+import { resourceForms } from '../config/resourceForms'
 
 const route = useRoute()
 const context = useContextStore()
@@ -124,6 +146,10 @@ const deletingId = ref(null)
 const etat = ref(route.query.etat || null)
 const q = ref('')
 const page = ref(1)
+const modalOpen = ref(false)
+const editing = ref(null)
+const forms = resourceForms
+const today = new Date().toISOString().slice(0, 10)
 
 const etatChips = [
   { label: 'Toutes', value: null },
@@ -132,6 +158,16 @@ const etatChips = [
   { label: 'Comptabilisée', value: 'comptabilisee' },
   { label: 'Annulée', value: 'annulee' },
 ]
+
+const pieceDefaults = computed(() => ({
+  exercice_id: context.exerciceId || null,
+  periode_id: context.periodeId || null,
+  date_piece: today,
+  date_comptable: today,
+  total_debit: 0,
+  total_credit: 0,
+  etat: 'brouillon',
+}))
 
 function format(n) {
   if (n == null) return '—'
@@ -176,6 +212,27 @@ async function removePiece(piece) {
   } finally {
     deletingId.value = null
   }
+}
+
+function openCreate() {
+  editing.value = null
+  modalOpen.value = true
+}
+
+function openEdit(piece) {
+  editing.value = { ...piece }
+  modalOpen.value = true
+}
+
+function closeModal() {
+  modalOpen.value = false
+  editing.value = null
+}
+
+async function onSaved() {
+  closeModal()
+  await load()
+  await context.bootstrap()
 }
 
 onMounted(load)
