@@ -73,237 +73,151 @@
     </div>
 
     <div v-if="contextReady" class="compta-card ecriture-card">
-      <form class="ecriture-line-form" @submit.prevent="submit">
-        <div class="compta-field">
-          <label>Pièce</label>
-          <select v-model="form.piece_id" class="compta-select" required @change="onPieceChange">
-            <option :value="null">—</option>
-            <option v-for="piece in pieces" :key="piece.id" :value="piece.id">
-              {{ pieceLabel(piece) }}
-            </option>
-          </select>
-        </div>
-
-        <div class="compta-field">
-          <label>Date</label>
-          <input v-model="form.date_ecriture" class="compta-input" type="date" required />
-        </div>
-
-        <div class="compta-field">
-          <label>Facture</label>
-          <input v-model="form.numero_facture" class="compta-input" />
-        </div>
-
-        <div class="compta-field">
-          <label>Compte</label>
-          <select v-model="form.compte_id" class="compta-select" required @change="onCompteChange">
-            <option :value="null">—</option>
-            <option v-for="compte in context.comptes" :key="compte.id" :value="compte.id">
-              {{ compte.numero }} — {{ compte.intitule }}
-            </option>
-          </select>
-        </div>
-
-        <div class="compta-field">
-          <label>Auxiliaire</label>
-          <select
-            v-model="form.compte_auxiliaire_id"
-            class="compta-select"
-            :class="{ 'saisie-invalid': auxiliaryMissing(form) }"
-            :disabled="auxiliaryLocked(form)"
-          >
-            <option :value="null">—</option>
-            <option v-for="tier in auxiliaryOptions(form)" :key="tier.id" :value="tier.id">
-              {{ tierLabel(tier) }}
-            </option>
-          </select>
-          <small v-if="auxiliaryMissing(form)" class="saisie-help">Obligatoire</small>
-        </div>
-
-        <div class="compta-field ecriture-grow">
-          <label>Libellé</label>
-          <input v-model="form.libelle" class="compta-input" />
-        </div>
-
-        <div class="compta-field">
-          <label>Débit</label>
-          <input v-model.number="form.debit" class="compta-input" type="number" min="0" step="0.01" @input="normalizeAmounts('debit')" />
-        </div>
-
-        <div class="compta-field">
-          <label>Crédit</label>
-          <input v-model.number="form.credit" class="compta-input" type="number" min="0" step="0.01" @input="normalizeAmounts('credit')" />
-        </div>
-
-        <div class="ecriture-actions">
-          <button
-            type="submit"
-            class="compta-btn compta-btn-primary ecriture-icon-btn"
-            :disabled="!canSubmit || saving"
-            :title="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
-            :aria-label="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
-          >
-            <i :class="editingId ? 'bi bi-check-lg' : 'bi bi-plus-lg'"></i>
-          </button>
-          <button
-            v-if="editingId"
-            type="button"
-            class="compta-btn compta-btn-secondary ecriture-icon-btn"
-            title="Annuler la modification"
-            aria-label="Annuler la modification"
-            @click="resetForm"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
+      <form @submit.prevent="submit">
+        <div class="compta-table-wrap">
+          <table class="compta-table ecriture-table">
+            <colgroup>
+              <col class="ecriture-col-piece" />
+              <col class="ecriture-col-date" />
+              <col class="ecriture-col-facture" />
+              <col class="ecriture-col-compte" />
+              <col class="ecriture-col-auxiliaire" />
+              <col class="ecriture-col-libelle" />
+              <col class="ecriture-col-montant" />
+              <col class="ecriture-col-montant" />
+              <col class="ecriture-col-actions" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Pièce</th>
+                <th>Date</th>
+                <th>Facture</th>
+                <th>Compte</th>
+                <th>Auxiliaire</th>
+                <th>Libellé</th>
+                <th>Débit</th>
+                <th>Crédit</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="ecriture-form-row">
+                <td>
+                  <select v-model="form.piece_id" class="compta-select" required aria-label="Pièce" @change="onPieceChange">
+                    <option :value="null">—</option>
+                    <option v-for="piece in pieces" :key="piece.id" :value="piece.id">
+                      {{ pieceLabel(piece) }}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <input v-model="form.date_ecriture" class="compta-input" type="date" required aria-label="Date" />
+                </td>
+                <td>
+                  <input v-model="form.numero_facture" class="compta-input" aria-label="Facture" />
+                </td>
+                <td>
+                  <select v-model="form.compte_id" class="compta-select" required aria-label="Compte" @change="onCompteChange">
+                    <option :value="null">—</option>
+                    <option v-for="compte in context.comptes" :key="compte.id" :value="compte.id">
+                      {{ compte.numero }} — {{ compte.intitule }}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    v-model="form.compte_auxiliaire_id"
+                    class="compta-select"
+                    :class="{ 'saisie-invalid': auxiliaryMissing(form) }"
+                    :disabled="auxiliaryLocked(form)"
+                    aria-label="Auxiliaire"
+                  >
+                    <option :value="null">—</option>
+                    <option v-for="tier in auxiliaryOptions(form)" :key="tier.id" :value="tier.id">
+                      {{ tierLabel(tier) }}
+                    </option>
+                  </select>
+                  <small v-if="auxiliaryMissing(form)" class="saisie-help">Obligatoire</small>
+                </td>
+                <td>
+                  <input v-model="form.libelle" class="compta-input" aria-label="Libellé" />
+                </td>
+                <td>
+                  <input v-model.number="form.debit" class="compta-input" type="number" min="0" step="0.01" aria-label="Débit" @input="normalizeAmounts('debit')" />
+                </td>
+                <td>
+                  <input v-model.number="form.credit" class="compta-input" type="number" min="0" step="0.01" aria-label="Crédit" @input="normalizeAmounts('credit')" />
+                </td>
+                <td class="ecriture-actions-cell">
+                  <button
+                    type="submit"
+                    class="compta-btn compta-btn-primary ecriture-icon-btn"
+                    :disabled="!canSubmit || saving"
+                    :title="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
+                    :aria-label="editingId ? 'Modifier l’écriture' : 'Enregistrer l’écriture'"
+                  >
+                    <i :class="editingId ? 'bi bi-check-lg' : 'bi bi-plus-lg'"></i>
+                  </button>
+                  <button
+                    v-if="editingId"
+                    type="button"
+                    class="compta-btn compta-btn-secondary ecriture-icon-btn"
+                    title="Annuler la modification"
+                    aria-label="Annuler la modification"
+                    @click="resetForm"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr
+                v-for="ecriture in ecritures"
+                :key="ecriture.id"
+                :class="{ 'saisie-row-editing': editingId === ecriture.id }"
+                @dblclick="edit(ecriture)"
+              >
+                <td>{{ pieceLabelById(ecriture.piece_id) }}</td>
+                <td>{{ formatDate(ecriture.date_ecriture) }}</td>
+                <td>{{ ecriture.numero_facture || '—' }}</td>
+                <td>{{ compteLabel(ecriture.compte_id) }}</td>
+                <td>
+                  <span :class="{ 'saisie-help': auxiliaryMissing(ecriture) }">
+                    {{ auxiliaryLabel(ecriture) }}
+                  </span>
+                </td>
+                <td>{{ ecriture.libelle || '—' }}</td>
+                <td>{{ format(ecriture.debit) }}</td>
+                <td>{{ format(ecriture.credit) }}</td>
+                <td style="white-space: nowrap">
+                  <button
+                    type="button"
+                    class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                    title="Modifier"
+                    aria-label="Modifier"
+                    @click.stop="edit(ecriture)"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="compta-btn compta-btn-ghost ecriture-icon-btn"
+                    style="color: #b91c1c"
+                    title="Supprimer"
+                    aria-label="Supprimer"
+                    :disabled="deletingId === ecriture.id"
+                    @click.stop="remove(ecriture)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="!ecritures.length">
+                <td colspan="9" class="compta-empty">Aucune écriture</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </form>
-
-      <div class="compta-table-wrap">
-        <table class="compta-table ecriture-table">
-          <colgroup>
-            <col class="ecriture-col-piece" />
-            <col class="ecriture-col-date" />
-            <col class="ecriture-col-facture" />
-            <col class="ecriture-col-compte" />
-            <col class="ecriture-col-auxiliaire" />
-            <col class="ecriture-col-libelle" />
-            <col class="ecriture-col-montant" />
-            <col class="ecriture-col-montant" />
-            <col class="ecriture-col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Pièce</th>
-              <th>Date</th>
-              <th>Facture</th>
-              <th>Compte</th>
-              <th>Auxiliaire</th>
-              <th>Libellé</th>
-              <th>Débit</th>
-              <th>Crédit</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="ecriture in ecritures"
-              :key="ecriture.id"
-              :class="{ 'saisie-row-editing': editingId === ecriture.id }"
-              @dblclick="edit(ecriture)"
-            >
-              <td>{{ pieceLabelById(ecriture.piece_id) }}</td>
-              <td>{{ formatDate(ecriture.date_ecriture) }}</td>
-              <td>{{ ecriture.numero_facture || '—' }}</td>
-              <td>{{ compteLabel(ecriture.compte_id) }}</td>
-              <td>
-                <span :class="{ 'saisie-help': auxiliaryMissing(ecriture) }">
-                  {{ auxiliaryLabel(ecriture) }}
-                </span>
-              </td>
-              <td>{{ ecriture.libelle || '—' }}</td>
-              <td>{{ format(ecriture.debit) }}</td>
-              <td>{{ format(ecriture.credit) }}</td>
-              <td style="white-space: nowrap">
-                <button
-                  type="button"
-                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
-                  title="Modifier"
-                  aria-label="Modifier"
-                  @click.stop="edit(ecriture)"
-                >
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button
-                  type="button"
-                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
-                  style="color: #b91c1c"
-                  title="Supprimer"
-                  aria-label="Supprimer"
-                  :disabled="deletingId === ecriture.id"
-                  @click.stop="remove(ecriture)"
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr v-if="!ecritures.length">
-              <td colspan="9" class="compta-empty">Aucune écriture</td>
-            </tr><div class="compta-table-wrap">
-        <table class="compta-table ecriture-table">
-          <colgroup>
-            <col class="ecriture-col-piece" />
-            <col class="ecriture-col-date" />
-            <col class="ecriture-col-facture" />
-            <col class="ecriture-col-compte" />
-            <col class="ecriture-col-auxiliaire" />
-            <col class="ecriture-col-libelle" />
-            <col class="ecriture-col-montant" />
-            <col class="ecriture-col-montant" />
-            <col class="ecriture-col-actions" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Pièce</th>
-              <th>Date</th>
-              <th>Facture</th>
-              <th>Compte</th>
-              <th>Auxiliaire</th>
-              <th>Libellé</th>
-              <th>Débit</th>
-              <th>Crédit</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="ecriture in ecritures"
-              :key="ecriture.id"
-              :class="{ 'saisie-row-editing': editingId === ecriture.id }"
-              @dblclick="edit(ecriture)"
-            >
-              <td>{{ pieceLabelById(ecriture.piece_id) }}</td>
-              <td>{{ formatDate(ecriture.date_ecriture) }}</td>
-              <td>{{ ecriture.numero_facture || '—' }}</td>
-              <td>{{ compteLabel(ecriture.compte_id) }}</td>
-              <td>
-                <span :class="{ 'saisie-help': auxiliaryMissing(ecriture) }">
-                  {{ auxiliaryLabel(ecriture) }}
-                </span>
-              </td>
-              <td>{{ ecriture.libelle || '—' }}</td>
-              <td>{{ format(ecriture.debit) }}</td>
-              <td>{{ format(ecriture.credit) }}</td>
-              <td style="white-space: nowrap">
-                <button
-                  type="button"
-                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
-                  title="Modifier"
-                  aria-label="Modifier"
-                  @click.stop="edit(ecriture)"
-                >
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button
-                  type="button"
-                  class="compta-btn compta-btn-ghost ecriture-icon-btn"
-                  style="color: #b91c1c"
-                  title="Supprimer"
-                  aria-label="Supprimer"
-                  :disabled="deletingId === ecriture.id"
-                  @click.stop="remove(ecriture)"
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr v-if="!ecritures.length">
-              <td colspan="9" class="compta-empty">Aucune écriture</td>
-            </tr>
-          </tbody>
-        </table>
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
 </template>
@@ -732,46 +646,6 @@ watch(() => context.periodeId, applyDefaultContext)
   overflow-x: auto;
 }
 
-.ecriture-line-form {
-  display: grid;
-  grid-template-columns:
-    var(--ecriture-col-piece)
-    var(--ecriture-col-date)
-    var(--ecriture-col-facture)
-    var(--ecriture-col-compte)
-    var(--ecriture-col-auxiliaire)
-    var(--ecriture-col-libelle)
-    var(--ecriture-col-montant)
-    var(--ecriture-col-montant)
-    var(--ecriture-col-actions);
-  min-width: var(--ecriture-total-width);
-  gap: 0;
-  align-items: end;
-}
-
-.ecriture-line-form .compta-field {
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 0 0.75rem;
-}
-
-.ecriture-line-form .compta-input,
-.ecriture-line-form .compta-select {
-  width: 100%;
-  min-width: 0;
-}
-
-.ecriture-grow {
-  min-width: 0;
-}
-
-.ecriture-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0 0.75rem;
-}
-
 .ecriture-icon-btn {
   width: 2.4rem;
   min-width: 2.4rem;
@@ -784,12 +658,30 @@ watch(() => context.periodeId, applyDefaultContext)
 .ecriture-table {
   table-layout: fixed;
   min-width: var(--ecriture-total-width);
-  margin-top: 1rem;
 }
 
 .ecriture-table th,
 .ecriture-table td {
   overflow-wrap: anywhere;
+}
+
+.ecriture-form-row td {
+  background: #ffffff;
+  vertical-align: top;
+}
+
+.ecriture-form-row .compta-input,
+.ecriture-form-row .compta-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.ecriture-actions-cell {
+  white-space: nowrap;
+}
+
+.ecriture-actions-cell .ecriture-icon-btn + .ecriture-icon-btn {
+  margin-left: 0.35rem;
 }
 
 .ecriture-col-piece {
@@ -822,21 +714,6 @@ watch(() => context.periodeId, applyDefaultContext)
 
 .ecriture-col-actions {
   width: var(--ecriture-col-actions);
-}
-
-@media (max-width: 1300px) {
-  .ecriture-line-form {
-    grid-template-columns:
-      var(--ecriture-col-piece)
-      var(--ecriture-col-date)
-      var(--ecriture-col-facture)
-      var(--ecriture-col-compte)
-      var(--ecriture-col-auxiliaire)
-      var(--ecriture-col-libelle)
-      var(--ecriture-col-montant)
-      var(--ecriture-col-montant)
-      var(--ecriture-col-actions);
-  }
 }
 
 @media (max-width: 720px) {
