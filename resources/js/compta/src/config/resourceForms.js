@@ -195,8 +195,6 @@ export const resourceForms = {
       { key: 'code', label: 'Code', type: 'text', required: true },
       { key: 'date_debut', label: 'Date début', type: 'date', required: true },
       { key: 'date_fin', label: 'Date fin', type: 'date', required: true },
-      { key: 'cloture', label: 'Clôturé', type: 'boolean', default: false },
-      { key: 'commentaire_cloture', label: 'Commentaire clôture', type: 'text' },
     ],
   },
   periodes: {

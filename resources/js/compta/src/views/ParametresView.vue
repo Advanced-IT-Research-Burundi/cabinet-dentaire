@@ -48,6 +48,7 @@
       :form-schema="forms.exercices"
       :create-fn="exercicesApi.create"
       :update-fn="exercicesApi.update"
+      :row-actions="exerciceActions"
       @saved="context.bootstrap"
     />
 
@@ -131,6 +132,62 @@ const tabs = [
 const periodeDefaults = computed(() => ({
   exercice_id: context.exerciceId || null,
 }))
+
+const today = new Date().toISOString().slice(0, 10)
+
+function closingDate(row) {
+  const dateDebut = String(row.date_debut || '').slice(0, 10)
+  const dateFin = String(row.date_fin || '').slice(0, 10)
+  if (dateDebut && today < dateDebut) return dateDebut
+  if (dateFin && today > dateFin) return dateFin
+  return today
+}
+
+function exercicePayload(row, overrides = {}) {
+  return {
+    societe_id: row.societe_id,
+    code: row.code,
+    date_debut: String(row.date_debut || '').slice(0, 10),
+    date_fin: String(row.date_fin || '').slice(0, 10),
+    cloture: !!row.cloture,
+    date_cloture: row.date_cloture ? String(row.date_cloture).slice(0, 10) : null,
+    commentaire_cloture: row.commentaire_cloture || null,
+    ...overrides,
+  }
+}
+
+const exerciceActions = [
+  {
+    key: 'close-exercice',
+    label: 'Fermer l’exercice',
+    icon: 'bi bi-lock',
+    style: 'padding: 0.25rem 0.5rem; color: #b45309',
+    visible: (row) => !row.cloture,
+    confirm: (row) => `Fermer l’exercice ${row.code || row.id} ?`,
+    handler: async (row) => {
+      await exercicesApi.update(row.id, exercicePayload(row, {
+        cloture: true,
+        date_cloture: closingDate(row),
+        commentaire_cloture: row.commentaire_cloture || 'Clôture de l’exercice',
+      }))
+    },
+  },
+  {
+    key: 'open-exercice',
+    label: 'Ouvrir l’exercice',
+    icon: 'bi bi-unlock',
+    style: 'padding: 0.25rem 0.5rem; color: #166534',
+    visible: (row) => !!row.cloture,
+    confirm: (row) => `Ouvrir l’exercice ${row.code || row.id} ?`,
+    handler: async (row) => {
+      await exercicesApi.update(row.id, exercicePayload(row, {
+        cloture: false,
+        date_cloture: null,
+        commentaire_cloture: null,
+      }))
+    },
+  },
+]
 
 const societeColumns = [
   { key: 'raison_sociale', label: 'Raison sociale' },

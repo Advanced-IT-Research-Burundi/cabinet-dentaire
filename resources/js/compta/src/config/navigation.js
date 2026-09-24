@@ -33,14 +33,14 @@ export const navigation = [
     //   { label: 'Types de comptes', icon: 'bi bi-tags', to: { name: 'compta.type-comptes' } },
     ],
   },
-  {
-    label: 'Budget',
-    items: [
-      { label: 'Budgets', icon: 'bi bi-pie-chart', to: { name: 'compta.budgets' } },
-      { label: 'Postes budgétaires', icon: 'bi bi-list-ul', to: { name: 'compta.postes' } },
-      { label: 'Types de budgets', icon: 'bi bi-tag', to: { name: 'compta.type-budgets' } },
-    ],
-  },
+//   {
+//     label: 'Budget',
+//     items: [
+//       { label: 'Budgets', icon: 'bi bi-pie-chart', to: { name: 'compta.budgets' } },
+//       { label: 'Postes budgétaires', icon: 'bi bi-list-ul', to: { name: 'compta.postes' } },
+//       { label: 'Types de budgets', icon: 'bi bi-tag', to: { name: 'compta.type-budgets' } },
+//     ],
+//   },
   {
     label: 'Immobilisations',
     items: [

@@ -35,13 +35,13 @@
           <thead>
             <tr>
               <th v-for="col in columns" :key="col.key">{{ col.label }}</th>
-              <th v-if="canEdit || canDelete" style="width: 1%; white-space: nowrap">Actions</th>
+              <th v-if="hasActions" style="width: 1%; white-space: nowrap">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="row in rows" :key="row.id">
               <td v-for="col in columns" :key="col.key">{{ cell(row, col) }}</td>
-              <td v-if="canEdit || canDelete" style="white-space: nowrap">
+              <td v-if="hasActions" style="white-space: nowrap">
                 <button
                   v-if="canEdit"
                   type="button"
@@ -50,6 +50,20 @@
                   @click="openEdit(row)"
                 >
                   <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  v-for="action in visibleRowActions(row)"
+                  :key="action.key || action.label"
+                  type="button"
+                  class="compta-btn compta-btn-ghost"
+                  :title="action.label"
+                  :aria-label="action.label"
+                  :style="action.style || 'padding: 0.25rem 0.5rem'"
+                  :disabled="runningActionKey === actionKey(action, row) || action.disabled?.(row)"
+                  @click="runRowAction(action, row)"
+                >
+                  <i v-if="action.icon" :class="action.icon"></i>
+                  <span v-if="!action.icon">{{ action.label }}</span>
                 </button>
                 <button
                   v-if="canDelete"
@@ -64,7 +78,7 @@
               </td>
             </tr>
             <tr v-if="!rows.length">
-              <td :colspan="columns.length + (canEdit || canDelete ? 1 : 0)" class="compta-empty">Aucune donnée</td>
+              <td :colspan="columns.length + (hasActions ? 1 : 0)" class="compta-empty">Aucune donnée</td>
             </tr>
           </tbody>
         </table>
@@ -104,6 +118,7 @@ const props = defineProps({
   createFn: { type: Function, default: null },
   updateFn: { type: Function, default: null },
   deleteFn: { type: Function, default: null },
+  rowActions: { type: Array, default: () => [] },
   createDefaults: { type: Object, default: () => ({}) },
 })
 const emit = defineEmits(['saved'])
@@ -116,9 +131,12 @@ const q = ref('')
 const modalOpen = ref(false)
 const editing = ref(null)
 const deletingId = ref(null)
+const runningActionKey = ref(null)
 
 const canEdit = computed(() => typeof props.updateFn === 'function' && !!props.formSchema)
 const canDelete = computed(() => typeof props.deleteFn === 'function')
+const canRunRowActions = computed(() => props.rowActions.length > 0)
+const hasActions = computed(() => canEdit.value || canDelete.value || canRunRowActions.value)
 
 const modalTitle = computed(() => {
   if (editing.value) return props.editLabel || 'Modifier'
@@ -167,6 +185,33 @@ function onSaved() {
   closeModal()
   load()
   emit('saved')
+}
+
+function visibleRowActions(row) {
+  return props.rowActions.filter((action) => !action.visible || action.visible(row))
+}
+
+function actionKey(action, row) {
+  return `${action.key || action.label}:${row.id}`
+}
+
+async function runRowAction(action, row) {
+  if (typeof action.handler !== 'function') return
+  const message = typeof action.confirm === 'function' ? action.confirm(row) : action.confirm
+  if (message && !confirm(message)) return
+
+  const key = actionKey(action, row)
+  runningActionKey.value = key
+  actionError.value = null
+  try {
+    await action.handler(row)
+    await load()
+    emit('saved')
+  } catch (e) {
+    actionError.value = e.message
+  } finally {
+    runningActionKey.value = null
+  }
 }
 
 async function removeRow(row) {

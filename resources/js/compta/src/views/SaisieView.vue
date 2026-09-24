@@ -21,17 +21,33 @@
 
     <div v-if="contextModalOpen" class="ecriture-context-backdrop" role="dialog" aria-modal="true">
       <div class="ecriture-context-modal">
-        <div>
-          <h2>Choisir le journal et la période</h2>
-          <p>L’exercice est celui ouvert dans les paramètres.</p>
-        </div>
-
-        <div class="ecriture-active-exercice" :class="{ missing: !context.exerciceId }">
-          <span>Exercice ouvert</span>
-          <strong>{{ exerciceLabel }}</strong>
+        <div class="ecriture-context-header">
+          <div>
+            <h2>Choisir l’exercice, le journal et la période</h2>
+            <p>La période est chargée selon l’exercice choisi.</p>
+          </div>
+          <button
+            type="button"
+            class="compta-btn compta-btn-ghost ecriture-context-close"
+            title="Fermer"
+            aria-label="Fermer"
+            @click="contextModalOpen = false"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
         </div>
 
         <div class="ecriture-context-fields">
+          <div class="compta-field">
+            <label>Exercice</label>
+            <select v-model="selectedExerciceId" class="compta-select" style="width: 100%" @change="onExerciceChange">
+              <option :value="null">—</option>
+              <option v-for="exercice in openExercices" :key="exercice.id" :value="exercice.id">
+                {{ exerciceOptionLabel(exercice) }}
+              </option>
+            </select>
+          </div>
+
           <div class="compta-field">
             <label>Code journal</label>
             <select v-model="selectedJournalId" class="compta-select" style="width: 100%">
@@ -44,7 +60,7 @@
 
           <div class="compta-field">
             <label>Période</label>
-            <select v-model="selectedPeriodeId" class="compta-select" style="width: 100%" :disabled="!context.exerciceId">
+            <select v-model="selectedPeriodeId" class="compta-select" style="width: 100%" :disabled="!selectedOpenExercice">
               <option :value="null">—</option>
               <option v-for="periode in periodesForExercice" :key="periode.id" :value="periode.id">
                 {{ periode.libelle || periode.code || `Période #${periode.id}` }}
@@ -53,8 +69,11 @@
           </div>
         </div>
 
-        <div v-if="!context.exerciceId" class="compta-error">
-          Aucun exercice ouvert n’est sélectionné dans les paramètres.
+        <div v-if="!openExercices.length" class="compta-error">
+          Aucun exercice ouvert n’est disponible pour la saisie.
+        </div>
+        <div v-else-if="selectedExerciceId && !periodesForExercice.length" class="compta-error">
+          Aucune période n’est disponible pour cet exercice.
         </div>
 
         <div class="ecriture-context-actions">
@@ -234,6 +253,7 @@ const saving = ref(false)
 const deletingId = ref(null)
 const editingId = ref(null)
 const selectedPieceId = ref(route.query.piece_id ? Number(route.query.piece_id) : null)
+const selectedExerciceId = ref(null)
 const selectedJournalId = ref(null)
 const selectedPeriodeId = ref(null)
 const contextModalOpen = ref(true)
@@ -265,15 +285,25 @@ const canSubmit = computed(() => (
   (Number(form.debit) > 0 || Number(form.credit) > 0)
 ))
 
+const openExercices = computed(() => context.exercices.filter((exercice) => !exercice.cloture))
+
+const selectedOpenExercice = computed(() => (
+  openExercices.value.find((exercice) => Number(exercice.id) === Number(selectedExerciceId.value)) || null
+))
+
 const periodesForExercice = computed(() => {
-  if (!context.exerciceId) return []
-  return context.periodes.filter((periode) => Number(periode.exercice_id) === Number(context.exerciceId))
+  if (!selectedOpenExercice.value) return []
+  return context.periodes.filter((periode) => Number(periode.exercice_id) === Number(selectedOpenExercice.value.id))
 })
 
-const contextReady = computed(() => !!context.exerciceId && !!selectedJournalId.value && !!selectedPeriodeId.value)
+const contextReady = computed(() => (
+  !!selectedOpenExercice.value &&
+  !!selectedJournalId.value &&
+  periodesForExercice.value.some((periode) => Number(periode.id) === Number(selectedPeriodeId.value))
+))
 const selectedJournal = computed(() => context.journals.find((journal) => Number(journal.id) === Number(selectedJournalId.value)) || null)
 const selectedPeriode = computed(() => context.periodes.find((periode) => Number(periode.id) === Number(selectedPeriodeId.value)) || null)
-const selectedExercice = computed(() => context.exercices.find((exercice) => Number(exercice.id) === Number(context.exerciceId)) || null)
+const selectedExercice = computed(() => context.exercices.find((exercice) => Number(exercice.id) === Number(selectedExerciceId.value)) || null)
 const journalLabel = computed(() => {
   const journal = selectedJournal.value
   return journal ? `${journal.code} — ${journal.intitule || journal.libelle || journal.id}` : '—'
@@ -287,6 +317,10 @@ const exerciceLabel = computed(() => {
   if (!exercice) return 'Aucun exercice ouvert'
   return `${exercice.code || exercice.id} — ${formatDate(exercice.date_debut)} / ${formatDate(exercice.date_fin)}`
 })
+
+function exerciceOptionLabel(exercice) {
+  return `${exercice.code || exercice.id} — ${formatDate(exercice.date_debut)} / ${formatDate(exercice.date_fin)}`
+}
 
 function pieceLabel(piece) {
   return `${piece.numero_piece || `#${piece.id}`} — ${piece.libelle || piece.reference || piece.date_comptable || ''}`.trim()
@@ -385,7 +419,7 @@ async function loadPieces() {
 
   const params = {
     per_page: 500,
-    exercice_id: context.exerciceId || undefined,
+    exercice_id: selectedExerciceId.value || undefined,
     journal_id: selectedJournalId.value || undefined,
     periode_id: selectedPeriodeId.value || undefined,
   }
@@ -404,7 +438,7 @@ async function loadEcritures() {
   try {
     const params = {
       per_page: 500,
-      exercice_id: context.exerciceId || undefined,
+      exercice_id: selectedExerciceId.value || undefined,
       journal_id: selectedJournalId.value || undefined,
       periode_id: selectedPeriodeId.value || undefined,
     }
@@ -491,11 +525,37 @@ function resetForm() {
   editingId.value = null
 }
 
+function firstPeriodeForExercice(exerciceId) {
+  return context.periodes.find((periode) => Number(periode.exercice_id) === Number(exerciceId) && !periode.cloturee)
+    || context.periodes.find((periode) => Number(periode.exercice_id) === Number(exerciceId))
+    || null
+}
+
 function applyDefaultContext() {
+  const defaultExercice = openExercices.value.find((exercice) => Number(exercice.id) === Number(context.exerciceId))
+    || openExercices.value[0]
+
+  if (!defaultExercice) {
+    selectedExerciceId.value = null
+    selectedPeriodeId.value = null
+    return
+  }
+
+  if (!selectedOpenExercice.value) {
+    selectedExerciceId.value = defaultExercice.id
+  }
+
   const periodStillValid = periodesForExercice.value.some((periode) => Number(periode.id) === Number(selectedPeriodeId.value))
   if (!periodStillValid) {
-    selectedPeriodeId.value = context.periodeId || null
+    selectedPeriodeId.value = firstPeriodeForExercice(selectedExerciceId.value)?.id ?? null
   }
+}
+
+function onExerciceChange() {
+  selectedPieceId.value = null
+  selectedPeriodeId.value = firstPeriodeForExercice(selectedExerciceId.value)?.id ?? null
+  resetForm()
+  syncTopContext()
 }
 
 function openContextModal() {
@@ -505,6 +565,8 @@ function openContextModal() {
 
 async function confirmContext() {
   if (!contextReady.value) return
+  context.setExercice(selectedExerciceId.value)
+  context.setPeriode(selectedPeriodeId.value)
   contextModalOpen.value = false
   selectedPieceId.value = route.query.piece_id ? Number(route.query.piece_id) : null
   resetForm()
@@ -540,18 +602,17 @@ onMounted(() => {
   contextModalOpen.value = true
   syncTopContext()
 })
-watch(() => context.exerciceId, () => {
-  selectedPieceId.value = null
-  resetForm()
-  applyDefaultContext()
-  contextModalOpen.value = true
-  syncTopContext()
-})
-watch(() => context.periodeId, () => {
+watch(() => context.exerciceId, (id) => {
+  if (id && !selectedExerciceId.value) selectedExerciceId.value = id
   applyDefaultContext()
   syncTopContext()
 })
-watch([selectedJournalId, selectedPeriodeId], syncTopContext)
+watch(() => context.periodeId, (id) => {
+  if (id && !selectedPeriodeId.value) selectedPeriodeId.value = id
+  applyDefaultContext()
+  syncTopContext()
+})
+watch([selectedExerciceId, selectedJournalId, selectedPeriodeId], syncTopContext)
 
 onBeforeUnmount(() => {
   saisieContextBar?.clear()
@@ -576,7 +637,7 @@ onBeforeUnmount(() => {
 }
 
 .ecriture-context-modal {
-  width: min(620px, 100%);
+  width: min(780px, 100%);
   display: grid;
   gap: 1rem;
   padding: 1.25rem;
@@ -598,26 +659,24 @@ onBeforeUnmount(() => {
   font-size: 0.9rem;
 }
 
-.ecriture-active-exercice {
+.ecriture-context-header {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid #bbf7d0;
-  border-radius: 6px;
-  color: #166534;
-  background: #f0fdf4;
 }
 
-.ecriture-active-exercice.missing {
-  border-color: #fecaca;
-  color: #991b1b;
-  background: #fef2f2;
+.ecriture-context-close {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
 }
-
 .ecriture-context-fields {
   display: grid;
-  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
   gap: 0.75rem;
 }
 
@@ -715,7 +774,6 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr;
   }
 
-  .ecriture-active-exercice,
   .ecriture-context-actions {
     flex-direction: column;
   }

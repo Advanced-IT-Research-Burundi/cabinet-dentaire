@@ -2,7 +2,10 @@
   <div class="compta-app">
     <aside class="compta-sidebar" :class="{ 'is-collapsed': collapsed, 'is-open': mobileOpen }">
       <div class="compta-sidebar-header">
-        <h2 v-show="!collapsed || mobileOpen">Comptabilité</h2>
+        <div v-show="!collapsed || mobileOpen" class="compta-sidebar-company">
+          <h2>{{ societeLabel }}</h2>
+          <small v-if="context.societeActive?.nif">NIF {{ context.societeActive.nif }}</small>
+        </div>
         <button
           type="button"
           class="compta-btn compta-btn-ghost"
@@ -40,47 +43,16 @@
           <i class="bi bi-list"></i> Menu
         </button>
 
-        <div class="compta-current-company">
-          <span class="label">Entreprise</span>
-          <strong>{{ societeLabel }}</strong>
-          <small v-if="context.societeActive?.nif">NIF {{ context.societeActive.nif }}</small>
-        </div>
-
         <div v-if="isSaisieRoute && saisieContextBar.ready" class="compta-saisie-context-top">
           <span><strong>Journal</strong> {{ saisieContextBar.journal }}</span>
           <span><strong>Exercice</strong> {{ saisieContextBar.exercice }}</span>
           <span><strong>Période</strong> {{ saisieContextBar.periode }}</span>
         </div>
 
-        <template v-else-if="!isSaisieRoute">
-          <div>
-            <span class="label">Exercice</span>
-            <select
-              class="compta-select"
-              :value="context.exerciceId || ''"
-              @change="context.setExercice($event.target.value)"
-            >
-              <option value="">—</option>
-              <option v-for="ex in context.exercices" :key="ex.id" :value="ex.id">
-                {{ ex.code || ex.libelle || `Exercice #${ex.id}` }}
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <span class="label">Période</span>
-            <select
-              class="compta-select"
-              :value="context.periodeId || ''"
-              @change="context.setPeriode($event.target.value)"
-            >
-              <option value="">—</option>
-              <option v-for="pe in context.periodesForExercice" :key="pe.id" :value="pe.id">
-                {{ pe.code || pe.libelle || pe.intitule || `Période #${pe.id}` }}
-              </option>
-            </select>
-          </div>
-        </template>
+        <div v-else class="compta-saisie-context-top">
+          <span><strong>Exercice</strong> {{ exerciceLabel }}</span>
+          <span><strong>Période</strong> {{ periodeLabel }}</span>
+        </div>
 
         <div v-if="context.error" class="compta-error" style="padding: 0; margin-left: auto">
           {{ context.error }}
@@ -116,6 +88,21 @@ const societeLabel = computed(() => (
   'Aucune entreprise'
 ))
 const isSaisieRoute = computed(() => route.name === 'compta.saisie')
+const exerciceLabel = computed(() => {
+  const exercice = context.exerciceActif
+  if (!exercice) return '—'
+  const code = exercice.code || exercice.libelle || `#${exercice.id}`
+  return `${code} — ${formatDate(exercice.date_debut)} / ${formatDate(exercice.date_fin)}`
+})
+const periodeLabel = computed(() => {
+  const periode = context.periodeActive
+  if (!periode) return '—'
+  return periode.code || periode.libelle || periode.intitule || `#${periode.id}`
+})
+
+function formatDate(value) {
+  return value ? String(value).slice(0, 10) : '—'
+}
 
 provide('saisieContextBar', {
   set(payload) {
@@ -138,6 +125,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.compta-sidebar-company {
+  min-width: 0;
+}
+
+.compta-sidebar-company h2 {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compta-sidebar-company small {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.72rem;
+  margin-top: 0.1rem;
+}
+
 .compta-saisie-context-top {
   display: flex;
   align-items: center;
