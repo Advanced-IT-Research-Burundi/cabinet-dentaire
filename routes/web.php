@@ -54,7 +54,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 //->can('is-admin');
 
 Route::middleware(['auth'])->group(function () {
-    Route::view('/compta/{any?}', 'compta.app')
+    Route::get('/compta/{any?}', function () {
+        return redirect()->away(config('services.compta.ui_url'));
+    })
         ->where('any', '.*')
         ->name('compta.app');
 
