@@ -46,33 +46,41 @@
           <small v-if="context.societeActive?.nif">NIF {{ context.societeActive.nif }}</small>
         </div>
 
-        <div>
-          <span class="label">Exercice</span>
-          <select
-            class="compta-select"
-            :value="context.exerciceId || ''"
-            @change="context.setExercice($event.target.value)"
-          >
-            <option value="">—</option>
-            <option v-for="ex in context.exercices" :key="ex.id" :value="ex.id">
-              {{ ex.code || ex.libelle || `Exercice #${ex.id}` }}
-            </option>
-          </select>
+        <div v-if="isSaisieRoute && saisieContextBar.ready" class="compta-saisie-context-top">
+          <span><strong>Journal</strong> {{ saisieContextBar.journal }}</span>
+          <span><strong>Exercice</strong> {{ saisieContextBar.exercice }}</span>
+          <span><strong>Période</strong> {{ saisieContextBar.periode }}</span>
         </div>
 
-        <div>
-          <span class="label">Période</span>
-          <select
-            class="compta-select"
-            :value="context.periodeId || ''"
-            @change="context.setPeriode($event.target.value)"
-          >
-            <option value="">—</option>
-            <option v-for="pe in context.periodesForExercice" :key="pe.id" :value="pe.id">
-              {{ pe.code || pe.libelle || pe.intitule || `Période #${pe.id}` }}
-            </option>
-          </select>
-        </div>
+        <template v-else-if="!isSaisieRoute">
+          <div>
+            <span class="label">Exercice</span>
+            <select
+              class="compta-select"
+              :value="context.exerciceId || ''"
+              @change="context.setExercice($event.target.value)"
+            >
+              <option value="">—</option>
+              <option v-for="ex in context.exercices" :key="ex.id" :value="ex.id">
+                {{ ex.code || ex.libelle || `Exercice #${ex.id}` }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <span class="label">Période</span>
+            <select
+              class="compta-select"
+              :value="context.periodeId || ''"
+              @change="context.setPeriode($event.target.value)"
+            >
+              <option value="">—</option>
+              <option v-for="pe in context.periodesForExercice" :key="pe.id" :value="pe.id">
+                {{ pe.code || pe.libelle || pe.intitule || `Période #${pe.id}` }}
+              </option>
+            </select>
+          </div>
+        </template>
 
         <div v-if="context.error" class="compta-error" style="padding: 0; margin-left: auto">
           {{ context.error }}
@@ -87,20 +95,68 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, provide, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { navigation } from '../config/navigation'
 import { useContextStore } from '../modules/context/store'
 
 const context = useContextStore()
+const route = useRoute()
 const collapsed = ref(false)
 const mobileOpen = ref(false)
+const saisieContextBar = reactive({
+  ready: false,
+  journal: '',
+  exercice: '',
+  periode: '',
+})
 const societeLabel = computed(() => (
   context.societeActive?.raison_sociale ||
   context.societeActive?.intitule ||
   'Aucune entreprise'
 ))
+const isSaisieRoute = computed(() => route.name === 'compta.saisie')
+
+provide('saisieContextBar', {
+  set(payload) {
+    saisieContextBar.ready = !!payload?.ready
+    saisieContextBar.journal = payload?.journal || ''
+    saisieContextBar.exercice = payload?.exercice || ''
+    saisieContextBar.periode = payload?.periode || ''
+  },
+  clear() {
+    saisieContextBar.ready = false
+    saisieContextBar.journal = ''
+    saisieContextBar.exercice = ''
+    saisieContextBar.periode = ''
+  },
+})
 
 onMounted(() => {
   context.bootstrap()
 })
 </script>
+
+<style scoped>
+.compta-saisie-context-top {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.compta-saisie-context-top span {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: baseline;
+  color: #334155;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.compta-saisie-context-top strong {
+  color: #64748b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+</style>

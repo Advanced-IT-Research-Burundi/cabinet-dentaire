@@ -19,12 +19,6 @@
     <div v-if="error" class="compta-error">{{ error }}</div>
     <div v-if="success" class="compta-card saisie-success">{{ success }}</div>
 
-    <div v-if="contextReady" class="ecriture-context-strip">
-      <span><strong>Journal</strong> {{ journalLabel }}</span>
-      <span><strong>Exercice</strong> {{ exerciceLabel }}</span>
-      <span><strong>Période</strong> {{ periodeLabel }}</span>
-    </div>
-
     <div v-if="contextModalOpen" class="ecriture-context-backdrop" role="dialog" aria-modal="true">
       <div class="ecriture-context-modal">
         <div>
@@ -223,13 +217,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ecrituresApi, piecesApi } from '../services/api'
 import { useContextStore } from '../modules/context/store'
 
 const route = useRoute()
 const context = useContextStore()
+const saisieContextBar = inject('saisieContextBar', null)
 const today = new Date().toISOString().slice(0, 10)
 
 const pieces = ref([])
@@ -513,7 +508,17 @@ async function confirmContext() {
   contextModalOpen.value = false
   selectedPieceId.value = route.query.piece_id ? Number(route.query.piece_id) : null
   resetForm()
+  syncTopContext()
   await load()
+}
+
+function syncTopContext() {
+  saisieContextBar?.set({
+    ready: contextReady.value,
+    journal: journalLabel.value,
+    exercice: exerciceLabel.value,
+    periode: periodeLabel.value,
+  })
 }
 
 async function remove(ecriture) {
@@ -533,14 +538,24 @@ async function remove(ecriture) {
 onMounted(() => {
   applyDefaultContext()
   contextModalOpen.value = true
+  syncTopContext()
 })
 watch(() => context.exerciceId, () => {
   selectedPieceId.value = null
   resetForm()
   applyDefaultContext()
   contextModalOpen.value = true
+  syncTopContext()
 })
-watch(() => context.periodeId, applyDefaultContext)
+watch(() => context.periodeId, () => {
+  applyDefaultContext()
+  syncTopContext()
+})
+watch([selectedJournalId, selectedPeriodeId], syncTopContext)
+
+onBeforeUnmount(() => {
+  saisieContextBar?.clear()
+})
 </script>
 
 <style scoped>
@@ -548,27 +563,6 @@ watch(() => context.periodeId, applyDefaultContext)
   margin-bottom: 1rem;
   border-color: #86efac;
   color: #065f46;
-}
-
-.ecriture-context-strip {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.75rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--compta-border);
-  background: #f8fafc;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  color: #334155;
-}
-
-.ecriture-context-strip span {
-  display: inline-flex;
-  gap: 0.35rem;
-  align-items: baseline;
-  white-space: nowrap;
 }
 
 .ecriture-context-backdrop {
