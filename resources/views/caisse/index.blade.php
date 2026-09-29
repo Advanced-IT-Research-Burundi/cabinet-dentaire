@@ -14,6 +14,9 @@
             <p class="text-muted mb-0">Gérez vos opérations de caisse et transactions</p>
         </div>
         <div>
+            <a href="{{ route('caisse-centrale.index') }}" class="btn btn-outline-primary btn-lg shadow-sm me-2">
+                <i class="bi bi-bank me-2"></i>Caisse Centrale
+            </a>
             <a href="{{ route('caisses.create') }}" class="btn btn-primary btn-lg shadow-sm">
                 <i class="bi bi-plus me-2"></i>Nouvelle Caisse
             </a>
@@ -86,10 +89,10 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Caisse Principale
+                                <a href="{{ route('caisse-centrale.index') }}" class="text-warning text-decoration-none">Caisse Centrale</a>
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $caissePrincipale ?? 'N/A' }} FBU
+                                {{ number_format($caissePrincipale ?? 0, 0, ',', ' ') }} FBU
                             </div>
                         </div>
                         <div class="col-auto">

@@ -15,7 +15,7 @@ class CaisseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Caisse::with('user');
+        $query = Caisse::utilisateurs()->with('user');
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
@@ -38,10 +38,10 @@ class CaisseController extends Controller
 
         $caisses = $query->latest('date')->paginate(10)->withQueryString();
 
-        $totalCaisses = Caisse::count();
-        $montantTotal = Caisse::sum('montant');
-        $caissesActives = Caisse::where('status', 'active')->count();
-        $caissePrincipale = Caisse::find(1)->first()->montant; // Assuming the main caisse has ID 1
+        $totalCaisses = Caisse::utilisateurs()->count();
+        $montantTotal = Caisse::utilisateurs()->sum('montant');
+        $caissesActives = Caisse::utilisateurs()->where('status', 'active')->count();
+        $caissePrincipale = Caisse::centrale()->montant;
 
         return view('caisse.index', [
             'caisses' => $caisses,
@@ -90,7 +90,11 @@ class CaisseController extends Controller
 
     public function show(Request $request,  $caisse)
     {
-        $currentCaisse = Caisse::with(['caisseDetails'])->find($caisse);
+        $currentCaisse = Caisse::with(['caisseDetails'])->findOrFail($caisse);
+
+        if ($currentCaisse->is_centrale) {
+            return redirect()->route('caisse-centrale.index');
+        }
 
         return view('caisse.show', [
             'caisse' => $currentCaisse,
@@ -115,91 +119,11 @@ class CaisseController extends Controller
 
     public function destroy(Request $request, Caisse $caisse)
     {
+        abort_if($caisse->is_centrale, 403, 'La caisse centrale ne peut pas être supprimée.');
+
         $caisse->delete();
 
         return redirect()->route('caisses.index');
-    }
-
-    public function withdraw(Request $request, Caisse $caisse){
-        // Validation des données
-        $validated = $request->validate([
-            'montant_retrait' => ['required','numeric','min:0.01','max:' . $caisse->montant],
-            'motif_retrait' => ['required','string','min:5','max:255']
-        ],
-        [
-            'montant_retrait.required' => 'Le montant à retirer est obligatoire.',
-            'montant_retrait.numeric' => 'Le montant doit être un nombre.',
-            'montant_retrait.min' => 'Le montant doit être supérieur à 0.',
-            'montant_retrait.max' => 'Le montant ne peut pas dépasser le solde disponible.',
-            'motif_retrait.required' => 'Le motif du retrait est obligatoire.',
-            'motif_retrait.min' => 'Le motif doit contenir au moins 5 caractères.',
-            'motif_retrait.max' => 'Le motif ne peut pas dépasser 255 caractères.'
-        ]);
-
-        try {
-            \DB::beginTransaction();
-
-            // Vérification de sécurité supplémentaire
-            if ($validated['montant_retrait'] > $caisse->montant) {
-                return back()->withErrors([
-                    'montant_retrait' => 'Solde insuffisant dans la caisse.'
-                ])->withInput();
-            }
-
-            $nouveauMontant = $caisse->montant - $validated['montant_retrait'];
-
-            $caisse->update([
-                'montant' => $nouveauMontant
-            ]);
-            // Ajout du montant retraint dans la caisse principale
-            Caisse::where('id', 1)->increment('montant', $validated['montant_retrait']);
-            // Enregistrement du retrait dans les détails de la caisse principale
-            CaisseDetail::create([
-                'caisse_id' => 1,
-                'type' => "MONTANT RETRAIT",
-                'price' => $validated['montant_retrait'],
-                'total' => $validated['montant_retrait'],
-                'status' => '1',
-                'user_id' => auth()->user()->id,
-                'description' => $validated['motif_retrait'],
-            ]);
-
-            // Enregistrement du retrait dans les détails de la caisse spécifique
-            CaisseDetail::create([
-                'caisse_id' => $caisse->id,
-                'type' => "MONTANT RETRAIT",
-                'price' => 0,
-                'total' => -($validated['montant_retrait']),
-                'status' => '1',
-                'user_id' => auth()->user()->id,
-                'description' => $validated['motif_retrait'],
-            ]);
-
-            // Message de succès
-            $message = sprintf(
-                'Retrait de %s FBU effectué avec succès. Nouveau solde : %s FBU',
-                number_format($validated['montant_retrait'], 0, ',', ' '),
-                number_format($nouveauMontant, 0, ',', ' ')
-            );
-            \DB::commit();
-            return redirect()->route('caisses.index')
-                ->with('success', $message);
-
-
-        } catch (\Exception $e) {
-            // Gestion des erreurs
-            \Log::error('Erreur lors du retrait de la caisse', [
-                'caisse_id' => $caisse->id,
-                'montant_retrait' => $validated['montant_retrait'],
-                'error' => $e->getMessage()
-            ]);
-
-            return back()->withErrors([
-                'error' => 'Une erreur est survenue lors du retrait. Veuillez réessayer.'
-            ])->withInput();
-        }
-
-
     }
 
 }

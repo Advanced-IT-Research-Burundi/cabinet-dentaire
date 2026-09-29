@@ -255,6 +255,12 @@
                                                         <i class="bi bi-eye"></i>
                                                     </a>
                                                 @endif
+                                                @if($detail->justificatif)
+                                                    <a href="{{ route('caisse-centrale.justificatif.show', $detail->id) }}" target="_blank"
+                                                       class="btn btn-sm btn-outline-secondary" title="Pièce justificative">
+                                                        <i class="bi bi-paperclip"></i>
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

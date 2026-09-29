@@ -44,3 +44,17 @@ const ROLE_USERS = [
 ];
 
 const LOAD_DATA = 1000;
+
+// Opérations de la caisse centrale : code => [libellé, sens]
+const OPERATIONS_CAISSE_CENTRALE = [
+    'VERSEMENT_BANQUE' => ['label' => 'Versement en banque', 'sens' => 'sortie'],
+    'RETRAIT_BANQUE' => ['label' => 'Retrait bancaire', 'sens' => 'entree'],
+    'VIREMENT_RECU' => ['label' => 'Virement reçu', 'sens' => 'entree'],
+    'VIREMENT_EMIS' => ['label' => 'Virement émis', 'sens' => 'sortie'],
+    'FRAIS_BANCAIRES' => ['label' => 'Frais bancaires', 'sens' => 'sortie'],
+    'AUTRE_ENTREE' => ['label' => 'Autre entrée', 'sens' => 'entree'],
+    'AUTRE_SORTIE' => ['label' => 'Autre sortie', 'sens' => 'sortie'],
+];
+
+// Collecte (diminution) du montant d'une caisse utilisateur vers la caisse centrale
+const COLLECTE_CAISSE = 'COLLECTE_CAISSE';

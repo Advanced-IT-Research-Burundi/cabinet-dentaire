@@ -34,6 +34,7 @@ return [
     'compta' => [
         'url' => env('COMPTA_API_URL', 'http://127.0.0.1:8000'),
         'token' => env('COMPTA_API_TOKEN'),
+        'ui_url' => env('COMPTA_UI_URL', 'http://127.0.0.1:5173'),
     ],
 
 ];

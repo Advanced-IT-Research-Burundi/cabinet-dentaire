@@ -206,6 +206,23 @@
                     </div>
 
                     <div class="col">
+                        <label for="category_type_vente_id" class="form-label">
+                            <i class="bi bi-tags-fill me-1"></i> Type de vente
+                        </label>
+                        <select id="category_type_vente_id" name="category_type_vente_id" class="form-select @error('category_type_vente_id') is-invalid @enderror">
+                            <option value="">Aucun</option>
+                            @foreach($categoryTypeVentes as $typeVente)
+                                <option value="{{ $typeVente->id }}" {{ old('category_type_vente_id', $stock->category_type_vente_id) == $typeVente->id ? 'selected' : '' }}>
+                                    {{ $typeVente->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_type_vente_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col">
                         <label for="supplier_id" class="form-label">
                             <i class="bi bi-truck me-1"></i> Fournisseur
                         </label>

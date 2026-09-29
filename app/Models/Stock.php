@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+enum StockCategory: string
+{
+    case ACTES = "ACTES";
+    case MATERIELS = "MATERIELS";
+    case MEDICAMENTS = "MEDICAMENTS";
+    case PARAMEDICAUX = "PARAMEDICAUX";
+}
+
 class Stock extends Model
 {
     use HasFactory, SoftDeletes;
@@ -36,6 +44,7 @@ class Stock extends Model
         'supplier',
         'user_id',
         'category_id',
+        'category_type_vente_id',
         'status',
     ];
 
@@ -64,6 +73,11 @@ class Stock extends Model
     public function category()
     {
         return $this->belongsTo(Category::class , 'category_id');
+    }
+
+    public function categoryTypeVente()
+    {
+        return $this->belongsTo(CategoryTypeVente::class, 'category_type_vente_id');
     }
 
     public function supplier()

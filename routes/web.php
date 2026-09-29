@@ -27,6 +27,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TreatmentTypeController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryTypeVenteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AssuranceController;
@@ -54,7 +55,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 //->can('is-admin');
 
 Route::middleware(['auth'])->group(function () {
-    Route::view('/compta/{any?}', 'compta.app')
+    Route::get('/compta/{any?}', function () {
+        return redirect()->away(config('services.compta.ui_url'));
+    })
         ->where('any', '.*')
         ->name('compta.app');
 
@@ -91,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('category-type-ventes', CategoryTypeVenteController::class);
     Route::resource('suppliers', SupplierController::class);
 
     Route::resource('assurances', AssuranceController::class);
@@ -109,6 +113,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('appointments', AppointmentController::class);
     Route::get('stocks/{id}/movement', [StockController::class, 'movement'])->name('stocks.movement');
+    Route::patch('stocks/{stock}/category-type-vente', [StockController::class, 'updateCategoryTypeVente'])->name('stocks.category-type-vente');
     // Dashboard related routes
     Route::get(
         'dashboard/revenue',
@@ -243,8 +248,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('companies', CompanyController::class);
-    Route::resource('caisses', App\Http\Controllers\CaisseController::class);
-    Route::patch('/{caisse}/withdraw', [App\Http\Controllers\CaisseController::class, 'withdraw'])->name('caisses.withdraw');
+    Route::resource('caisses', App\Http\Controllers\CaisseController::class)->parameters(['caisses' => 'caisse']);
 
     Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);
 
@@ -268,6 +272,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/export', [AdminController::class, 'exportSessions'])->name('export');
     });
     Route::get('/admin/stats/update', [AdminController::class, 'updateStats'])->name('admin.stats.update');
+
+    // Caisse centrale : opérations bancaires + collecte des caisses utilisateurs
+    Route::prefix('caisse-centrale')->name('caisse-centrale.')->controller(App\Http\Controllers\CaisseCentraleController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/operations', 'storeOperation')->name('operations.store');
+        Route::patch('/collecter/{caisse}', 'collecter')->name('collecter');
+        Route::post('/operations/{detail}/justificatif', 'attachJustificatif')->name('justificatif.store');
+        Route::get('/operations/{detail}/justificatif', 'justificatif')->name('justificatif.show');
+    });
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings.index');
 });
 
@@ -320,10 +333,5 @@ require __DIR__.'/auth.php';
 
 
 Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
-
 Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);
 
-
-Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
-
-Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);
