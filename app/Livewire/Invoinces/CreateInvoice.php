@@ -210,7 +210,7 @@ class CreateInvoice extends Component
             return;
         }
 
-        $caisse = Caisse::where('user_id', auth()->user()->id)->first();
+        $caisse = Caisse::utilisateurs()->where('user_id', auth()->user()->id)->first();
         if(!$caisse){
             session()->flash('error', "Veuillez nous excuser, vous n'avez pas le droit de créer une facture");
             return;

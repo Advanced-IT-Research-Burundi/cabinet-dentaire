@@ -23,7 +23,8 @@ class Caisse extends Model
         'description',
         'status',
         'user_id',
-        'name'
+        'name',
+        'is_centrale',
     ];
 
     /**
@@ -36,6 +37,7 @@ class Caisse extends Model
         'date' => 'date',
         'montant' => 'double',
         'user_id' => 'integer',
+        'is_centrale' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -45,5 +47,32 @@ class Caisse extends Model
 
     public function caisseDetails(){
         return $this->hasMany(CaisseDetail::class , 'caisse_id')->latest();
+    }
+
+    /**
+     * Caisses des utilisateurs (hors caisse centrale).
+     */
+    public function scopeUtilisateurs($query)
+    {
+        return $query->where('is_centrale', false);
+    }
+
+    /**
+     * Retourne la caisse centrale, en la créant si elle n'existe pas encore.
+     */
+    public static function centrale(): self
+    {
+        return static::firstOrCreate(
+            ['is_centrale' => true],
+            [
+                'name' => 'Caisse Centrale',
+                'type' => 'transfer',
+                'date' => now(),
+                'montant' => 0,
+                'status' => 'active',
+                'description' => 'Caisse centrale : opérations bancaires et collecte des caisses utilisateurs',
+                'user_id' => auth()->id(),
+            ]
+        );
     }
 }

@@ -221,8 +221,11 @@
                                     <li><a class="dropdown-item modern-dropdown-item" href="{{ route('caisses.index') }}">
                                         <i class="bi bi-cash"></i>Caisses
                                     </a></li>
+                                    <li><a class="dropdown-item modern-dropdown-item" href="{{ route('caisse-centrale.index') }}">
+                                        <i class="bi bi-bank"></i>Caisse Centrale
+                                    </a></li>
                                     <li>
-                                      <a class="dropdown-item modern-dropdown-item" href="{{ route('compta.app') }}">
+                                      <a class="dropdown-item modern-dropdown-item" href="http://localhost:5173/compta/">
                                         <i class="bi bi-calculator"></i>Comptabilité
                                       </a>
                                     </li>

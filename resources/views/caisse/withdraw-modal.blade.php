@@ -20,7 +20,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form method="POST" action="{{ route('caisses.withdraw', $caisse->id) }}" id="withdrawForm{{ $caisse->id }}">
+            <form method="POST" action="{{ route('caisse-centrale.collecter', $caisse->id) }}" id="withdrawForm{{ $caisse->id }}" enctype="multipart/form-data">
                 @csrf
                 @method('PATCH')
 
@@ -111,6 +111,25 @@
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ $message }}
                             </div>
                         @enderror
+                    </div>
+
+                    {{-- Pièce justificative --}}
+                    <div class="mb-3">
+                        <label for="justificatif{{ $caisse->id }}" class="form-label">
+                            <i class="bi bi-paperclip text-secondary me-2"></i>Pièce justificative <small class="text-muted">(optionnel)</small>
+                        </label>
+                        <input type="file" name="justificatif" id="justificatif{{ $caisse->id }}"
+                               class="form-control @error('justificatif') is-invalid @enderror"
+                               accept=".pdf,.jpg,.jpeg,.png">
+                        <div class="form-text">PDF, JPG ou PNG — 5 Mo maximum</div>
+                        @error('justificatif')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="alert alert-light border small mb-3">
+                        <i class="bi bi-arrow-right-circle me-1"></i>
+                        Le montant retiré sera transféré vers la <strong>Caisse Centrale</strong>.
                     </div>
 
                     {{-- Prévisualisation du nouveau solde --}}

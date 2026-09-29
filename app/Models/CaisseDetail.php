@@ -24,6 +24,13 @@ class CaisseDetail extends Model
         'status',
         'user_id',
         'description',
+        'operation_type',
+        'sens',
+        'date_operation',
+        'reference',
+        'banque',
+        'justificatif',
+        'source_caisse_id',
     ];
 
     /**
@@ -37,11 +44,27 @@ class CaisseDetail extends Model
         'price' => 'double',
         'total' => 'double',
         'user_id' => 'integer',
+        'source_caisse_id' => 'integer',
+        'date_operation' => 'date',
     ];
 
     public function caisse(): BelongsTo
     {
-        return $this->belongsTo(Caisses,id::class);
+        return $this->belongsTo(Caisse::class);
+    }
+
+    public function sourceCaisse(): BelongsTo
+    {
+        return $this->belongsTo(Caisse::class, 'source_caisse_id');
+    }
+
+    public function getOperationLabelAttribute(): string
+    {
+        if ($this->operation_type === COLLECTE_CAISSE) {
+            return 'Collecte caisse utilisateur';
+        }
+
+        return OPERATIONS_CAISSE_CENTRALE[$this->operation_type]['label'] ?? ($this->type ?? '--');
     }
 
     public function user(): BelongsTo

@@ -245,8 +245,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('companies', CompanyController::class);
-    Route::resource('caisses', App\Http\Controllers\CaisseController::class);
-    Route::patch('/{caisse}/withdraw', [App\Http\Controllers\CaisseController::class, 'withdraw'])->name('caisses.withdraw');
+    Route::resource('caisses', App\Http\Controllers\CaisseController::class)->parameters(['caisses' => 'caisse']);
 
     Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);
 
@@ -270,6 +269,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/export', [AdminController::class, 'exportSessions'])->name('export');
     });
     Route::get('/admin/stats/update', [AdminController::class, 'updateStats'])->name('admin.stats.update');
+
+    // Caisse centrale : opérations bancaires + collecte des caisses utilisateurs
+    Route::prefix('caisse-centrale')->name('caisse-centrale.')->controller(App\Http\Controllers\CaisseCentraleController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/operations', 'storeOperation')->name('operations.store');
+        Route::patch('/collecter/{caisse}', 'collecter')->name('collecter');
+        Route::post('/operations/{detail}/justificatif', 'attachJustificatif')->name('justificatif.store');
+        Route::get('/operations/{detail}/justificatif', 'justificatif')->name('justificatif.show');
+    });
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings.index');
 });
 
