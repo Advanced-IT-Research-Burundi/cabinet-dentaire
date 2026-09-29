@@ -6,9 +6,14 @@
 <div class="px-4 container-fluid">
     <div class="mb-4 d-flex justify-content-between align-items-center">
         <h1 class="mb-0 text-gray-800 h3">Liste des Produits</h1>
-        <a href="{{ route('stocks.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle-fill"></i> Nouveau Produit
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('category-type-ventes.index') }}" class="btn btn-outline-primary">
+                <i class="bi bi-tags-fill me-1"></i> Types de Ventes
+            </a>
+            <a href="{{ route('stocks.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill me-1"></i> Nouveau Produit
+            </a>
+        </div>
     </div>
     <!-- Search and Filter Card -->
     <div class="mb-4 card">

@@ -27,6 +27,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TreatmentTypeController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryTypeVenteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\AssuranceController;
@@ -93,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('stocks', StockController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('category-type-ventes', CategoryTypeVenteController::class);
     Route::resource('suppliers', SupplierController::class);
 
     Route::resource('assurances', AssuranceController::class);
@@ -330,10 +332,5 @@ require __DIR__.'/auth.php';
 
 
 Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
-
 Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);
 
-
-Route::resource('obr-request-bodies', App\Http\Controllers\ObrRequestBodyController::class);
-
-Route::resource('obr-pointers', App\Http\Controllers\ObrPointerController::class);

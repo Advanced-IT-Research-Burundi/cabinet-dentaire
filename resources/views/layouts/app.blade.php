@@ -141,7 +141,7 @@
                         @canany(['is-admin', 'is-pharmacist'])
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('stocks*') ||request()->is('categories*') || request()->is('suppliers*') || request()->is('medicines*')   ? 'active' : '' }}" href="#" id="stocksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle modern-nav-link {{ request()->is('stocks*') || request()->is('categories*') || request()->is('category-type-ventes*') || request()->is('suppliers*') || request()->is('medicines*')   ? 'active' : '' }}" href="#" id="stocksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-box-seam me-2"></i>Pharmacies
                             </a>
                             <ul class="dropdown-menu modern-dropdown-menu" aria-labelledby="stocksDropdown">
@@ -150,6 +150,9 @@
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('categories.index') }}">
                                     <i class="bi bi-tag"></i>Categories
+                                </a></li>
+                                <li><a class="dropdown-item modern-dropdown-item" href="{{ route('category-type-ventes.index') }}">
+                                    <i class="bi bi-tags"></i>Types de Ventes
                                 </a></li>
                                 <li><a class="dropdown-item modern-dropdown-item" href="{{ route('invoice.alert') }}">
                                     <i class="bi bi-exclamation-circle"></i>Alertes de stock

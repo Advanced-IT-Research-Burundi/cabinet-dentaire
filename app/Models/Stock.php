@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+enum StockCategory: string
+{
+    case ACTES = "ACTES";
+    case MATERIELS = "MATERIELS";
+    case MEDICAMENTS = "MEDICAMENTS";
+    case PARAMEDICAUX = "PARAMEDICAUX";
+}
+
 class Stock extends Model
 {
     use HasFactory, SoftDeletes;
