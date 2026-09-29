@@ -15,4 +15,9 @@ class CategoryTypeVente extends Model
         'name',
         'description',
     ];
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class, 'category_type_vente_id');
+    }
 }

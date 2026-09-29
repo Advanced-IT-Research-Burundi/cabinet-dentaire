@@ -23,7 +23,7 @@
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
                         <input type="text" class="form-control" name="search" value="{{ request('search') }}"
-                               placeholder="Rechercher par nom de produit, catégorie...">
+                               placeholder="Rechercher par nom, marque, code...">
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -33,6 +33,14 @@
                         <option value="Faible_stock" {{ request('status') == "Faible_stock" ? 'selected' : '' }}>Faible stock</option>
                         <option value="En_rupture" {{ request('status') == "En_rupture" ? 'selected' : '' }}>En rupture</option>
                         <option value="Expire" {{ request('status') == "Expire" ? 'selected' : '' }}>Expiré</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="category_type_vente_id" class="form-select">
+                        <option value="">Tous les types de vente</option>
+                        @foreach($categoryTypeVentes as $typeVente)
+                            <option value="{{ $typeVente->id }}" {{ request('category_type_vente_id') == $typeVente->id ? 'selected' : '' }}>{{ $typeVente->name }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -53,7 +61,8 @@
                             <th>Nom du Produit</th>
                             <th>Numéro du produit</th>
                             <th>Catégorie</th>
-                            <th>Code Produit</th>
+                            <!-- <th>Code Produit</th> -->
+                            <th>Type de vente</th>
                             <th>Quantité</th>
                             <th>Prix</th>
                             {{-- <th>Status</th> --}}
@@ -67,7 +76,21 @@
                                 <td>{{ $stock->product_name }}</td>
                                 <td> {{ $stock->id }}</td>
                                 <td>{{ $stock->category->name }}</td>
-                                <td>{{ $stock->code_product ?: '-' }}</td>
+                               
+                                <!-- <td>{{ $stock->code_product ?: '-' }}</td> -->
+                                <td>
+                                    <form action="{{ route('stocks.category-type-vente', $stock) }}" method="POST" class="m-0">
+                                        @csrf
+                                        @method('PATCH')
+                                        <select name="category_type_vente_id" class="form-select form-select-sm {{ $stock->category_type_vente_id ? '' : 'border-warning' }}"
+                                                onchange="this.form.submit()" title="Type de vente">
+                                            <option value="">— Aucun —</option>
+                                            @foreach($categoryTypeVentes as $typeVente)
+                                                <option value="{{ $typeVente->id }}" {{ $stock->category_type_vente_id == $typeVente->id ? 'selected' : '' }}>{{ $typeVente->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                </td>
                                 <td>
                                     {{ $stock->quantite }}
                                     @if($stock->quantite < $stock->quantite_alert)
@@ -102,7 +125,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="py-4 text-center">
+                                <td colspan="8" class="py-4 text-center">
                                     <div class="text-muted">
                                         <i class="mb-2 bi bi-inbox-fill fs-2 d-block"></i>
                                         Aucun stock trouvé

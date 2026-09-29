@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stock;
 use App\Models\Category;
+use App\Models\CategoryTypeVente;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\StockMovement;
@@ -156,17 +157,29 @@ class StockController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
-        $stocks = Stock::with('category')
+        $categoryTypeVenteId = $request->input('category_type_vente_id');
+
+        $stocks = Stock::with(['category', 'categoryTypeVente', 'supplier'])
             ->when($search, function ($query, $search) {
-                $query->where('product_name', 'like', "%{$search}%");
+                $query->where(function($q) use ($search) {
+                    $q->where('product_name', 'like', "%{$search}%")
+                      ->orWhere('marque', 'like', "%{$search}%")
+                      ->orWhere('code_product', 'like', "%{$search}%");
+                });
             })
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->when($categoryTypeVenteId, function ($query, $categoryTypeVenteId) {
+                $query->where('category_type_vente_id', $categoryTypeVenteId);
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('stock.index', compact('stocks'));
+        $categoryTypeVentes = CategoryTypeVente::orderBy('name')->get();
+
+        return view('stock.index', compact('stocks', 'categoryTypeVentes'));
     }
 
     public function rapport(Request $request)
@@ -174,8 +187,9 @@ class StockController extends Controller
         $perPage = $request->get('per_page', 25);
         $search = $request->get('search');
         $status = $request->get('status');
+        $categoryTypeVenteId = $request->get('category_type_vente_id');
 
-        $query = Stock::with(['category', 'supplier', 'user']);
+        $query = Stock::with(['category', 'supplier', 'user', 'categoryTypeVente']);
 
         // Filtre de recherche
         if ($search) {
@@ -191,6 +205,10 @@ class StockController extends Controller
             $query->where('status', $status);
         }
 
+        if ($categoryTypeVenteId) {
+            $query->where('category_type_vente_id', $categoryTypeVenteId);
+        }
+
         $produits = $query->orderBy('created_at', 'desc')->paginate($perPage)->withQueryString();
 
         // Statistiques globales (indépendantes de la pagination)
@@ -201,6 +219,9 @@ class StockController extends Controller
                   ->orWhere('marque', 'like', "%{$search}%")
                   ->orWhere('code_product', 'like', "%{$search}%");
             });
+        }
+        if ($categoryTypeVenteId) {
+            $statsQuery->where('category_type_vente_id', $categoryTypeVenteId);
         }
 
         $stats = [
@@ -214,7 +235,9 @@ class StockController extends Controller
             'total_produits' => (clone $statsQuery)->count(),
         ];
 
-        return view('stock.rapport', compact('produits', 'stats', 'search', 'status', 'perPage'));
+        $categoryTypeVentes = CategoryTypeVente::orderBy('name')->get();
+
+        return view('stock.rapport', compact('produits', 'stats', 'search', 'status', 'perPage', 'categoryTypeVentes'));
     }
 
 
@@ -234,7 +257,8 @@ class StockController extends Controller
     {
         $categories = Category::all();
         $suppliers = Supplier::all(); // Retrieve all suppliers for the dropdown
-        return view('stock.create', compact('categories', 'suppliers'));
+        $categoryTypeVentes = CategoryTypeVente::orderBy('name')->get();
+        return view('stock.create', compact('categories', 'suppliers', 'categoryTypeVentes'));
     }
 
     // Store a newly created stock in storage
@@ -261,6 +285,7 @@ class StockController extends Controller
             'supplier' => 'nullable|string|max:255',
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
+            'category_type_vente_id' => 'nullable|exists:category_type_ventes,id',
             'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
@@ -273,6 +298,7 @@ class StockController extends Controller
     // Display the specified stock
     public function show(Stock $stock)
     {
+        $stock->load(['category', 'categoryTypeVente', 'user', 'supplier']);
         $category = $stock->category; // Retrieve the associated category
         $user = $stock->user; // Retrieve the associated user
         return view('stock.show', compact('stock', 'category', 'user'));
@@ -284,7 +310,8 @@ class StockController extends Controller
         $stock = Stock::findOrFail($id);
         $categories = Category::all(); // Retrieve all categories for the dropdown
         $suppliers = Supplier::all(); // Retrieve all suppliers for the dropdown
-        return view('stock.edit', compact('stock', 'categories', 'suppliers'));
+        $categoryTypeVentes = CategoryTypeVente::orderBy('name')->get();
+        return view('stock.edit', compact('stock', 'categories', 'suppliers', 'categoryTypeVentes'));
     }
 
     // Update the specified stock in storage
@@ -307,8 +334,10 @@ class StockController extends Controller
             'price_min' => 'nullable|numeric|min:0',
             'date_expiration' => 'nullable|date',
             'description' => 'nullable|string',
+            'location' => 'nullable|string|max:100',
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
+            'category_type_vente_id' => 'nullable|exists:category_type_ventes,id',
             'status' => 'required|in:Disponible,Faible_stock,En_rupture,Expire',
             'supplier_id' => 'nullable|exists:suppliers,id',
         ]);
@@ -316,6 +345,18 @@ class StockController extends Controller
         $stock->update($validated);
 
         return redirect()->route('stocks.index')->with('success', 'Stock mis à jour avec succès.');
+    }
+
+    // Associer un type de vente à un produit depuis la liste des stocks
+    public function updateCategoryTypeVente(Request $request, Stock $stock)
+    {
+        $validated = $request->validate([
+            'category_type_vente_id' => 'nullable|exists:category_type_ventes,id',
+        ]);
+
+        $stock->update(['category_type_vente_id' => $validated['category_type_vente_id'] ?? null]);
+
+        return back()->with('success', 'Type de vente mis à jour pour « ' . $stock->product_name . ' ».');
     }
 
     // Remove the specified stock from storage

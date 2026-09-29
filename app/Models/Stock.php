@@ -44,6 +44,7 @@ class Stock extends Model
         'supplier',
         'user_id',
         'category_id',
+        'category_type_vente_id',
         'status',
     ];
 
@@ -72,6 +73,11 @@ class Stock extends Model
     public function category()
     {
         return $this->belongsTo(Category::class , 'category_id');
+    }
+
+    public function categoryTypeVente()
+    {
+        return $this->belongsTo(CategoryTypeVente::class, 'category_type_vente_id');
     }
 
     public function supplier()

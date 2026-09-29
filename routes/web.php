@@ -113,6 +113,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('appointments', AppointmentController::class);
     Route::get('stocks/{id}/movement', [StockController::class, 'movement'])->name('stocks.movement');
+    Route::patch('stocks/{stock}/category-type-vente', [StockController::class, 'updateCategoryTypeVente'])->name('stocks.category-type-vente');
     // Dashboard related routes
     Route::get(
         'dashboard/revenue',
