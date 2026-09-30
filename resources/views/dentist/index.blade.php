@@ -121,8 +121,8 @@
                                                 </span>
                                             </div>
                                             <div>
-                                                <div class="fw-bold">{{ $dentist->user->first_name }} {{ $dentist->user->last_name }}</div>
-                                                <div class="text-muted small">{{ $dentist->user->email }}</div>
+                                                <div class="fw-bold">{{ $dentist->user->first_name ?? '' }} {{ $dentist->user->last_name ?? '' }}</div>
+                                                <div class="text-muted small">{{ $dentist->user->email ?? '' }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -171,7 +171,7 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Êtes-vous sûr de vouloir supprimer le dentiste <strong>{{ $dentist->user->first_name }} {{ $dentist->user->last_name }}</strong> ?</p>
+                                                        <p>Êtes-vous sûr de vouloir supprimer le dentiste <strong>{{ $dentist->user->first_name ?? "" }} {{ $dentist->user->last_name ?? "" }}</strong> ?</p>
                                                         <p class="text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Cette action est irréversible.</p>
                                                     </div>
                                                     <div class="modal-footer">

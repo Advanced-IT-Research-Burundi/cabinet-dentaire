@@ -24,7 +24,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Tableau de bord</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('dentists.index') }}">Dentistes</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('dentists.show', $dentist) }}">{{ $dentist->user->first_name }} {{ $dentist->user->last_name }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dentists.show', $dentist) }}">{{ $dentist->user->first_name ?? "" }} {{ $dentist->user->last_name ?? ""  }}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Modifier</li>
                 </ol>
             </nav>

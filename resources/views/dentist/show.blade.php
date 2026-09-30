@@ -34,7 +34,7 @@
                     @endif
                 </div>
                 <div class="col">
-                    <h2 class="h3 mb-1">{{ $dentist->user->first_name }} {{ $dentist->user->last_name }}</h2>
+                    <h2 class="h3 mb-1">{{ $dentist->user->first_name ?? "" }} {{ $dentist->user->last_name ?? ""    }}</h2>
                     <p class="text-muted mb-0">
                         <i class="bi bi-award"></i> {{ $dentist->specialty ?? 'Dentisterie Générale' }}
                         <span class="ms-3 badge {{ $dentist->available ? 'bg-success' : 'bg-danger' }}">
