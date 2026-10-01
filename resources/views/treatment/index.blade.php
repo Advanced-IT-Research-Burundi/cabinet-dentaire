@@ -29,7 +29,7 @@
                                 <option value="">Tous</option>
                                 @foreach($dentists as $dentist)
                                     <option value="{{ $dentist->id }}" {{ request('dentist_id') == $dentist->id ? 'selected' : '' }}>
-                                        {{ $dentist->user->full_name }}
+                                        {{ $dentist->user->full_name ?? "" }}
                                     </option>
                                 @endforeach
                             </select>
