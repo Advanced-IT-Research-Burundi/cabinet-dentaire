@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InvoicesObrExport;
 use App\Http\Requests\InvoiceStoreRequest;
 use App\Http\Requests\InvoiceUpdateRequest;
 use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InvoiceController extends Controller
 {
@@ -33,6 +35,20 @@ class InvoiceController extends Controller
 
     public function invoices_obr(Request $request)
     {
+        $invoices = $this->invoicesObrQuery($request)->paginate(15);
+
+        return view("invoice.obr_history", compact("invoices"));
+    }
+
+    public function exportInvoicesObr(Request $request)
+    {
+        $invoices = $this->invoicesObrQuery($request)->get();
+
+        return Excel::download(new InvoicesObrExport($invoices), 'factures_obr_' . now()->format('Y-m-d_His') . '.xlsx');
+    }
+
+    private function invoicesObrQuery(Request $request)
+    {
         $query = Invoice::with('obrPointer', 'patient', 'creator')
         ->latest();
         // Filtrer par numéro de facture
@@ -51,19 +67,20 @@ class InvoiceController extends Controller
             });
         }
 
-        // Filtrer par date
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
+        // Filtrer par période
+        if ($request->filled('date_debut')) {
+            $query->whereDate('created_at', '>=', $request->date_debut);
+        }
+        if ($request->filled('date_fin')) {
+            $query->whereDate('created_at', '<=', $request->date_fin);
         }
 
         // Filtrer par status
         if ($request->filled('status')) {
             $query->where('is_sent_to_obr', $request->status);
         }
-        // Exécuter la requête
-        $invoices = $query->paginate(15); // Pagination au lieu de get()
 
-        return view("invoice.obr_history", compact("invoices"));
+        return $query;
     }
     public function index(Request $request)
     {

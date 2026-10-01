@@ -17,7 +17,12 @@
                            placeholder="Nom du patient" value="{{ request('patient') }}">
                 </div>
                 <div class="col-md-3">
-                    <input type="date" name="date" class="form-control" value="{{ request('date') }}">
+                    <div class="input-group">
+                        <span class="input-group-text">Du</span>
+                        <input type="date" name="date_debut" class="form-control" value="{{ request('date_debut') }}">
+                        <span class="input-group-text">Au</span>
+                        <input type="date" name="date_fin" class="form-control" value="{{ request('date_fin') }}">
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <select name="status" class="form-control">
@@ -28,7 +33,10 @@
                 </div>
                 <div class="col-md-12 text-end">
                     <button type="submit" class="btn btn-primary">Rechercher</button>
-                    <a href="{{ route('invoices.index') }}" class="btn btn-secondary">Réinitialiser</a>
+                    <a href="{{ route('invoices_obr.export', request()->query()) }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Exporter Excel
+                    </a>
+                    <a href="{{ route('invoices_obr') }}" class="btn btn-secondary">Réinitialiser</a>
                 </div>
             </form>
         </div>

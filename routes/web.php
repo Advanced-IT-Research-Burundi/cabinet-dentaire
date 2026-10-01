@@ -101,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invoices/{id}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
     Route::get('stock/alert', [StockController::class, 'alert'])->name('invoice.alert');
     Route::get("invoices_obr", [InvoiceController::class, 'invoices_obr' ])->name('invoices_obr');
+    Route::get("invoices_obr/export", [InvoiceController::class, 'exportInvoicesObr' ])->name('invoices_obr.export');
     Route::get("invoices.send-to-obr/{id}", [InvoiceController::class, 'sendToObr' ])->name('invoices.send-to-obr');
     Route::get("invoices.cancel-to-obr/{id}", [InvoiceController::class, 'cancelToObr' ])->name('invoices.cancel-to-obr');
     // Routes pour les rendez-vous
@@ -248,6 +249,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::resource('companies', CompanyController::class);
+    Route::get('caisses/{caisse}/print', [App\Http\Controllers\CaisseController::class, 'print'])->name('caisses.print');
     Route::resource('caisses', App\Http\Controllers\CaisseController::class)->parameters(['caisses' => 'caisse']);
 
     Route::resource('caisse-details', App\Http\Controllers\CaisseDetailController::class);

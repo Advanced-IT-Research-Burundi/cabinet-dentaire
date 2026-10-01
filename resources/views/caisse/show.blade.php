@@ -144,11 +144,40 @@
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="bi bi-list-alt me-2"></i>Détails des Transactions
+                        <small class="text-muted fw-normal">
+                            @if($dateDebut->isSameDay($dateFin))
+                                du {{ $dateDebut->format('d/m/Y') }}
+                            @else
+                                du {{ $dateDebut->format('d/m/Y') }} au {{ $dateFin->format('d/m/Y') }}
+                            @endif
+                        </small>
                     </h6>
-
+                    <a href="{{ route('caisses.print', ['caisse' => $caisse->id, 'date_debut' => $dateDebut->toDateString(), 'date_fin' => $dateFin->toDateString()]) }}"
+                       target="_blank" class="btn btn-sm btn-primary">
+                        <i class="bi bi-printer me-1"></i>Imprimer
+                    </a>
                 </div>
                 <div class="card-body">
-                    @if($caisse->caisseDetails && $caisse->caisseDetails->count() > 0)
+                    <form action="{{ route('caisses.show', $caisse->id) }}" method="GET" class="row g-2 align-items-end mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1">Du</label>
+                            <input type="date" name="date_debut" class="form-control" value="{{ $dateDebut->toDateString() }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted mb-1">Au</label>
+                            <input type="date" name="date_fin" class="form-control" value="{{ $dateFin->toDateString() }}">
+                        </div>
+                        <div class="col-md-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="bi bi-funnel me-1"></i>Filtrer
+                            </button>
+                            <a href="{{ route('caisses.show', $caisse->id) }}" class="btn btn-secondary" title="Aujourd'hui">
+                                Aujourd'hui
+                            </a>
+                        </div>
+                    </form>
+
+                    @if($details && $details->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
@@ -165,7 +194,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($caisse->caisseDetails as $detail)
+                                    @foreach($details as $detail)
                                     <tr>
                                         @php
                                                 $pos = strpos($detail->type, 'No ');
@@ -268,9 +297,9 @@
                                 </tbody>
                                 <tfoot class="table-light">
                                     <tr>
-                                        <th colspan="4" class="text-end">Total :</th>
+                                        <th colspan="3" class="text-end">Total :</th>
                                         <th class="text-primary">
-                                            {{ number_format($caisse->caisseDetails->sum('total'), 0, ',', ' ') }} FBU
+                                            {{ number_format($details->sum('total'), 0, ',', ' ') }} FBU
                                         </th>
                                         <th colspan="3"></th>
                                     </tr>
@@ -281,7 +310,7 @@
                         <div class="text-center py-5">
                             <i class="bi bi-clipboard-x fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">Aucun détail de transaction</h5>
-                            <p class="text-muted">Commencez par ajouter des détails à cette caisse</p>
+                            <p class="text-muted">Aucune transaction sur la période sélectionnée</p>
 
                         </div>
                     @endif
@@ -303,25 +332,25 @@
                     <div class="row text-center">
                         <div class="col-6 mb-3">
                             <div class="border-bottom pb-2">
-                                <div class="h4 mb-0 text-primary">{{ $caisse->caisseDetails->count() }}</div>
+                                <div class="h4 mb-0 text-primary">{{ $details->count() }}</div>
                                 <small class="text-muted">Transactions</small>
                             </div>
                         </div>
                         <div class="col-6 mb-3">
                             <div class="border-bottom pb-2">
-                                <div class="h4 mb-0 text-success">{{ $caisse->caisseDetails->where('type', 'recette')->count() }}</div>
+                                <div class="h4 mb-0 text-success">{{ $details->where('type', 'recette')->count() }}</div>
                                 <small class="text-muted">Recettes</small>
                             </div>
                         </div>
                         <div class="col-6 mb-3">
                             <div class="border-bottom pb-2">
-                                <div class="h4 mb-0 text-danger">{{ $caisse->caisseDetails->where('type', 'depense')->count() }}</div>
+                                <div class="h4 mb-0 text-danger">{{ $details->where('type', 'depense')->count() }}</div>
                                 <small class="text-muted">Dépenses</small>
                             </div>
                         </div>
                         <div class="col-6 mb-3">
                             <div class="border-bottom pb-2">
-                                <div class="h4 mb-0 text-info">{{ $caisse->caisseDetails->where('status', 'completed')->count() }}</div>
+                                <div class="h4 mb-0 text-info">{{ $details->where('status', 'completed')->count() }}</div>
                                 <small class="text-muted">Terminées</small>
                             </div>
                         </div>
@@ -354,7 +383,7 @@
                             </div>
                         </div>
                         @endif
-                        @foreach($caisse->caisseDetails->take(3) as $detail)
+                        @foreach($details->take(3) as $detail)
                         <div class="timeline-item">
                             <div class="timeline-marker bg-{{ $detail->type == 'recette' ? 'success' : 'danger' }}"></div>
                             <div class="timeline-content">

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CaisseStoreRequest;
 use App\Http\Requests\CaisseUpdateRequest;
 use App\Models\Caisse;
+use App\Models\Company;
 use App\Models\User;
 use App\Models\CaisseDetail;
 use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -90,15 +92,58 @@ class CaisseController extends Controller
 
     public function show(Request $request,  $caisse)
     {
-        $currentCaisse = Caisse::with(['caisseDetails'])->findOrFail($caisse);
+        $currentCaisse = Caisse::findOrFail($caisse);
 
         if ($currentCaisse->is_centrale) {
             return redirect()->route('caisse-centrale.index');
         }
 
+        [$dateDebut, $dateFin] = $this->periode($request);
+
         return view('caisse.show', [
             'caisse' => $currentCaisse,
+            'details' => $this->detailsPeriode($currentCaisse, $dateDebut, $dateFin),
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin,
         ]);
+    }
+
+    public function print(Request $request, Caisse $caisse)
+    {
+        abort_if($caisse->is_centrale, 404);
+
+        [$dateDebut, $dateFin] = $this->periode($request);
+
+        return view('caisse.print', [
+            'caisse' => $caisse,
+            'details' => $this->detailsPeriode($caisse, $dateDebut, $dateFin),
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin,
+            'company' => Company::where('is_actif', true)->first(),
+        ]);
+    }
+
+    /**
+     * Période sélectionnée, par défaut la journée en cours
+     */
+    private function periode(Request $request): array
+    {
+        $dateDebut = $request->filled('date_debut') ? Carbon::parse($request->date_debut) : today();
+        $dateFin = $request->filled('date_fin') ? Carbon::parse($request->date_fin) : $dateDebut->copy();
+
+        if ($dateFin->lt($dateDebut)) {
+            [$dateDebut, $dateFin] = [$dateFin, $dateDebut];
+        }
+
+        return [$dateDebut->startOfDay(), $dateFin->endOfDay()];
+    }
+
+    private function detailsPeriode(Caisse $caisse, Carbon $dateDebut, Carbon $dateFin)
+    {
+        return $caisse->caisseDetails()
+            ->with('user')
+            ->whereBetween('created_at', [$dateDebut, $dateFin])
+            ->get();
     }
 
     public function edit(Request $request, Caisse $caisse)
