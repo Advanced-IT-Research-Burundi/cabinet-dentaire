@@ -86,6 +86,23 @@ class Invoice extends Model
     }
 
 
+    public function treatments()
+    {
+        return $this->hasMany(Treatment::class);
+    }
+
+    /**
+     * Noms des dentistes ayant réalisé les traitements de la facture
+     */
+    public function getDentistNamesAttribute(): string
+    {
+        return $this->treatments
+            ->map(fn ($treatment) => $treatment->dentist?->user?->full_name)
+            ->filter()
+            ->unique()
+            ->implode(', ');
+    }
+
     public function obrPointer(){
         return $this->belongsTo(ObrPointer::class, 'id', 'invoice_id');
     }

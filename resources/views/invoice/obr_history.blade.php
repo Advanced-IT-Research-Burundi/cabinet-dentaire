@@ -54,6 +54,7 @@
                         <th>#</th>
                         <th>FACTURE No</th>
                         <th>PATIENT</th>
+                        <th>DENTISTE</th>
                         <th>Create Par</th>
                         <th>DATE</th>
                         <th>MONTANT</th>
@@ -67,6 +68,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->client['customer_name'] ?: '-' }}</td>
+                            <td>{{ $order->dentist_names ?: '-' }}</td>
                             <td>{{ $order->creator->name }}</td>
                             <td>{{ $order->created_at->format('d/m/Y') }}</td>
                             <td>{{ number_format($order->total_amount, 2, ',', ' ') }}</td>
@@ -114,7 +116,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">Aucune facture trouvée.</td>
+                            <td colspan="10" class="text-center">Aucune facture trouvée.</td>
                         </tr>
                     @endforelse
                 </tbody>

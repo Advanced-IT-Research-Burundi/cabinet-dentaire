@@ -2,7 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\ObrPointer;
+use App\Http\Controllers\SendInvoiceToOBR;
+use App\Models\Treatment;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -15,23 +16,9 @@ class InvoicesObrExport implements FromCollection, WithHeadings, WithMapping, Wi
 {
     private Collection $invoices;
 
-    /**
-     * Signatures électroniques OBR indexées par invoice_id
-     * (une facture peut avoir plusieurs tentatives d'envoi, on garde la dernière signée)
-     */
-    private Collection $signatures;
-
     public function __construct(Collection $invoices)
     {
         $this->invoices = $invoices;
-
-        $this->signatures = ObrPointer::whereIn('invoice_id', $invoices->pluck('id'))
-            ->whereNotNull('electronic_signature')
-            ->where('electronic_signature', '!=', '')
-            ->orderBy('id')
-            ->get()
-            ->keyBy('invoice_id')
-            ->map(fn ($pointer) => $pointer->electronic_signature);
     }
 
     public function collection()
@@ -46,7 +33,9 @@ class InvoicesObrExport implements FromCollection, WithHeadings, WithMapping, Wi
             'Nom du patient',
             'Numero facture',
             'Prestation',
-            'signature obr',
+            'Montant',
+            'Dentiste',
+            'Signature électronique',
         ];
     }
 
@@ -58,19 +47,38 @@ class InvoicesObrExport implements FromCollection, WithHeadings, WithMapping, Wi
         $date = $invoice->created_at->format('d/m/Y');
         $patient = $invoice->client['customer_name'] ?? '';
         $numero = $invoice->invoice_number ?: $invoice->id;
-        $signature = $this->signatures[$invoice->id] ?? '';
+        // Signature électronique : TIN/OBR_USERNAME/YmdHis/numero facture
+        $signature = $invoice->invoice_identifier
+            ?: SendInvoiceToOBR::getInvoiceSignature($numero, $invoice->created_at);
+
+        // Dentiste par traitement (lignes de type Treatment)
+        $dentistsByTreatment = $invoice->treatments
+            ->mapWithKeys(fn ($treatment) => [$treatment->id => $treatment->dentist?->user?->full_name ?? '']);
 
         $prestations = collect($invoice->description ?? [])
-            ->pluck('item_designation')
-            ->filter()
+            ->filter(fn ($item) => !empty($item['item_designation']))
             ->values();
 
         if ($prestations->isEmpty()) {
-            return [[$date, $patient, $numero, '', $signature]];
+            return [[$date, $patient, $numero, '', $invoice->total_amount, $invoice->dentist_names, $signature]];
         }
 
         return $prestations
-            ->map(fn ($prestation) => [$date, $patient, $numero, $prestation, $signature])
+            ->map(function ($item) use ($date, $patient, $numero, $signature, $dentistsByTreatment) {
+                $dentiste = ($item['item_model'] ?? null) === Treatment::class
+                    ? ($dentistsByTreatment[$item['item_product_detail_id'] ?? 0] ?? '')
+                    : '';
+
+                return [
+                    $date,
+                    $patient,
+                    $numero,
+                    $item['item_designation'],
+                    $item['item_total_amount'] ?? 0,
+                    $dentiste,
+                    $signature,
+                ];
+            })
             ->all();
     }
 
