@@ -228,7 +228,8 @@
                                         <i class="bi bi-bank"></i>Caisse Centrale
                                     </a></li>
                                     <li>
-                                      <a class="dropdown-item modern-dropdown-item" href="http://localhost:5173/compta/">
+                                      <a class="dropdown-item modern-dropdown-item" 
+                                      href="https://comptabilite-budental.advanceditb.com/compta/" target="_blank">
                                         <i class="bi bi-calculator"></i>Comptabilité
                                       </a>
                                     </li>
